@@ -103,7 +103,10 @@ params:
   homeInfoParams:
     title: 在逻辑、思辨与诗意间滑动
     content: |
-      [数学](categories/数学/) | [哲学](categories/哲学/) | [艺术](categories/艺术/) & [小说](categories/小说/)
+      [数学](categories/数学/) |
+      [哲学](categories/哲学/) |
+      [计算机科学](categories/计算机科学/) |
+      [艺术](categories/艺术/) & [小说](categories/小说/)
 
 
   socialIcons:
