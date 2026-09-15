@@ -4,6 +4,8 @@ language: en-us
 dictionaryDefinitions:
   - name: blog-words
     path: ./.cspell/blog-words.txt
+  - name: fp
+    path: ./.cspell/fp.txt
   - name: math
     path: ./.cspell/math.txt
   - name: tikz
@@ -20,6 +22,7 @@ dictionaryDefinitions:
     path: ./.cspell/scripts.txt
 dictionaries:
   - blog-words
+  - fp
   - math
   - tikz
   - jsxgraph

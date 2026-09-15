@@ -1,6 +1,7 @@
 coreutils
 dpkg
 dvisvgm
+ghci
 Justfile
 ltex
 Markmap
