@@ -57,24 +57,23 @@ layout: about
 
 ### 写作
 
-我使用 [VSCode](https://code.visualstudio.com/) 写博客。我的所有博客都以 `Markdown` 作为源文件。我还写了点脚本来把它们导出为符合知乎规范的格式。
+我使用 [VSCode](https://code.visualstudio.com/) 写博客。我的所有博客都以 `Markdown` 作为源格式。我还写了点脚本来把它们导出为符合知乎规范的格式。
 
 另外在此列出其它我写作时会用到的工具
 
 - VSCode 插件
-  - [abcjs vscode](https://marketplace.visualstudio.com/items?itemName=alensiljak.abcjs-vscode)
   - [AutoCorrect](https://marketplace.visualstudio.com/items?itemName=huacnlee.autocorrect)
+  - [Better Todo Tree](https://marketplace.visualstudio.com/items?itemName=FanaticPythoner.better-todo-tree)
   - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
   - [GitDoc](https://marketplace.visualstudio.com/items?itemName=vsls-contrib.gitdoc)
   - [LTeX+ – grammar/spell checking using LanguageTool](https://marketplace.visualstudio.com/items?itemName=ltex-plus.vscode-ltex-plus)
   - [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
+  - [Markdown Preview Enhanced](https://marketplace.visualstudio.com/items?itemName=shd101wyy.markdown-preview-enhanced)
   - [Markdown Word Count](https://marketplace.visualstudio.com/items?itemName=CurlyBrackets.markdown-word-count)
   - [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint)
   - [Markmap](https://marketplace.visualstudio.com/items?itemName=gera2ld.markmap-vscode)
   - [Mermaid](https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart)
   - [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-  - [TikZ in Markdown](https://marketplace.visualstudio.com/items?itemName=kevinyuan.vscode-tikzjax)
-  - [Todo Tree](https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.todo-tree)
   - [Typos spell checker](https://marketplace.visualstudio.com/items?itemName=tekumara.typos-vscode)
 - CLI 工具
   - [bash](https://www.gnu.org/software/bash/)
@@ -96,9 +95,11 @@ layout: about
 
 本网站是基于 [Hugo](https://gohugo.io/) 和 [PaperMod](https://github.com/adityatelange/hugo-PaperMod/) 搭建的，前者是一个静态网站生成器，后者是该生成器的一个主题。我自己覆盖了原主题的部分代码。
 
-另外在此列出其它本网站所使用的工具
+另外在此列出其它构建本网站或渲染页面时需要用到的工具
 
+- [abcjs](https://www.abcjs.net/)
 - [GitHub](https://github.com/)
+- [JSXGraph](https://jsxgraph.org/)
 - [KaTeX](https://katex.org/)
 - [TikZJax](https://tikzjax.com/)
 - [Mermaid](https://mermaid.js.org/)
