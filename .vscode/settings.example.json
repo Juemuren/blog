@@ -2,6 +2,14 @@
   "files.associations": {
     ".autocorrectrc": "yaml"
   },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.*_cache": true
+  },
   "explorer.fileNesting.patterns": {
     ".markdownlint.yaml": ".autocorrectrc, .cspell.yaml, .ltex.json, .typos.toml",
     "hugo.yaml": ".hugo_build.lock",
