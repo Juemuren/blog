@@ -1,0 +1,22 @@
+{{- if eq .Type "alert" -}}
+  {{- $icons := dict
+    "note" "M12 8h.01 M12 11v6 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0"
+    "tip" "M9 18h6 M9 21h6 M9 15c0-2-4-3-4-7a7 7 0 0 1 14 0c0 4-4 5-4 7"
+    "important" "M12 7v6 M12 17h.01 M21 3H3v14h5l4 4 4-4h5Z"
+    "warning" "M12 9v4 M12 17h.01 M12 3 2 21h20Z"
+    "caution" "M12 7v6 M12 17h.01 M8 2h8l6 6v8l-6 6H8l-6-6V8Z"
+  -}}
+  <blockquote class="markdown-alert markdown-alert-{{ .AlertType }}">
+    <p class="markdown-alert-title">
+      <svg class="markdown-alert-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <path d="{{ or (index $icons .AlertType) (index $icons "note") }}" />
+      </svg>
+      {{- with .AlertTitle }}{{ . }}{{ else }}{{ title .AlertType }}{{ end -}}
+    </p>
+    {{ .Text }}
+  </blockquote>
+{{- else -}}
+  <blockquote>
+    {{ .Text }}
+  </blockquote>
+{{- end -}}
