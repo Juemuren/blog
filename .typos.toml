@@ -19,5 +19,6 @@ extend-ignore-words-re = []
 
 [default.extend-words]
 Hom = "Hom"
+Mor = "Mor"
 
 [default.extend-identifiers]
