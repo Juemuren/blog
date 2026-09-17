@@ -1,5 +1,14 @@
+catamorphism
 contramap
 foldl
+foldr
 Kleisli
+mappend
+mconcat
+mempty
 Monoid
+println
+Semigroup
 uncurry
+unfoldl
+unfoldr
