@@ -1,18 +1,28 @@
 {{/* Render series navigation independently of the article TOC setting. */}}
 {{- $current := . }}
 {{- range .GetTerms "series" }}
-<aside class="post-content">
-  <h2>系列 | <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
-  <ol>
+<nav class="series-nav" aria-label="{{ i18n "series" }}: {{ .LinkTitle }}">
+  <details class="toc" open>
+  <summary>
+    <span class="title">
+      <span class="series-nav-label">{{ i18n "series" }}</span>
+      <span class="series-nav-separator" aria-hidden="true">|</span>
+      <a class="series-nav-name" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+    </span>
+  </summary>
+  <div class="inner">
+  <ol class="series-nav-list">
     {{- range .Pages }}
     <li>
       {{- if eq .RelPermalink $current.RelPermalink }}
-      <strong aria-current="page">{{ .LinkTitle }}（本文）</strong>
+      <strong aria-current="page">{{ .LinkTitle }}</strong>
       {{- else }}
       <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
       {{- end }}
     </li>
     {{- end }}
   </ol>
-</aside>
+  </div>
+  </details>
+</nav>
 {{- end }}

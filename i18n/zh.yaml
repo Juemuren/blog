@@ -6,3 +6,6 @@
 
 - id: rss_description
   translation: "「{{ .Title }}」下的最新文章"
+
+- id: series
+  translation: "系列"

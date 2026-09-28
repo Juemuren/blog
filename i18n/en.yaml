@@ -1,0 +1,11 @@
+- id: lastmod
+  translation: "Updated on {{ . }}"
+
+- id: archive_summary
+  translation: "{{ .Articles }} articles in total, with {{ .Words }} words altogether"
+
+- id: rss_description
+  translation: "The latest articles under '{{ .Title }}'"
+
+- id: series
+  translation: "Series"
