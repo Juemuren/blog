@@ -8,6 +8,11 @@ copyright: "&copy; Copyright 2026, **[Raind](https://github.com/Juemuren)**"
 theme: PaperMod
 mainSections: ["posts"]
 
+taxonomies:
+  category: categories
+  tag: tags
+  series: series
+
 hasCJKLanguage: true
 enableGitInfo: true
 googleAnalytics: G-79T7Y2J3Z6
@@ -54,28 +59,31 @@ languages:
       main:
         - name: 主页
           url: /
-          weight: 1
+          weight: 10
         - name: 合集
           url: /posts
-          weight: 2
+          weight: 20
+        - name: 系列
+          url: /series
+          weight: 30
         - name: 类别
           url: /categories
-          weight: 3
+          weight: 40
         - name: 标签
           url: /tags
-          weight: 4
+          weight: 50
         - name: 搜索
           url: /search
-          weight: 5
+          weight: 60
         - name: 归档
           url: /archives
-          weight: 6
+          weight: 70
         - name: 关于
           url: /about
-          weight: 7
+          weight: 80
         - name: 仓库
           url: https://github.com/juemuren/blog
-          weight: 8
+          weight: 90
 
 params:
   env: production

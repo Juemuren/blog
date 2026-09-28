@@ -1,0 +1,17 @@
+{{- $current := . }}
+{{- range .GetTerms "series" }}
+<aside class="post-content">
+  <h2>系列：<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
+  <ol>
+    {{- range .Pages }}
+    <li>
+      {{- if eq .RelPermalink $current.RelPermalink }}
+      <strong aria-current="page">{{ .LinkTitle }}（本文）</strong>
+      {{- else }}
+      <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+      {{- end }}
+    </li>
+    {{- end }}
+  </ol>
+</aside>
+{{- end }}
