@@ -1,7 +1,8 @@
+{{/* Render series navigation independently of the article TOC setting. */}}
 {{- $current := . }}
 {{- range .GetTerms "series" }}
 <aside class="post-content">
-  <h2>系列：<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
+  <h2>系列 | <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
   <ol>
     {{- range .Pages }}
     <li>
