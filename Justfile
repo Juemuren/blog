@@ -9,10 +9,10 @@ build: clean
     hugo build --cleanDestinationDir
 
 new:
-    ./scripts/new-content.sh
+    ./scripts/content/new-content.sh
 
 clean:
-    ./scripts/clean-temp.sh
+    ./scripts/maintenance/clean-temp.sh
 
 check:
     rumdl check "{{ SOURCE }}"
@@ -26,18 +26,18 @@ punctuation-check:
     autocorrect "{{ SOURCE }}" --lint
 
 ocd-check:
-    ./scripts/check-alerts.sh "{{ SOURCE }}"
+    ./scripts/check/check-alerts.sh "{{ SOURCE }}"
 
 sort-dictionary:
-    ./scripts/sort-dictionary.sh .cspell
-    ./scripts/sort-dictionary.sh .ltex
-
-publish-zhihu file: (export-standalone file)
-    ./scripts/publish-zhihu.sh "{{ without_extension(file) }}.temp.md"
+    ./scripts/check/sort-dictionary.sh .cspell
+    ./scripts/check/sort-dictionary.sh .ltex
 
 export-standalone file:
-    ./scripts/handle-md.sh "{{ file }}" "{{ without_extension(file) }}.temp.md"
-    ./scripts/export-svg.sh "{{ parent_directory(file) }}"
+    ./scripts/export/handle-md.sh "{{ file }}" "{{ without_extension(file) }}.temp.md"
+    ./scripts/export/export-svg.sh "{{ parent_directory(file) }}"
+
+publish-zhihu file: (export-standalone file)
+    ./scripts/maintenance/publish-zhihu.sh "{{ without_extension(file) }}.temp.md"
 
 delete-deployments:
-    ./scripts/delete-deployments.sh
+    ./scripts/maintenance/delete-deployments.sh
