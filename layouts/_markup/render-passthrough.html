@@ -1,6 +1,17 @@
 {{- $displayMode := eq .Type "block" -}}
+{{- $math := .Inner -}}
+{{- if $displayMode -}}
+  {{/* Goldmark can retain blockquote markers inside multiline passthrough.
+    Use the closing delimiter's line prefix to determine the quote depth,
+    so greater-than operators in the formula itself are preserved. */}}
+  {{- with findRE `\r?\n[\t ]*(?:>[\t ]*)+$` $math -}}
+    {{- $depth := len (findRE `>` (index . 0)) -}}
+    {{- $prefix := printf `(\r?\n)(?:[\t ]*>[\t ]?){%d}` $depth -}}
+    {{- $math = replaceRE $prefix "${1}" $math -}}
+  {{- end -}}
+{{- end -}}
 {{- $opts := dict "output" "htmlAndMathml" "displayMode" $displayMode -}}
-{{- with try (transform.ToMath .Inner $opts) -}}
+{{- with try (transform.ToMath $math $opts) -}}
   {{- with .Err -}}
     {{- errorf "Unable to render math at %s: %s" $.Position . -}}
     {{- .Inner | htmlEscape | safeHTML -}}
