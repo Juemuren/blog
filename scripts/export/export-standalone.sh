@@ -31,7 +31,14 @@ for tex in *-tikz-*.tex; do
   echo "Saved ${tex%.tex}.svg"
 done
 
-# Render Mermaid
+# Compile CeTZ
+for typ in *-cetz-*.typ; do
+  typst compile "$typ" "${typ%.typ}.svg"
+  rm "$typ"
+  echo "Saved ${typ%.typ}.svg"
+done
+
+# Compile Mermaid
 for mmd in *-mermaid-*.mmd; do
   mmdc -i "$mmd" -o "${mmd%.mmd}.svg" -b transparent -q
   rm "$mmd"
