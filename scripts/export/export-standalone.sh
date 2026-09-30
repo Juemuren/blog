@@ -21,8 +21,8 @@ cd "$(dirname "$input")"
 
 # Compile TikZ
 for tex in *-tikz-*.tex; do
-  latex "$tex" -quiet
-  dvisvgm "${tex%.tex}.dvi" --verbosity=0
+  latex -interaction=batchmode -halt-on-error "$tex" >/dev/null
+  dvisvgm "${tex%.tex}.dvi" --verbosity=3
   rm "$tex" "${tex%.tex}.dvi" "${tex%.tex}.log" "${tex%.tex}.aux"
   echo "Saved ${tex%.tex}.svg"
 done
