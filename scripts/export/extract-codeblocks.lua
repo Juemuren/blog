@@ -1,21 +1,12 @@
-local input_file = PANDOC_STATE.input_files[1]
-local input_path_stem = pandoc.path.split_extension(input_file)
-local input_stem = pandoc.path.filename(input_path_stem)
+local input_stem = pandoc.path.split_extension(
+  pandoc.path.filename(PANDOC_STATE.input_files[1])
+)
+local output_dir = pandoc.path.directory(PANDOC_STATE.output_file)
 
 local diagram_counts = {
   tikz = 0,
   mermaid = 0,
 }
-
-local TIKZ_PREAMBLE = [[
-\documentclass[tikz]{standalone}
-\usepackage{tikz}
-\begin{document}
-]]
-
-local TIKZ_POSTAMBLE = [[
-\end{document}
-]]
 
 local function next_diagram_suffix(kind)
   diagram_counts[kind] = diagram_counts[kind] + 1
@@ -24,8 +15,8 @@ end
 
 local function extract_codeblock(kind, extension, source)
   local diagram_suffix = next_diagram_suffix(kind)
-  local source_path = string.format("%s-%s.%s", input_path_stem, diagram_suffix, extension)
   local diagram_name = string.format("%s-%s", input_stem, diagram_suffix)
+  local source_path = pandoc.path.join({ output_dir, diagram_name .. "." .. extension })
   local diagram_path = diagram_name .. ".svg"
 
   pandoc.system.write_file(source_path, source)
@@ -36,7 +27,13 @@ end
 
 local codeblock_handlers = {
   tikz = function(codeblock)
-    local source = TIKZ_PREAMBLE .. codeblock.text .. TIKZ_POSTAMBLE
+    local source = string.format([[
+\documentclass[tikz]{standalone}
+\usepackage{tikz}
+\begin{document}
+%s
+\end{document}
+]], codeblock.text)
     return extract_codeblock("tikz", "tex", source)
   end,
 

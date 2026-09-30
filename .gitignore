@@ -4,12 +4,10 @@
 !.vscode/settings.example.json
 
 # Export
-*.temp.md
-*-mermaid-*
-*-tikz-*
+/output
 
 # Draft
-draft/
+/draft
 
 # Hugo
 .hugo_build.lock

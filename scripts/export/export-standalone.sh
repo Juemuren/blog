@@ -8,6 +8,10 @@ SCRIPT_DIR=$(dirname "$0")
 input=$1
 output=$2
 
+output_dir=$(dirname "$output")
+mkdir -p "$output_dir"
+
+# Convert Markdown
 pandoc "$input" -o "$output" \
   --standalone \
   --from markdown \
@@ -17,7 +21,7 @@ pandoc "$input" -o "$output" \
   --lua-filter="$SCRIPT_DIR/remove-comments.lua" \
   --wrap=preserve
 
-cd "$(dirname "$input")"
+cd "$output_dir"
 
 # Compile TikZ
 for tex in *-tikz-*.tex; do

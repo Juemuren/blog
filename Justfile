@@ -33,10 +33,10 @@ sort-dictionary:
     ./scripts/check/sort-dictionary.sh .ltex
 
 export-standalone file:
-    ./scripts/export/export-standalone.sh "{{ file }}" "{{ without_extension(file) }}.temp.md"
+    ./scripts/export/export-standalone.sh "{{ file }}" "output/{{ file_stem(file) }}/{{ file_name(file) }}"
 
 publish-zhihu file: (export-standalone file)
-    ./scripts/maintenance/publish-zhihu.sh "{{ without_extension(file) }}.temp.md"
+    ./scripts/maintenance/publish-zhihu.sh "output/{{ file_stem(file) }}/{{ file_name(file) }}"
 
 delete-deployments:
     ./scripts/maintenance/delete-deployments.sh
