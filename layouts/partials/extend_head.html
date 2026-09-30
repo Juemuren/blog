@@ -4,7 +4,7 @@
 
 {{ if .Store.Get "hasMath" }}
 {{ partial "maths/style.html" . }}
-{{ partial "maths/copy-tex.html" . }}
+{{ partial "maths/copy.html" . }}
 {{ end }}
 
 {{ if .Store.Get "hasTikz" }}
