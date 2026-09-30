@@ -17,8 +17,8 @@ function renderDiagram(source) {
 
   const container = document.createElement('div');
   container.className = 'tikz-container';
-  source.replaceWith(container);
   container.appendChild(script);
+  source.replaceWith(container);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

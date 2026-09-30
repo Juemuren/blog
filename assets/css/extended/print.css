@@ -75,6 +75,7 @@
     display: none;
   }
   .tikz-container,
+  .cetz-container,
   .math-container {
     overflow-x: clip !important;
   }

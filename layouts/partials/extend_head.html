@@ -11,6 +11,10 @@
 {{ partial "diagrams/tikz.html" . }}
 {{ end }}
 
+{{ if .Store.Get "hasCetz" }}
+{{ partial "diagrams/cetz.html" . }}
+{{ end }}
+
 {{ if .Store.Get "hasMermaid" }}
 {{ partial "diagrams/mermaid.html" . }}
 {{ end }}
