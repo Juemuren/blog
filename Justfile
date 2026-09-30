@@ -2,17 +2,14 @@ set default-list := true
 
 SOURCE := 'content'
 
-server: clean
+server:
     hugo server
 
-build: clean
+build:
     hugo build --cleanDestinationDir
 
 new:
     ./scripts/content/new-content.sh
-
-clean:
-    ./scripts/maintenance/clean-temp.sh
 
 check:
     rumdl check "{{ SOURCE }}"
