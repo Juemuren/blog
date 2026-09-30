@@ -10,6 +10,48 @@
         "${relativeFile}"
       ],
       "problemMatcher": []
+    },
+    {
+      "label": "Start the Dev Server",
+      "type": "shell",
+      "command": "just",
+      "args": ["dev"],
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(?!)"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "Web Server is available at.*"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Start the Preview Server",
+      "type": "shell",
+      "command": "just",
+      "args": ["preview"],
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(?!)"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "Available at.*"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
     }
   ]
 }

@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Preview the Blog",
+      "type": "editor-browser",
+      "request": "launch",
+      "url": "http:///127.0.0.1:1313/blog",
+      "webRoot": "${workspaceFolder}/public",
+      "preLaunchTask": "Start the Preview Server"
+    },
+    {
+      "name": "Dev the Blog",
+      "type": "editor-browser",
+      "request": "launch",
+      "url": "http://localhost:1313/blog",
+      "preLaunchTask": "Start the Dev Server"
+    }
+  ]
+}
