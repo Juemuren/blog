@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Convert Math Delimiters in Markdown",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "scripts/content/convert-math-delimiters.py",
+        "${relativeFile}"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

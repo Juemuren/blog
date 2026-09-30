@@ -15,15 +15,5 @@
     "hugo.yaml": ".hugo_build.lock",
     ".gitignore": ".git*"
   },
-  "Lua.diagnostics.globals": ["PANDOC_STATE", "pandoc"],
-  "ltex.language": "zh-CN",
-  "ltex.dictionary": {
-    "zh-CN": [":../.ltex/dictionary.zh-CN.txt"]
-  },
-  "ltex.disabledRules": {
-    "zh-CN": [":../.ltex/disabledRules.zh-CN.txt"]
-  },
-  "ltex.hiddenFalsePositives": {
-    "zh-CN": [":../.ltex/hiddenFalsePositives.zh-CN.jsonl"]
-  }
+  "Lua.diagnostics.globals": ["PANDOC_STATE", "pandoc"]
 }
