@@ -33,8 +33,7 @@ sort-dictionary:
     ./scripts/check/sort-dictionary.sh .ltex
 
 export-standalone file:
-    ./scripts/export/handle-md.sh "{{ file }}" "{{ without_extension(file) }}.temp.md"
-    ./scripts/export/export-svg.sh "{{ parent_directory(file) }}"
+    ./scripts/export/export-standalone.sh "{{ file }}" "{{ without_extension(file) }}.temp.md"
 
 publish-zhihu file: (export-standalone file)
     ./scripts/maintenance/publish-zhihu.sh "{{ without_extension(file) }}.temp.md"
