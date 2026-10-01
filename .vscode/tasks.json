@@ -9,7 +9,11 @@
         "scripts/content/convert-math-delimiters.py",
         "${relativeFile}"
       ],
-      "problemMatcher": []
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "close": true
+      }
     },
     {
       "label": "Start the Dev Server",

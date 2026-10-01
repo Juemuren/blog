@@ -2,13 +2,12 @@ set default-list
 
 SOURCE := 'content'
 
-# 本地开发：包含草稿，不写入磁盘，使用完整重渲染
+# 本地开发：包含草稿，不写入磁盘
 dev:
     hugo server \
         --environment development \
-        --buildDrafts --renderToMemory \
-        --disableFastRender \
-        --printPathWarnings
+        --buildDrafts \
+        --renderToMemory
 
 # 本地构建：与 .github\workflows\ci.yaml 中的构建对齐
 build port="1313":
