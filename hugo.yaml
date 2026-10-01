@@ -91,9 +91,9 @@ params:
   tocOpen: true
   showFullTextInRSS: false
   showCodeCopyButtons: true
-  showShareButtons: true
+  showShareButtons: false
   showBreadCrumbs: false
-  showPostNavLinks: true
+  showPostNavLinks: false
   showWordCount: true
   showReadingTime: true
   hideFooter: false
