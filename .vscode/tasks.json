@@ -16,6 +16,38 @@
       }
     },
     {
+      "label": "Build the HTML",
+      "type": "process",
+      "command": "just",
+      "args": ["build"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": {
+        "owner": "hugo",
+        "source": "hugo",
+        "fileLocation": "absolute",
+        "pattern": {
+          "regexp": "^(ERROR|WARN|INFO)\\s+(.*?\"([^\"]+):(\\d+):(\\d+)\".*)$",
+          "severity": 1,
+          "message": 2,
+          "file": 3,
+          "line": 4,
+          "column": 5
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "revealProblems": "onProblem",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
       "label": "Start the Dev Server",
       "type": "shell",
       "command": "just",
