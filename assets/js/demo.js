@@ -1,70 +1,99 @@
-// Build the configured form once; do not execute the demonstrated code here.
+// Build the form and parameter reference once, without running the example.
 export function createDemo(container, demo) {
   const form = container.querySelector("form");
-  const button = container.querySelector("button");
+  const runButton = form.querySelector('button[type="submit"]');
   const title = container.querySelector(".interactive-demo-title");
   const inputTemplate = container.querySelector("[data-demo-input]");
   const parameterTemplate = container.querySelector("[data-demo-parameter]");
-  const parameters = container.querySelector("[data-demo-parameters]");
+  const parameterTableBody = container.querySelector("[data-demo-parameters]");
 
   title.textContent = demo.title ?? "";
   title.hidden = !demo.title;
 
-  const fields = demo.inputs.map((field) => {
-    if (field.type !== "number") {
-      throw new Error(`Unsupported demo input type: ${field.type}`);
-    }
-    const element = inputTemplate.content.firstElementChild.cloneNode(true);
-    element.querySelector("[data-field-label]").textContent = field.label;
-    const row = parameterTemplate.content.firstElementChild.cloneNode(true);
-    row.querySelector("[data-field-label]").textContent = field.label;
-    row.querySelector("[data-field-name]").textContent = field.name;
-    row.querySelector("[data-field-type]").textContent = field.type;
-    for (const key of ["min", "max"]) {
-      if (field[key] !== undefined) {
-        row.querySelector(`[data-field-${key}]`).textContent = field[key];
-      }
-    }
-    parameters.append(row);
-    const input = element.querySelector("input");
-    Object.assign(input, {
-      name: field.name,
-      value: field.default,
-      inputMode: field.step === 1 ? "numeric" : "decimal",
-    });
-    for (const key of ["min", "max", "step"]) {
-      if (field[key] !== undefined) input[key] = field[key];
-    }
-    form.insertBefore(element, button);
-    return input;
-  });
+  const inputs = [];
+  for (const field of demo.inputs) {
+    const { element, input } = createInput(inputTemplate, field);
+    const parameterRow = createParameterRow(parameterTemplate, field);
+
+    form.insertBefore(element, runButton);
+    parameterTableBody.append(parameterRow);
+    inputs.push(input);
+  }
+
   inputTemplate.remove();
   parameterTemplate.remove();
+
+  function readValues() {
+    return Object.fromEntries(
+      inputs.map((input) => [input.name, input.valueAsNumber]),
+    );
+  }
 
   return {
     form,
     output: container.querySelector(".interactive-demo-output code"),
-    readValues: () => Object.fromEntries(
-      fields.map((input) => [input.name, input.valueAsNumber]),
-    ),
+    readValues,
   };
 }
 
-// Run the demonstrated code on submission; initialization is already complete.
+// Bind execution only after the form has been initialized.
 export function bindRunner(view, demo, messages) {
-  function run() {
-    if (!view.form.reportValidity()) return;
+  const { form, output, readValues } = view;
+
+  function runDemo() {
+    if (!form.reportValidity()) return;
+
     try {
-      view.output.textContent = demo.run(view.readValues());
+      const values = readValues();
+      output.textContent = demo.run(values);
     } catch (error) {
-      view.output.textContent = messages.runFailed;
+      output.textContent = messages.runFailed;
       console.error(error);
     }
   }
 
-  view.form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
-    run();
+    runDemo();
   });
-  if (demo.autorun) run();
+
+  if (demo.autorun) runDemo();
+}
+
+function createInput(template, field) {
+  if (field.type !== "number") {
+    throw new Error(`Unsupported demo input type: ${field.type}`);
+  }
+
+  const element = template.content.firstElementChild.cloneNode(true);
+  const input = element.querySelector("input");
+  element.querySelector("[data-field-label]").textContent = field.label;
+
+  input.name = field.name;
+  input.value = field.default;
+  input.inputMode = field.step === 1 ? "numeric" : "decimal";
+
+  for (const attribute of ["min", "max", "step"]) {
+    if (field[attribute] !== undefined) {
+      input[attribute] = field[attribute];
+    }
+  }
+
+  return { element, input };
+}
+
+function createParameterRow(template, field) {
+  const row = template.content.firstElementChild.cloneNode(true);
+  row.querySelector("[data-field-label]").textContent = field.label;
+  row.querySelector("[data-field-name]").textContent = field.name;
+  row.querySelector("[data-field-type]").textContent = field.type;
+
+  for (const bound of ["min", "max"]) {
+    // Preserve the translated "unbounded" text when no limit is configured.
+    if (field[bound] !== undefined) {
+      row.querySelector(`[data-field-${bound}]`).textContent = field[bound];
+    }
+  }
+
+  return row;
 }

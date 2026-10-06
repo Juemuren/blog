@@ -1,6 +1,6 @@
 .interactive-demo {
-  margin: 1.5rem 0;
-  padding: 1rem;
+  margin: var(--gap) 0;
+  padding: var(--content-gap);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
@@ -9,7 +9,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: start;
-  gap: 0.75rem;
+  gap: calc(var(--content-gap) / 2);
 }
 
 .interactive-demo-field {
@@ -26,9 +26,9 @@
 .interactive-demo-controls input,
 .interactive-demo-controls button {
   min-height: 44px;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem calc(var(--content-gap) / 2);
   border: 1px solid var(--secondary);
-  border-radius: 6px;
+  border-radius: var(--radius);
   font: inherit;
 }
 
@@ -39,6 +39,7 @@
 }
 
 .interactive-demo-controls button {
+  margin-top: calc(1.6em + 0.25rem);
   color: var(--theme);
   background: var(--primary);
   cursor: pointer;
@@ -50,33 +51,29 @@
 }
 
 .interactive-demo .interactive-demo-loading {
-  margin: 0.75rem 0 0;
+  margin: calc(var(--content-gap) / 2) 0 0;
   color: var(--secondary);
   font-size: 0.875rem;
 }
 
 .interactive-demo .interactive-demo-output-label {
-  margin: 1rem 0 0;
+  margin: var(--content-gap) 0 0;
   font-weight: 600;
 }
 
 .interactive-demo .interactive-demo-output {
   max-height: 20rem;
   overflow: auto;
-  margin: 0.75rem 0 0;
+  margin: calc(var(--content-gap) / 2) 0 0;
 }
 
 .interactive-demo .interactive-demo-title {
-  margin: 0 0 1rem;
+  margin: 0 0 var(--content-gap);
   font-size: 1.15rem;
 }
 
-.interactive-demo-controls button {
-  margin-top: calc(1.6em + 0.25rem);
-}
-
 .interactive-demo-details {
-  margin-top: 1rem;
+  margin-top: var(--content-gap);
 }
 
 .interactive-demo summary {
@@ -85,7 +82,7 @@
 
 .interactive-demo-parameters {
   overflow-x: auto;
-  margin-top: 0.75rem;
+  margin-top: calc(var(--content-gap) / 2);
 }
 
 .interactive-demo .interactive-demo-parameters table {
@@ -103,7 +100,7 @@
 }
 
 .interactive-demo .interactive-demo-source-label {
-  margin: 0.75rem 0;
+  margin: calc(var(--content-gap) / 2) 0;
   font-weight: 600;
 }
 
