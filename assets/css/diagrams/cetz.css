@@ -1,0 +1,10 @@
+.cetz-container {
+  width: fit-content;
+  margin: var(--content-gap) auto;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+html[data-theme="dark"] .cetz-container {
+  filter: invert(1) hue-rotate(180deg);
+}

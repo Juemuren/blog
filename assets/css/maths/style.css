@@ -1,0 +1,6 @@
+.math-container {
+  max-width: 100%;
+  margin: var(--content-gap) auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+}

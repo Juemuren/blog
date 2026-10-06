@@ -1,0 +1,7 @@
+.mermaid-container {
+  margin: var(--content-gap) auto;
+}
+.mermaid-container svg {
+  display: block;
+  margin-inline: auto;
+}

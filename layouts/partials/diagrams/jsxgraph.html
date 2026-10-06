@@ -6,69 +6,7 @@
   src="https://cdn.jsdelivr.net/npm/jsxgraph@1.12.2/distrib/jsxgraphcore.js"
   crossorigin="anonymous"
 ></script>
-<script>
-function applyThemeColors() {
-  const primary = "var(--primary)"
-  const secondary = "var(--secondary)"
-  const theme = "var(--theme)"
-
-  const options = window.JXG.Options;
-  Object.assign(options.text, {
-    strokeColor: primary,
-    highlightStrokeColor: primary,
-  });
-  Object.assign(options.label, {
-    strokeColor: primary,
-    highlightStrokeColor: primary,
-  });
-  Object.assign(options.ticks, {
-    strokeColor: secondary,
-    highlightStrokeColor: primary,
-  });
-  Object.assign(options.slider, {
-    strokeColor: primary,
-    highlightStrokeColor: primary,
-    fillColor: theme,
-    highlightFillColor: theme,
-  });
-  Object.assign(options.slider.baseline, {
-    strokeColor: secondary,
-    highlightStrokeColor: primary,
-  });
-  Object.assign(options.slider.ticks, {
-    strokeColor: secondary,
-    highlightStrokeColor: primary,
-  });
-  Object.assign(options.slider.highline, {
-    strokeColor: primary,
-    highlightStrokeColor: primary,
-  });
-  Object.assign(options.slider.label, {
-    strokeColor: primary,
-    highlightStrokeColor: primary,
-  });
-}
-
-function renderDiagram(source, index) {
-  const container = document.createElement("div");
-  container.id = `jsxgraph-diagram-${index + 1}`;
-  container.className = "jsxgraph-container";
-  source.replaceWith(container);
-
-  const code = source.textContent.trim()
-  const render = Function("JXG", "BOARDID", code);
-  render(JXG, container.id);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  applyThemeColors();
-  document.querySelectorAll("pre.jsxgraph").forEach(renderDiagram);
-});
-</script>
-<style>
-.jsxgraph-container {
-  margin: var(--content-gap) auto;
-  width: 100%;
-  height: 50dvh;
-}
-</style>
+{{- $script := resources.Get "js/diagrams/jsxgraph.js" | minify | fingerprint -}}
+<script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
+{{- $style := resources.Get "css/diagrams/jsxgraph.css" | minify | fingerprint -}}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">

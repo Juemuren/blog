@@ -1,41 +1,4 @@
-<script type="module">
-import { $typst } from 'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst.ts@0.7.0/dist/esm/contrib/all-in-one-lite.bundle.js';
-
-$typst.setCompilerInitOptions({
-  getModule: () => 'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-web-compiler@0.7.0/pkg/typst_ts_web_compiler_bg.wasm',
-});
-$typst.setRendererInitOptions({
-  getModule: () => 'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-renderer@0.7.0/pkg/typst_ts_renderer_bg.wasm',
-});
-
-async function renderDiagram(source) {
-  const code = `
-#import "@preview/cetz:0.5.2"
-#set page(width: auto, height: auto, margin: 0pt, fill: none)
-#cetz.canvas({
-import cetz.draw: *
-${source.textContent.trim()}
-})
-`;
-  const svg = await $typst.svg({ mainContent: code });
-
-  const container = document.createElement('div');
-  container.className = 'cetz-container';
-  container.innerHTML = svg;
-  source.replaceWith(container);
-}
-
-document.querySelectorAll('pre.cetz').forEach(renderDiagram)
-</script>
-<style>
-.cetz-container {
-  width: fit-content;
-  margin: var(--content-gap) auto;
-  max-width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-html[data-theme="dark"] .cetz-container {
-  filter: invert(1) hue-rotate(180deg);
-}
-</style>
+{{- $script := resources.Get "js/diagrams/cetz.js" | minify | fingerprint -}}
+<script type="module" src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
+{{- $style := resources.Get "css/diagrams/cetz.css" | minify | fingerprint -}}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
