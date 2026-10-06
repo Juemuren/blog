@@ -1,6 +1,7 @@
 ---
 title: 流形上的微积分（零）：用线性代数与流形几何重新审视微积分
 date: 2026-06-23
+categories: 数学
 series: 流形上的微积分
 series_ordered: 0
 summary: 引言，讲解学习路线和知识体系。
