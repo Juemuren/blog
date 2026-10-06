@@ -1,0 +1,81 @@
+/* Catppuccin palette: https://catppuccin.com/palette/
+ * This file overrides PaperMod's core asset, including its layout variables.
+ */
+:root {
+    --gap: 24px;
+    --content-gap: 20px;
+    --nav-width: 1024px;
+    --main-width: 720px;
+    --header-height: 60px;
+    --footer-height: 60px;
+    --radius: 8px;
+
+    /* Latte */
+    --ctp-base: #eff1f5;
+    --ctp-mantle: #e6e9ef;
+    --ctp-surface0: #ccd0da;
+    --ctp-surface1: #bcc0cc;
+    --ctp-text: #4c4f69;
+    --ctp-subtext0: #6c6f85;
+    --ctp-blue: #1e66f5;
+    --ctp-green: #40a02b;
+    --ctp-mauve: #8839ef;
+    --ctp-yellow: #df8e1d;
+    --ctp-red: #d20f39;
+    color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+    /* Mocha */
+    --ctp-base: #1e1e2e;
+    --ctp-mantle: #181825;
+    --ctp-surface0: #313244;
+    --ctp-surface1: #45475a;
+    --ctp-text: #cdd6f4;
+    --ctp-subtext0: #a6adc8;
+    --ctp-blue: #89b4fa;
+    --ctp-green: #a6e3a1;
+    --ctp-mauve: #cba6f7;
+    --ctp-yellow: #f9e2af;
+    --ctp-red: #f38ba8;
+    color-scheme: dark;
+}
+
+/* Match the system preference when JavaScript has not set a theme. */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+        /* Mocha */
+        --ctp-base: #1e1e2e;
+        --ctp-mantle: #181825;
+        --ctp-surface0: #313244;
+        --ctp-surface1: #45475a;
+        --ctp-text: #cdd6f4;
+        --ctp-subtext0: #a6adc8;
+        --ctp-blue: #89b4fa;
+        --ctp-green: #a6e3a1;
+        --ctp-mauve: #cba6f7;
+        --ctp-yellow: #f9e2af;
+        --ctp-red: #f38ba8;
+        color-scheme: dark;
+    }
+}
+
+/* Map palette colors to PaperMod's semantic variables in both modes. */
+:root,
+:root:not([data-theme]),
+:root[data-theme="light"],
+:root[data-theme="dark"] {
+    --theme: var(--ctp-base);
+    --entry: var(--ctp-mantle);
+    --primary: var(--ctp-text);
+    --secondary: var(--ctp-subtext0);
+    --tertiary: var(--ctp-surface1);
+    --content: var(--ctp-text);
+    --code-block-bg: var(--ctp-mantle);
+    --code-bg: var(--ctp-surface0);
+    --border: var(--ctp-surface0);
+}
+
+.list {
+    background: var(--theme);
+}

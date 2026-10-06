@@ -1,0 +1,9 @@
+/* PaperMod otherwise uses a fixed light foreground for every code block. */
+.md-content pre code {
+  color: var(--content);
+}
+
+.copy-code {
+  color: var(--primary);
+  background: var(--code-bg);
+}

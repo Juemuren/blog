@@ -18,6 +18,8 @@ enableGitInfo: true
 googleAnalytics: G-79T7Y2J3Z6
 
 markup:
+  highlight:
+    noClasses: false
   goldmark:
     extensions:
       passthrough:
