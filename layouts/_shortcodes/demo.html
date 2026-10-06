@@ -12,13 +12,24 @@
   {{- $id := printf "demo-%d" .Ordinal -}}
   {{- $messages := dict
     "loadFailed" (i18n "demo_load_failed")
-    "run" (i18n "demo_run")
-    "output" (i18n "demo_output")
     "completed" (i18n "demo_completed")
     "runFailed" (i18n "demo_run_failed")
   -}}
-  <div id="{{ $id }}" data-src="{{ $script.RelPermalink }}">
-    <p>{{ i18n "demo_loading" }}</p>
+  <div id="{{ $id }}" class="interactive-demo" data-src="{{ $script.RelPermalink }}">
+    <div data-demo-content hidden>
+      <form class="interactive-demo-controls">
+        <button type="submit">{{ i18n "demo_run" }}</button>
+      </form>
+      <p class="interactive-demo-hint" hidden></p>
+      <pre class="interactive-demo-output" tabindex="0" aria-label="{{ i18n "demo_output" }}"><code></code></pre>
+    </div>
+    <p class="interactive-demo-status" role="status">{{ i18n "demo_loading" }}</p>
+    <template data-demo-input>
+      <label>
+        <span></span>
+        <input type="number" required>
+      </label>
+    </template>
   </div>
   <script type="module">
     import { mount } from {{ $runtime.RelPermalink }};
@@ -28,7 +39,7 @@
       const { default: demo } = await import(container.dataset.src);
       mount(container, demo, messages);
     } catch (error) {
-      container.textContent = messages.loadFailed;
+      container.querySelector('[role="status"]').textContent = messages.loadFailed;
       console.error(error);
     }
   </script>
