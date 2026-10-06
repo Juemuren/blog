@@ -1,6 +1,8 @@
 import { createGaussianRandomGenerator } from "./gaussian.js";
 
 export default {
+  autorun: true,
+  description: "高斯随机数生成器",
   inputs: [
     {
       name: "seed",
@@ -21,9 +23,6 @@ export default {
       step: 1,
     },
   ],
-  action: "生成",
-  autorun: true,
-  description: "每次从指定种子重新生成，最多 1000 个；相同种子和数量会得到相同结果。",
 
   run({ seed, count }) {
     const next = createGaussianRandomGenerator(seed);

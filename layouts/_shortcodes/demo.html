@@ -20,7 +20,8 @@
         <button type="submit">{{ i18n "demo_run" }}</button>
       </form>
       <p class="interactive-demo-hint" hidden></p>
-      <pre class="interactive-demo-output" tabindex="0" aria-label="{{ i18n "demo_output" }}"><code></code></pre>
+      <p id="{{ $id }}-output-label" class="interactive-demo-output-label">{{ i18n "demo_output" }}</p>
+      <pre class="interactive-demo-output" tabindex="0" aria-labelledby="{{ $id }}-output-label"><code></code></pre>
     </div>
     <p class="interactive-demo-loading" data-demo-loading role="status">{{ i18n "demo_loading" }}</p>
     <template data-demo-input>

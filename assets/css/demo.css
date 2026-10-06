@@ -52,6 +52,11 @@
   font-size: 0.875rem;
 }
 
+.interactive-demo .interactive-demo-output-label {
+  margin: 1rem 0 0;
+  font-weight: 600;
+}
+
 .interactive-demo .interactive-demo-output {
   max-height: 20rem;
   overflow: auto;

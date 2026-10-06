@@ -5,7 +5,6 @@ export function createDemo(container, demo) {
   const description = container.querySelector(".interactive-demo-hint");
   const inputTemplate = container.querySelector("[data-demo-input]");
 
-  if (demo.action != null) button.textContent = demo.action;
   description.textContent = demo.description ?? "";
   description.hidden = !demo.description;
 

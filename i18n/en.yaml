@@ -2,7 +2,7 @@
   translation: "Updated on {{ . }}"
 
 - id: archive_summary
-  translation: "{{ .Articles }} articles in total, with {{ .Words }} words altogether"
+  translation: "{{ .Articles }} articles in total, with {{ .Words }} words altogether."
 
 - id: rss_description
   translation: "The latest articles under '{{ .Title }}'"
@@ -19,8 +19,8 @@
 - id: demo_run
   translation: "Run"
 
-- id: demo_output
-  translation: "Output"
-
 - id: demo_run_failed
   translation: "Run failed. Please check your input and try again."
+
+- id: demo_output
+  translation: "Output"

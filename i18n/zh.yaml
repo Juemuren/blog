@@ -2,7 +2,7 @@
   translation: "更新于 {{ . }}"
 
 - id: archive_summary
-  translation: "共 {{ .Articles }} 篇文章，累计 {{ .Words }} 字"
+  translation: "共 {{ .Articles }} 篇文章，累计 {{ .Words }} 字。"
 
 - id: rss_description
   translation: "「{{ .Title }}」下的最新文章"
@@ -19,8 +19,8 @@
 - id: demo_run
   translation: "运行"
 
-- id: demo_output
-  translation: "运行结果"
-
 - id: demo_run_failed
   translation: "运行失败，请检查输入后重试。"
+
+- id: demo_output
+  translation: "运行结果"
