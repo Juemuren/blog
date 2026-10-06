@@ -2,7 +2,7 @@ import { createGaussianRandomGenerator } from "./gaussian.js";
 
 export default {
   autorun: true,
-  description: "高斯随机数生成器",
+  title: "高斯随机数生成器",
   inputs: [
     {
       name: "seed",

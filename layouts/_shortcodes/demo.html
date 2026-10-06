@@ -16,19 +16,54 @@
   -}}
   <div id="{{ $id }}" class="interactive-demo" data-src="{{ $script.RelPermalink }}">
     <div data-demo-content hidden>
+      <h4 class="interactive-demo-title" hidden></h4>
       <form class="interactive-demo-controls">
         <button type="submit">{{ i18n "demo_run" }}</button>
       </form>
-      <p class="interactive-demo-hint" hidden></p>
+      <details class="interactive-demo-details">
+        <summary>{{ i18n "demo_details" }}</summary>
+        <div class="interactive-demo-parameters" tabindex="0" role="region" aria-label="{{ i18n "demo_parameter_details" }}">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">{{ i18n "demo_parameter" }}</th>
+                <th scope="col">{{ i18n "demo_variable" }}</th>
+                <th scope="col">{{ i18n "demo_type" }}</th>
+                <th scope="col">{{ i18n "demo_min" }}</th>
+                <th scope="col">{{ i18n "demo_max" }}</th>
+              </tr>
+            </thead>
+            <tbody data-demo-parameters></tbody>
+          </table>
+        </div>
+        {{- with .Get "source" -}}
+          {{- $resource := $.Page.Resources.Get . -}}
+          {{- if not $resource -}}
+            {{- errorf "Demo source %q not found in %s" . $.Page.File.Path -}}
+          {{- else -}}
+            <p class="interactive-demo-source-label">{{ i18n "demo_source" }}</p>
+            <div class="interactive-demo-source">{{ highlight $resource.Content "js" }}</div>
+          {{- end -}}
+        {{- end -}}
+      </details>
       <p id="{{ $id }}-output-label" class="interactive-demo-output-label">{{ i18n "demo_output" }}</p>
       <pre class="interactive-demo-output" tabindex="0" aria-labelledby="{{ $id }}-output-label"><code></code></pre>
     </div>
     <p class="interactive-demo-loading" data-demo-loading role="status">{{ i18n "demo_loading" }}</p>
     <template data-demo-input>
-      <label>
-        <span></span>
+      <label class="interactive-demo-field">
+        <span data-field-label></span>
         <input type="number" required>
       </label>
+    </template>
+    <template data-demo-parameter>
+      <tr>
+        <th scope="row" data-field-label></th>
+        <td><code data-field-name></code></td>
+        <td><code data-field-type></code></td>
+        <td data-field-min>{{ i18n "demo_unbounded" }}</td>
+        <td data-field-max>{{ i18n "demo_unbounded" }}</td>
+      </tr>
     </template>
   </div>
   <script type="module">

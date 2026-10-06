@@ -24,3 +24,30 @@
 
 - id: demo_output
   translation: "Output"
+
+- id: demo_source
+  translation: "Source code"
+
+- id: demo_parameter_details
+  translation: "Parameter details"
+
+- id: demo_variable
+  translation: "Variable name"
+
+- id: demo_type
+  translation: "Data type"
+
+- id: demo_min
+  translation: "Minimum"
+
+- id: demo_max
+  translation: "Maximum"
+
+- id: demo_unbounded
+  translation: "Unbounded"
+
+- id: demo_details
+  translation: "View details"
+
+- id: demo_parameter
+  translation: "Parameter"

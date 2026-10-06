@@ -24,3 +24,30 @@
 
 - id: demo_output
   translation: "运行结果"
+
+- id: demo_source
+  translation: "源代码"
+
+- id: demo_parameter_details
+  translation: "参数说明"
+
+- id: demo_variable
+  translation: "变量名"
+
+- id: demo_type
+  translation: "数据类型"
+
+- id: demo_min
+  translation: "最小值"
+
+- id: demo_max
+  translation: "最大值"
+
+- id: demo_unbounded
+  translation: "不限"
+
+- id: demo_details
+  translation: "查看详情"
+
+- id: demo_parameter
+  translation: "参数"

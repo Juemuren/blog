@@ -2,19 +2,31 @@
 export function createDemo(container, demo) {
   const form = container.querySelector("form");
   const button = container.querySelector("button");
-  const description = container.querySelector(".interactive-demo-hint");
+  const title = container.querySelector(".interactive-demo-title");
   const inputTemplate = container.querySelector("[data-demo-input]");
+  const parameterTemplate = container.querySelector("[data-demo-parameter]");
+  const parameters = container.querySelector("[data-demo-parameters]");
 
-  description.textContent = demo.description ?? "";
-  description.hidden = !demo.description;
+  title.textContent = demo.title ?? "";
+  title.hidden = !demo.title;
 
   const fields = demo.inputs.map((field) => {
     if (field.type !== "number") {
       throw new Error(`Unsupported demo input type: ${field.type}`);
     }
-    const label = inputTemplate.content.firstElementChild.cloneNode(true);
-    label.querySelector("span").textContent = field.label;
-    const input = label.querySelector("input");
+    const element = inputTemplate.content.firstElementChild.cloneNode(true);
+    element.querySelector("[data-field-label]").textContent = field.label;
+    const row = parameterTemplate.content.firstElementChild.cloneNode(true);
+    row.querySelector("[data-field-label]").textContent = field.label;
+    row.querySelector("[data-field-name]").textContent = field.name;
+    row.querySelector("[data-field-type]").textContent = field.type;
+    for (const key of ["min", "max"]) {
+      if (field[key] !== undefined) {
+        row.querySelector(`[data-field-${key}]`).textContent = field[key];
+      }
+    }
+    parameters.append(row);
+    const input = element.querySelector("input");
     Object.assign(input, {
       name: field.name,
       value: field.default,
@@ -23,14 +35,15 @@ export function createDemo(container, demo) {
     for (const key of ["min", "max", "step"]) {
       if (field[key] !== undefined) input[key] = field[key];
     }
-    form.insertBefore(label, button);
+    form.insertBefore(element, button);
     return input;
   });
   inputTemplate.remove();
+  parameterTemplate.remove();
 
   return {
     form,
-    output: container.querySelector("code"),
+    output: container.querySelector(".interactive-demo-output code"),
     readValues: () => Object.fromEntries(
       fields.map((input) => [input.name, input.valueAsNumber]),
     ),
