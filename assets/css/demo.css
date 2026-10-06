@@ -46,7 +46,7 @@
 }
 
 .interactive-demo .interactive-demo-hint,
-.interactive-demo .interactive-demo-status {
+.interactive-demo .interactive-demo-loading {
   margin: 0.75rem 0 0;
   color: var(--secondary);
   font-size: 0.875rem;

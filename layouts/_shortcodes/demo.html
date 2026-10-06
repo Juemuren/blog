@@ -12,7 +12,6 @@
   {{- $id := printf "demo-%d" .Ordinal -}}
   {{- $messages := dict
     "loadFailed" (i18n "demo_load_failed")
-    "completed" (i18n "demo_completed")
     "runFailed" (i18n "demo_run_failed")
   -}}
   <div id="{{ $id }}" class="interactive-demo" data-src="{{ $script.RelPermalink }}">
@@ -23,7 +22,7 @@
       <p class="interactive-demo-hint" hidden></p>
       <pre class="interactive-demo-output" tabindex="0" aria-label="{{ i18n "demo_output" }}"><code></code></pre>
     </div>
-    <p class="interactive-demo-status" role="status">{{ i18n "demo_loading" }}</p>
+    <p class="interactive-demo-loading" data-demo-loading role="status">{{ i18n "demo_loading" }}</p>
     <template data-demo-input>
       <label>
         <span></span>
@@ -32,15 +31,26 @@
     </template>
   </div>
   <script type="module">
-    import { mount } from {{ $runtime.RelPermalink }};
     const container = document.getElementById({{ $id }});
+    const loading = container.querySelector("[data-demo-loading]");
     const messages = {{ $messages | jsonify | safeJS }};
+    let demo, view, bindRunner;
     try {
-      const { default: demo } = await import(container.dataset.src);
-      mount(container, demo, messages);
+      const [runtime, definition] = await Promise.all([
+        import({{ $runtime.RelPermalink }}),
+        import(container.dataset.src),
+      ]);
+      demo = definition.default;
+      view = runtime.createDemo(container, demo);
+      bindRunner = runtime.bindRunner;
     } catch (error) {
-      container.querySelector('[role="status"]').textContent = messages.loadFailed;
+      loading.textContent = messages.loadFailed;
       console.error(error);
+    }
+    if (view) {
+      loading.remove();
+      container.querySelector("[data-demo-content]").hidden = false;
+      bindRunner(view, demo, messages);
     }
   </script>
 {{- end -}}

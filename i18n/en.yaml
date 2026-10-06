@@ -22,8 +22,5 @@
 - id: demo_output
   translation: "Output"
 
-- id: demo_completed
-  translation: "Run completed."
-
 - id: demo_run_failed
   translation: "Run failed. Please check your input and try again."

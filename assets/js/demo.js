@@ -1,10 +1,8 @@
-// Each demo declares numeric inputs and synchronously returns text from run(values).
-export function mount(container, demo, messages) {
+// Build the configured form once; do not execute the demonstrated code here.
+export function createDemo(container, demo) {
   const form = container.querySelector("form");
   const button = container.querySelector("button");
   const description = container.querySelector(".interactive-demo-hint");
-  const output = container.querySelector("code");
-  const status = container.querySelector('[role="status"]');
   const inputTemplate = container.querySelector("[data-demo-input]");
 
   if (demo.action != null) button.textContent = demo.action;
@@ -29,27 +27,32 @@ export function mount(container, demo, messages) {
     form.insertBefore(label, button);
     return input;
   });
+  inputTemplate.remove();
 
-  function run() {
-    if (!form.reportValidity()) return;
-    const values = Object.fromEntries(
+  return {
+    form,
+    output: container.querySelector("code"),
+    readValues: () => Object.fromEntries(
       fields.map((input) => [input.name, input.valueAsNumber]),
-    );
+    ),
+  };
+}
+
+// Run the demonstrated code on submission; initialization is already complete.
+export function bindRunner(view, demo, messages) {
+  function run() {
+    if (!view.form.reportValidity()) return;
     try {
-      output.textContent = demo.run(values);
-      status.textContent = messages.completed;
+      view.output.textContent = demo.run(view.readValues());
     } catch (error) {
-      output.textContent = "";
-      status.textContent = messages.runFailed;
+      view.output.textContent = messages.runFailed;
       console.error(error);
     }
   }
 
-  form.addEventListener("submit", (event) => {
+  view.form.addEventListener("submit", (event) => {
     event.preventDefault();
     run();
   });
-  container.querySelector("[data-demo-content]").hidden = false;
-  status.textContent = "";
   if (demo.autorun) run();
 }
