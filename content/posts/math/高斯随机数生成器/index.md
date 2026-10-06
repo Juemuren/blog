@@ -33,11 +33,122 @@ $$
 f_X(x) = \frac{1}{\sqrt{2\pi}} e^{-\frac{x^2}{2}}
 $$
 
+```jsxgraph
+const board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [-5, 0.5, 5, -0.05],
+  axis: true,
+  showCopyright: false,
+});
+
+const mu = 0;
+const sigma = 1;
+const normalPDF = (x) =>
+  1 / (
+    sigma * Math.sqrt(2 * Math.PI)
+  ) * Math.exp(
+    -Math.pow(x - mu, 2) / (2 * sigma * sigma)
+  );
+
+board.create('functiongraph', [
+  normalPDF,
+  -5,
+  5
+], {
+  strokeWidth: 3
+});
+```
+
 二维正态分布与一维的类似。设 $X, Y \stackrel{\text{i.i.d.}}{\sim} \mathcal{N}(0,1)$，则其联合概率密度函数为
 
 $$
 f_{X,Y}(x,y) = \frac{1}{2\pi} e^{-\frac{x^2+y^2}{2}} \quad (x,y)\in\mathbb{R}^2
 $$
+
+```jsxgraph
+const board = JXG.JSXGraph.initBoard(BOARDID, {
+  boundingbox: [-6, 6, 6, -6],
+  axis: false,
+  showCopyright: false,
+  pan: {
+    enabled: false
+  }
+});
+
+const range = [-5, 5]
+const scale = 25
+const max = scale / (2 * Math.PI);
+
+const view = board.create('view3d', [
+  [-5, -5],
+  [10, 10],
+  [
+    range,
+    range,
+    [0, max]
+  ]
+], {
+  projection: 'parallel',
+  axesPosition: 'border',
+  trackball: {
+    enabled: true
+  },
+  xPlaneRear: {
+    visible: false
+  },
+  yPlaneRear: {
+    visible: false
+  },
+  zPlaneRear: {
+    visible: false
+  },
+  xAxisBorder: {
+    withLabel: true,
+    name: 'x',
+    ticks3d: {
+      ticksDistance: 1,
+      label: {
+        visible: true
+      }
+    }
+  },
+  yAxisBorder: {
+    withLabel: true,
+    name: 'y',
+    ticks3d: {
+      ticksDistance: 1,
+      label: {
+        visible: true
+      }
+    }
+  },
+  zAxisBorder: {
+    withLabel: true,
+    name: 'z',
+    ticks3d: {
+      ticksDistance: 0.05 * scale,
+      label: {
+        visible: false
+      }
+    }
+  }
+});
+
+const normal2DPDF = (x, y) =>
+  1 / (
+    2 * Math.PI
+  ) * Math.exp(
+    -(x * x + y * y) / 2
+  );
+
+view.create('functiongraph3d', [
+  (x,y) => scale * normal2DPDF(x, y),
+  range,
+  range
+], {
+  stepsU: 50,
+  stepsV: 50
+});
+```
 
 对随机变量作极坐标变换
 
