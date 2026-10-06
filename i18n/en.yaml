@@ -9,3 +9,24 @@
 
 - id: series
   translation: "Series"
+
+- id: demo_loading
+  translation: "Loading demo. Please make sure JavaScript is enabled in your browser."
+
+- id: demo_load_failed
+  translation: "Failed to load the demo. Please refresh the page and try again."
+
+- id: demo_run
+  translation: "Run"
+
+- id: demo_output
+  translation: "Output"
+
+- id: demo_running
+  translation: "Running…"
+
+- id: demo_completed
+  translation: "Run completed."
+
+- id: demo_run_failed
+  translation: "Run failed. Please check your input and try again."

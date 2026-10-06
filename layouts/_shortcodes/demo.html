@@ -10,17 +10,26 @@
     {{- .Page.Store.Set "hasDemoStyles" true -}}
   {{- end -}}
   {{- $id := printf "demo-%d" .Ordinal -}}
+  {{- $messages := dict
+    "loadFailed" (i18n "demo_load_failed")
+    "run" (i18n "demo_run")
+    "output" (i18n "demo_output")
+    "running" (i18n "demo_running")
+    "completed" (i18n "demo_completed")
+    "runFailed" (i18n "demo_run_failed")
+  -}}
   <div id="{{ $id }}" data-src="{{ $script.RelPermalink }}">
-    <p>演示正在加载，请确保浏览器已启用 JavaScript。</p>
+    <p>{{ i18n "demo_loading" }}</p>
   </div>
   <script type="module">
     import { mount } from {{ $runtime.RelPermalink }};
     const container = document.getElementById({{ $id }});
+    const messages = {{ $messages | jsonify | safeJS }};
     try {
       const { default: demo } = await import(container.dataset.src);
-      mount(container, demo);
+      mount(container, demo, messages);
     } catch (error) {
-      container.textContent = "演示加载失败，请刷新页面重试。";
+      container.textContent = messages.loadFailed;
       console.error(error);
     }
   </script>
