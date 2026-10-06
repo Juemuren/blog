@@ -1,26 +1,26 @@
-.gaussian-demo {
+.interactive-demo {
   margin: 1.5rem 0;
   padding: 1rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
 
-.gaussian-demo-controls {
+.interactive-demo-controls {
   display: flex;
   flex-wrap: wrap;
   align-items: end;
   gap: 0.75rem;
 }
 
-.gaussian-demo-controls label {
+.interactive-demo-controls label {
   display: grid;
   flex: 1 1 9rem;
   gap: 0.25rem;
   min-width: 0;
 }
 
-.gaussian-demo-controls input,
-.gaussian-demo-controls button {
+.interactive-demo-controls input,
+.interactive-demo-controls button {
   min-height: 44px;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--secondary);
@@ -28,31 +28,31 @@
   font: inherit;
 }
 
-.gaussian-demo-controls input {
+.interactive-demo-controls input {
   width: 100%;
   color: var(--primary);
   background: var(--theme);
 }
 
-.gaussian-demo-controls button {
+.interactive-demo-controls button {
   color: var(--theme);
   background: var(--primary);
   cursor: pointer;
 }
 
-.gaussian-demo :focus-visible {
+.interactive-demo :focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 3px;
 }
 
-.gaussian-demo .gaussian-demo-hint,
-.gaussian-demo .gaussian-demo-status {
+.interactive-demo .interactive-demo-hint,
+.interactive-demo .interactive-demo-status {
   margin: 0.75rem 0 0;
   color: var(--secondary);
   font-size: 0.875rem;
 }
 
-.gaussian-demo .gaussian-demo-output {
+.interactive-demo .interactive-demo-output {
   max-height: 20rem;
   overflow: auto;
   margin: 0.75rem 0 0;

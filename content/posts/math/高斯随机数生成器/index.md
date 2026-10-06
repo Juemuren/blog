@@ -320,4 +320,4 @@ for (let i = 0; i < COUNT; i++) console.log(g())
 
 移动端的话没法打开 `DevTools`，可以尝试运行下面的示例
 
-{{< demo src="demo/main.js" css="demo/style.css" >}}
+{{< demo src="demo/main.js" >}}

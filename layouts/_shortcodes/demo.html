@@ -3,23 +3,22 @@
 {{- if not $script -}}
   {{- errorf "Demo script %q not found in %s" $src .Page.File.Path -}}
 {{- else -}}
-  {{- with .Get "css" -}}
-    {{- $style := $.Page.Resources.Get . -}}
-    {{- if not $style -}}
-      {{- errorf "Demo stylesheet %q not found in %s" . $.Page.File.Path -}}
-    {{- else -}}
-      <link rel="stylesheet" href="{{ $style.RelPermalink }}">
-    {{- end -}}
+  {{- $runtime := resources.Get "js/demo.js" -}}
+  {{- if not (.Page.Store.Get "hasDemoStyles") -}}
+    {{- $style := resources.Get "css/demo.css" -}}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+    {{- .Page.Store.Set "hasDemoStyles" true -}}
   {{- end -}}
   {{- $id := printf "demo-%d" .Ordinal -}}
   <div id="{{ $id }}" data-src="{{ $script.RelPermalink }}">
     <p>演示正在加载，请确保浏览器已启用 JavaScript。</p>
   </div>
   <script type="module">
+    import { mount } from {{ $runtime.RelPermalink }};
     const container = document.getElementById({{ $id }});
     try {
-      const { mount } = await import(container.dataset.src);
-      await mount(container);
+      const { default: demo } = await import(container.dataset.src);
+      mount(container, demo);
     } catch (error) {
       container.textContent = "演示加载失败，请刷新页面重试。";
       console.error(error);
