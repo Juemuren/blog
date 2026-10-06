@@ -22,9 +22,6 @@
 - id: demo_output
   translation: "Output"
 
-- id: demo_running
-  translation: "Running…"
-
 - id: demo_completed
   translation: "Run completed."
 

@@ -22,9 +22,6 @@
 - id: demo_output
   translation: "运行结果"
 
-- id: demo_running
-  translation: "正在运行…"
-
 - id: demo_completed
   translation: "运行完成。"
 
