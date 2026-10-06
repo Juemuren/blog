@@ -31,3 +31,8 @@ export function createGaussianRandomGenerator(seed) {
     return r * Math.cos(theta);
   };
 }
+
+export function run({ seed, count }) {
+  const next = createGaussianRandomGenerator(seed);
+  return Array.from({ length: count }, () => next()).join("\n");
+}

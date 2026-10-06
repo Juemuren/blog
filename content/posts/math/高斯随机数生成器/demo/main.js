@@ -1,4 +1,4 @@
-import { createGaussianRandomGenerator } from "./gaussian.js";
+import { run } from "./gaussian.js";
 
 export default {
   autorun: true,
@@ -24,8 +24,5 @@ export default {
     },
   ],
 
-  run({ seed, count }) {
-    const next = createGaussianRandomGenerator(seed);
-    return Array.from({ length: count }, () => next()).join("\n");
-  },
+  run,
 };
