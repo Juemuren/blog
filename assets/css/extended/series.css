@@ -18,8 +18,7 @@
 
 .series-nav a {
   color: var(--secondary);
-  text-decoration: underline;
-  text-decoration-color: var(--tertiary);
+  text-decoration: none;
 }
 
 .series-nav a.series-nav-name {
@@ -30,5 +29,6 @@
 
 .series-nav a:hover {
   color: var(--primary);
+  text-decoration-line: underline;
   text-decoration-color: currentColor;
 }
