@@ -45,13 +45,13 @@
 .interactive-demo-controls button {
   justify-self: stretch;
   color: var(--primary);
-  background: var(--code-bg);
+  background: var(--button-bg);
   cursor: pointer;
 }
 
 .interactive-demo-controls button:hover {
   border-color: var(--primary);
-  background: var(--tertiary);
+  background: var(--button-hover-bg);
 }
 
 .interactive-demo :focus-visible {
