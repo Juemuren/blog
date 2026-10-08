@@ -1,7 +1,7 @@
 // Build the form and parameter reference once, without running the example.
 export function createDemo(container, demo) {
   const form = container.querySelector("form");
-  const runButton = form.querySelector('button[type="submit"]');
+  const fields = form.querySelector(".interactive-demo-fields");
   const title = container.querySelector(".interactive-demo-title");
   const inputTemplate = container.querySelector("[data-demo-input]");
   const parameterTemplate = container.querySelector("[data-demo-parameter]");
@@ -15,7 +15,7 @@ export function createDemo(container, demo) {
     const { element, input } = createInput(inputTemplate, field);
     const parameterRow = createParameterRow(parameterTemplate, field);
 
-    form.insertBefore(element, runButton);
+    fields.append(element);
     parameterTableBody.append(parameterRow);
     inputs.push(input);
   }
