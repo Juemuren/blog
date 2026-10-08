@@ -1,46 +1,54 @@
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-  width="250" height="250" viewBox="0 0 250 250"
-  preserveAspectRatio="xMidYMid meet">
-<g transform="translate(0,250) scale(0.1,-0.1)"
-fill="#000000" stroke="none">
-  <path d="
-    M1847 1769
-    c -78 -11 -187 -65 -268 -132
-    -57 -47 -140 -139 -244 -271
-    l -30 -38 -65 83
-    c -129 167 -264 282 -388 330
-    -69 27 -214 37 -291 20
-    -168 -36 -325 -192 -390 -389
-    -71 -210 -42 -388 81 -511
-    152 -152 400 -172 606 -49
-    67 40 219 183 297 278
-    l 58 70 31 -41
-    c 168 -225 300 -335 449 -375
-    29 -8 88 -14 133 -14
-    141 0 249 46 345 147
-    211 221 255 574 95 751
-    -97 107 -264 163 -419 141
-    z
-    
-    m-1089 -188
-    c 121 -49 263 -168 382 -322
-    l 60 -77 -94 -89
-    c -156 -147 -272 -202 -427 -203
-    -141 0 -250 44 -341 137
-    -78 81 -117 179 -118 298
-    0 113 31 171 119 223
-    110 64 303 80 419 33
-    z
-
-    m999 -668
-    c -121 49 -263 168 -382 322
-    l -60 77 94 89
-    c 156 147 272 202 427 203
-    141 0 250 -44 341 -137
-    78 -81 117 -179 118 -298
-    0 -113 -31 -171 -119 -223
-    -110 -64 -303 -80 -419 -33
-    z
-  "/>
-</g>
+<svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+  width="1024" height="1024" viewBox="0 0 700 700"
+  fill="none"
+>
+  <title>Mobius Infinity</title>
+  <desc>A Mobius surface twisted into an infinity symbol.</desc>
+  <!-- Each closed path is a visible surface patch. -->
+  <g id="ribbon" fill="#191919">
+    <!-- Rear face, upper right loop, ending at the edge-on twist. -->
+    <path id="rear-upper-right" d="
+      M 357,296
+      C 410,245 461,206 515,203
+      C 553,200 584,208 600,222
+      C 620,242 631,281 624,318
+      C 601,284 564,267 522,267
+      C 468,264 417,286 376,315
+      Z"/>
+    <!-- Right outer fold. The narrow gap beside the rear face is transparent. -->
+    <path id="right-fold" d="
+      M 616,232
+      C 658,263 687,322 679,382
+      C 678,393 676,398 671,403
+      C 644,430 590,438 521,411
+      C 563,409 597,390 616,360
+      C 642,320 640,267 616,232
+      Z"/>
+    <!-- Left returning face. Its upper tip narrows into the ribbon twist. -->
+    <path id="left-return" d="
+      M 124,282
+      C 65,279 31,312 26,356
+      C 18,413 55,468 112,488
+      C 186,514 270,481 334,421
+      L 308,395
+      C 261,440 191,449 147,425
+      C 103,401 92,351 114,300
+      C 117,293 121,287 124,282
+      Z"/>
+    <!-- Uninterrupted foreground diagonal, flowing into the lower right loop. -->
+    <path id="front-diagonal" d="
+      M 20,358
+      C 20,307 40,263 80,234
+      C 126,199 171,195 212,209
+      C 266,225 307,256 351,300
+      C 402,352 447,397 504,416
+      C 567,439 628,444 670,413
+      C 646,463 600,491 546,496
+      C 470,505 410,470 351,411
+      C 302,362 258,310 209,286
+      C 154,258 109,262 73,282
+      C 42,299 24,324 20,358
+      Z"/>
+  </g>
 </svg>
