@@ -1,0 +1,13 @@
+<aside class="reading-rail" hidden>
+  <div class="reading-panel" data-toc-label="{{ i18n "toc" }}" data-series-label="{{ i18n "series" }}">
+    <div class="reading-tabs" role="tablist"></div>
+  </div>
+</aside>
+<button class="reading-trigger" type="button" hidden aria-haspopup="dialog" aria-controls="reading-dialog"></button>
+<dialog class="reading-dialog" id="reading-dialog">
+  <form method="dialog"><button class="reading-close" autofocus>×</button></form>
+</dialog>
+{{- $style := resources.Get "css/reading-navigation.css" | minify | fingerprint -}}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+{{- $script := resources.Get "js/reading-navigation.js" | minify | fingerprint -}}
+<script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
