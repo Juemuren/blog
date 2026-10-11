@@ -2,45 +2,78 @@
  * This file overrides PaperMod's core asset, including its layout variables.
  */
 :root {
-    --gap: 24px;
-    --content-gap: 20px;
-    --nav-width: 1024px;
-    --main-width: 720px;
-    --header-height: 60px;
-    --footer-height: 60px;
-    --radius: 8px;
+  --gap: 24px;
+  --content-gap: 20px;
+  --nav-width: 1024px;
+  --main-width: 720px;
+  --header-height: 60px;
+  --footer-height: 60px;
+  --radius: 8px;
 
-    /* Latte */
-    --ctp-rosewater: #dc8a78;
-    --ctp-flamingo: #dd7878;
-    --ctp-pink: #ea76cb;
-    --ctp-mauve: #8839ef;
-    --ctp-red: #d20f39;
-    --ctp-maroon: #e64553;
-    --ctp-peach: #fe640b;
-    --ctp-yellow: #df8e1d;
-    --ctp-green: #40a02b;
-    --ctp-teal: #179299;
-    --ctp-sky: #04a5e5;
-    --ctp-sapphire: #209fb5;
-    --ctp-blue: #1e66f5;
-    --ctp-lavender: #7287fd;
-    --ctp-text: #4c4f69;
-    --ctp-subtext1: #5c5f77;
-    --ctp-subtext0: #6c6f85;
-    --ctp-overlay2: #7c7f93;
-    --ctp-overlay1: #8c8fa1;
-    --ctp-overlay0: #9ca0b0;
-    --ctp-surface2: #acb0be;
-    --ctp-surface1: #bcc0cc;
-    --ctp-surface0: #ccd0da;
-    --ctp-base: #eff1f5;
-    --ctp-mantle: #e6e9ef;
-    --ctp-crust: #dce0e8;
-    color-scheme: light;
+  /* Latte */
+  --ctp-rosewater: #dc8a78;
+  --ctp-flamingo: #dd7878;
+  --ctp-pink: #ea76cb;
+  --ctp-mauve: #8839ef;
+  --ctp-red: #d20f39;
+  --ctp-maroon: #e64553;
+  --ctp-peach: #fe640b;
+  --ctp-yellow: #df8e1d;
+  --ctp-green: #40a02b;
+  --ctp-teal: #179299;
+  --ctp-sky: #04a5e5;
+  --ctp-sapphire: #209fb5;
+  --ctp-blue: #1e66f5;
+  --ctp-lavender: #7287fd;
+  --ctp-text: #4c4f69;
+  --ctp-subtext1: #5c5f77;
+  --ctp-subtext0: #6c6f85;
+  --ctp-overlay2: #7c7f93;
+  --ctp-overlay1: #8c8fa1;
+  --ctp-overlay0: #9ca0b0;
+  --ctp-surface2: #acb0be;
+  --ctp-surface1: #bcc0cc;
+  --ctp-surface0: #ccd0da;
+  --ctp-base: #eff1f5;
+  --ctp-mantle: #e6e9ef;
+  --ctp-crust: #dce0e8;
+  color-scheme: light;
 }
 
 :root[data-theme="dark"] {
+  /* Mocha */
+  --ctp-rosewater: #f5e0dc;
+  --ctp-flamingo: #f2cdcd;
+  --ctp-pink: #f5c2e7;
+  --ctp-mauve: #cba6f7;
+  --ctp-red: #f38ba8;
+  --ctp-maroon: #eba0ac;
+  --ctp-peach: #fab387;
+  --ctp-yellow: #f9e2af;
+  --ctp-green: #a6e3a1;
+  --ctp-teal: #94e2d5;
+  --ctp-sky: #89dceb;
+  --ctp-sapphire: #74c7ec;
+  --ctp-blue: #89b4fa;
+  --ctp-lavender: #b4befe;
+  --ctp-text: #cdd6f4;
+  --ctp-subtext1: #bac2de;
+  --ctp-subtext0: #a6adc8;
+  --ctp-overlay2: #9399b2;
+  --ctp-overlay1: #7f849c;
+  --ctp-overlay0: #6c7086;
+  --ctp-surface2: #585b70;
+  --ctp-surface1: #45475a;
+  --ctp-surface0: #313244;
+  --ctp-base: #1e1e2e;
+  --ctp-mantle: #181825;
+  --ctp-crust: #11111b;
+  color-scheme: dark;
+}
+
+/* Match the system preference when JavaScript has not set a theme. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
     /* Mocha */
     --ctp-rosewater: #f5e0dc;
     --ctp-flamingo: #f2cdcd;
@@ -69,40 +102,7 @@
     --ctp-mantle: #181825;
     --ctp-crust: #11111b;
     color-scheme: dark;
-}
-
-/* Match the system preference when JavaScript has not set a theme. */
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme]) {
-        /* Mocha */
-        --ctp-rosewater: #f5e0dc;
-        --ctp-flamingo: #f2cdcd;
-        --ctp-pink: #f5c2e7;
-        --ctp-mauve: #cba6f7;
-        --ctp-red: #f38ba8;
-        --ctp-maroon: #eba0ac;
-        --ctp-peach: #fab387;
-        --ctp-yellow: #f9e2af;
-        --ctp-green: #a6e3a1;
-        --ctp-teal: #94e2d5;
-        --ctp-sky: #89dceb;
-        --ctp-sapphire: #74c7ec;
-        --ctp-blue: #89b4fa;
-        --ctp-lavender: #b4befe;
-        --ctp-text: #cdd6f4;
-        --ctp-subtext1: #bac2de;
-        --ctp-subtext0: #a6adc8;
-        --ctp-overlay2: #9399b2;
-        --ctp-overlay1: #7f849c;
-        --ctp-overlay0: #6c7086;
-        --ctp-surface2: #585b70;
-        --ctp-surface1: #45475a;
-        --ctp-surface0: #313244;
-        --ctp-base: #1e1e2e;
-        --ctp-mantle: #181825;
-        --ctp-crust: #11111b;
-        color-scheme: dark;
-    }
+  }
 }
 
 /* Map palette colors to PaperMod's semantic variables in both modes. */
@@ -110,19 +110,19 @@
 :root:not([data-theme]),
 :root[data-theme="light"],
 :root[data-theme="dark"] {
-    --theme: var(--ctp-base);
-    --entry: var(--ctp-mantle);
-    --primary: var(--ctp-text);
-    --secondary: var(--ctp-subtext0);
-    --tertiary: var(--ctp-surface1);
-    --content: var(--ctp-text);
-    --code-block-bg: var(--ctp-mantle);
-    --code-bg: var(--ctp-surface0);
-    --border: var(--ctp-surface0);
-    --button-bg: var(--ctp-surface0);
-    --button-hover-bg: var(--ctp-surface1);
+  --theme: var(--ctp-base);
+  --entry: var(--ctp-mantle);
+  --primary: var(--ctp-text);
+  --secondary: var(--ctp-subtext0);
+  --tertiary: var(--ctp-surface1);
+  --content: var(--ctp-text);
+  --code-block-bg: var(--ctp-mantle);
+  --code-bg: var(--ctp-surface0);
+  --border: var(--ctp-surface0);
+  --button-bg: var(--ctp-surface0);
+  --button-hover-bg: var(--ctp-surface1);
 }
 
 .list {
-    background: var(--theme);
+  background: var(--theme);
 }

@@ -18,7 +18,8 @@
         const selected = button.dataset.tab === name;
         button.setAttribute("aria-selected", String(selected));
         button.tabIndex = selected ? 0 : -1;
-        document.getElementById(button.getAttribute("aria-controls")).hidden = !selected;
+        document.getElementById(button.getAttribute("aria-controls")).hidden =
+          !selected;
       }
       revealCurrentItem(panel);
     }
@@ -94,7 +95,8 @@
   // Wait until the reader has passed both the first screen and inline navigation.
   function updateVisibility() {
     const pastIntroduction =
-      window.scrollY > window.innerHeight && inlineNavigation.getBoundingClientRect().bottom < 0;
+      window.scrollY > window.innerHeight &&
+      inlineNavigation.getBoundingClientRect().bottom < 0;
     desktopRail.hidden = !desktopViewport.matches || !pastIntroduction;
     mobileTrigger.hidden = desktopViewport.matches || !pastIntroduction;
   }
@@ -107,10 +109,14 @@
   // Group both panels' links by their target heading to keep highlights in sync.
   function collectHeadings() {
     const headings = new Map();
-    for (const link of document.querySelectorAll('.reading-list[id$="-toc"] a[href^="#"]')) {
+    for (const link of document.querySelectorAll(
+      '.reading-list[id$="-toc"] a[href^="#"]',
+    )) {
       let heading;
       try {
-        heading = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+        heading = document.getElementById(
+          decodeURIComponent(link.hash.slice(1)),
+        );
       } catch {
         continue;
       }
@@ -128,8 +134,10 @@
       currentHeading = entry;
     }
     if (!currentHeading || currentHeading === activeHeading) return;
-    for (const link of activeHeading?.links ?? []) link.removeAttribute("aria-current");
-    for (const link of currentHeading.links) link.setAttribute("aria-current", "location");
+    for (const link of activeHeading?.links ?? [])
+      link.removeAttribute("aria-current");
+    for (const link of currentHeading.links)
+      link.setAttribute("aria-current", "location");
     activeHeading = currentHeading;
   }
 
@@ -140,7 +148,10 @@
     if (!item) return;
     const itemBounds = item.getBoundingClientRect();
     const listBounds = list.getBoundingClientRect();
-    if (itemBounds.top < listBounds.top || itemBounds.bottom > listBounds.bottom) {
+    if (
+      itemBounds.top < listBounds.top ||
+      itemBounds.bottom > listBounds.bottom
+    ) {
       revealCurrentItem(desktopRail);
     }
   }

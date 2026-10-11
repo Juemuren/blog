@@ -1,14 +1,12 @@
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
 
 function getTheme() {
-  return document.documentElement.dataset.theme === 'dark'
-    ? 'dark'
-    : 'neutral';
+  return document.documentElement.dataset.theme === "dark" ? "dark" : "neutral";
 }
 
 function createDiagram(source, index) {
-  const container = document.createElement('div');
-  container.className = 'mermaid-container';
+  const container = document.createElement("div");
+  container.className = "mermaid-container";
   source.replaceWith(container);
 
   return {
@@ -36,14 +34,14 @@ function observeThemeChanges(onThemeChange) {
 
   observer.observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ['data-theme'],
+    attributeFilter: ["data-theme"],
   });
 }
 
 function init() {
   const diagrams = Array.from(
-    document.querySelectorAll('pre.mermaid'),
-    createDiagram
+    document.querySelectorAll("pre.mermaid"),
+    createDiagram,
   );
 
   observeThemeChanges(() => renderDiagrams(diagrams));

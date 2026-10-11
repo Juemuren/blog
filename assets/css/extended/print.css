@@ -39,7 +39,7 @@
     line-break: strict;
     hanging-punctuation: first allow-end;
   }
-  .post-title, 
+  .post-title,
   .post-content h2,
   .toc summary {
     display: block !important;

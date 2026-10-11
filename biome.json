@@ -7,10 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": [
-      "assets/**",
-      "layouts/**"
-    ]
+    "includes": ["assets/**", "layouts/**"]
   },
   "formatter": {
     "enabled": true,
@@ -18,7 +15,7 @@
     "indentStyle": "space",
     "indentWidth": 2,
     "lineEnding": "lf",
-    "lineWidth": 100
+    "lineWidth": 80
   },
   "linter": {
     "enabled": true,

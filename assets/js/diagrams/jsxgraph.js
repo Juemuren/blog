@@ -1,8 +1,8 @@
 (() => {
   function applyThemeColors() {
-    const primary = "var(--primary)"
-    const secondary = "var(--secondary)"
-    const theme = "var(--theme)"
+    const primary = "var(--primary)";
+    const secondary = "var(--secondary)";
+    const theme = "var(--theme)";
 
     const options = window.JXG.Options;
     Object.assign(options.text, {
@@ -47,7 +47,7 @@
     container.className = "jsxgraph-container";
     source.replaceWith(container);
 
-    const code = source.textContent.trim()
+    const code = source.textContent.trim();
     const render = Function("JXG", "BOARDID", code);
     render(JXG, container.id);
   }
