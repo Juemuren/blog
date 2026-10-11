@@ -36,15 +36,20 @@ export function createDemo(container: HTMLElement, demo: Demo): DemoView {
   );
 
   const readers = new Map<string, () => InputValue>();
-  for (const [name, options] of Object.entries(demo.inputs)) {
-    const field: InputField = { ...options, name };
+  for (const [name, field] of Object.entries(demo.inputs)) {
     const type = getInputType(field.type);
     const { element, readValue, bounds } = createInput(
       inputTemplate,
+      name,
       field,
       type,
     );
-    const parameterRow = createParameterRow(parameterTemplate, field, bounds);
+    const parameterRow = createParameterRow(
+      parameterTemplate,
+      name,
+      field,
+      bounds,
+    );
 
     requireElement(form, ".interactive-demo-fields").append(element);
     requireElement(container, "[data-demo-parameters]").append(parameterRow);
@@ -90,6 +95,7 @@ export function bindRunner(view: DemoView, demo: Demo, messages: RunMessages) {
 
 function createInput(
   template: HTMLTemplateElement,
+  name: string,
   field: InputField,
   type: InputType,
 ) {
@@ -97,7 +103,7 @@ function createInput(
   requireElement(element, "[data-field-label]").textContent = field.label;
 
   const input = requireElement<HTMLInputElement>(element, "input");
-  input.name = field.name;
+  input.name = name;
   const bounds = type.configure(input, field);
 
   return {
@@ -109,12 +115,13 @@ function createInput(
 
 function createParameterRow(
   template: HTMLTemplateElement,
+  name: string,
   field: InputField,
   bounds: Bounds,
 ) {
   const row = cloneTemplate(template);
   requireElement(row, "[data-field-label]").textContent = field.label;
-  requireElement(row, "[data-field-name]").textContent = field.name;
+  requireElement(row, "[data-field-name]").textContent = name;
   requireElement(row, "[data-field-type]").textContent = field.type;
 
   for (const [bound, value] of Object.entries(bounds)) {

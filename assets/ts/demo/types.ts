@@ -20,7 +20,6 @@ export type InputKind = keyof BaseFieldOptionsByKind;
 
 interface FieldMetadata<K extends InputKind> {
   type: K;
-  name: string;
   label: string;
 }
 
@@ -28,9 +27,6 @@ type FieldsByKind = {
   [K in InputKind]: BaseFieldOptionsByKind[K] & FieldMetadata<K>;
 };
 export type InputField = FieldsByKind[InputKind];
-export type InputFieldOptions = {
-  [K in InputKind]: Omit<FieldsByKind[K], "name">;
-}[InputKind];
 export type InputValue = NonNullable<
   BaseFieldOptionsByKind[InputKind]["default"]
 >;
@@ -50,7 +46,7 @@ export interface Demo {
   title?: string;
   autoRun?: boolean;
   autoOpen?: boolean;
-  inputs: Record<string, InputFieldOptions>;
+  inputs: Record<string, InputField>;
   run(values: InputValues): string;
 }
 

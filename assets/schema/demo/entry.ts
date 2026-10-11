@@ -1,9 +1,9 @@
-import type { Demo, InputFieldOptions } from "../../ts/demo/types";
+import type { Demo, InputField } from "../../ts/demo/types";
 
 // Each run parameter must have exactly one compatible input field.
 type InputFieldForValues<TValues> = {
   [Name in keyof TValues & string]-?: Extract<
-    InputFieldOptions,
+    InputField,
     { default?: TValues[Name] }
   >;
 };
