@@ -11,6 +11,7 @@
     {{- .Page.Store.Set "hasDemoStyles" true -}}
   {{- end -}}
   {{- $id := printf "demo-%d" .Ordinal -}}
+  {{- .Page.Store.Set "hasTable" true -}}
   {{- $messages := dict
     "loadFailed" (i18n "demo_load_failed")
     "runFailed" (i18n "demo_run_failed")

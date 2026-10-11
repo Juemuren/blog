@@ -25,7 +25,7 @@
   },
   "overrides": [
     {
-      "includes": ["assets/css/extended/print.css"],
+      "includes": ["assets/css/print/style.css"],
       "linter": {
         "rules": {
           "complexity": {
