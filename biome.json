@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["assets/**", "layouts/**"]
+    "includes": ["assets/**"]
   },
   "formatter": {
     "enabled": true,
