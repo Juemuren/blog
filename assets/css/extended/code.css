@@ -12,7 +12,9 @@
   color: var(--secondary);
   background: var(--code-bg);
   cursor: pointer;
-  transition: color 150ms ease, background-color 150ms ease;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
 }
 
 div.highlight:hover .copy-code,
@@ -21,7 +23,9 @@ pre:hover .copy-code {
 }
 
 .copy-code svg {
-  transition: transform 150ms ease, stroke-width 150ms ease;
+  transition:
+    transform 150ms ease,
+    stroke-width 150ms ease;
 }
 
 .copy-code:hover,
