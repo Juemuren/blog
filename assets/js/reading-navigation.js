@@ -3,113 +3,84 @@
   const desktopRail = document.querySelector(".reading-rail");
   if (!inlineNavigation || !desktopRail) return;
 
-  const panel = desktopRail.querySelector(".reading-panel");
-  const tabList = panel.querySelector(".reading-tabs");
   const mobileTrigger = document.querySelector(".reading-trigger");
   const dialog = document.querySelector(".reading-dialog");
   const desktopViewport = matchMedia("(min-width: 1360px)");
   const headingOffset = 120;
-  const tabs = [];
-  let selectedTab;
-  let activeHeadingLink;
+  const panels = [desktopRail, dialog];
+  let activeHeading;
   let updateScheduled = false;
 
-  // Reuse the inline links, removing IDs and shortcuts that must stay unique.
-  function cloneNavigation(source) {
-    const copy = source.cloneNode(true);
-    const elements = [copy, ...copy.querySelectorAll("[id], [accesskey]")];
-    for (const element of elements) {
-      element.removeAttribute("id");
-      element.removeAttribute("accesskey");
+  // Hugo renders both panels. Tab names synchronize selection across layouts.
+  function selectTab(name) {
+    for (const panel of panels) {
+      for (const button of panel.querySelectorAll('[role="tab"]')) {
+        const selected = button.dataset.tab === name;
+        button.setAttribute("aria-selected", String(selected));
+        button.tabIndex = selected ? 0 : -1;
+        document.getElementById(button.getAttribute("aria-controls")).hidden = !selected;
+      }
+      revealCurrentItem(panel);
     }
-    return copy;
   }
 
-  function createTab(name, label, sources) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.id = `reading-tab-${name}`;
-    button.textContent = label;
-    button.setAttribute("role", "tab");
-    button.setAttribute("aria-controls", `reading-${name}`);
-
-    const content = document.createElement("div");
-    content.id = `reading-${name}`;
-    content.className = "reading-list";
-    content.tabIndex = 0;
-    content.setAttribute("role", "tabpanel");
-    content.setAttribute("aria-labelledby", button.id);
-    for (const source of sources) content.append(cloneNavigation(source));
-
-    const tab = { button, content };
-    button.addEventListener("click", () => selectTab(tab));
-    tabList.append(button);
-    panel.append(content);
-    tabs.push(tab);
+  function revealCurrentItem(panel) {
+    const list = panel.querySelector(".reading-list:not([hidden])");
+    const item = list.querySelector("[aria-current]");
+    if (!item) return;
+    const itemBounds = item.getBoundingClientRect();
+    const listBounds = list.getBoundingClientRect();
+    list.scrollTop += itemBounds.top - listBounds.top - listBounds.height / 2;
   }
 
-  function revealCurrentItem() {
-    const content = selectedTab.content;
-    const currentItem = content.querySelector("[aria-current]");
-    if (!currentItem) return;
-
-    const itemBounds = currentItem.getBoundingClientRect();
-    const listBounds = content.getBoundingClientRect();
-    content.scrollTop += itemBounds.top - listBounds.top - listBounds.height / 2;
-  }
-
-  function selectTab(nextTab) {
-    selectedTab = nextTab;
-    for (const tab of tabs) {
-      const selected = tab === nextTab;
-      tab.button.setAttribute("aria-selected", String(selected));
-      tab.button.tabIndex = selected ? 0 : -1;
-      tab.content.hidden = !selected;
-    }
-    revealCurrentItem();
+  function handleTabClick(event) {
+    const button = event.target.closest('[role="tab"]');
+    if (button) selectTab(button.dataset.tab);
   }
 
   function handleTabKeydown(event) {
-    const index = tabs.findIndex((tab) => tab.button === event.target);
+    const buttons = [...event.currentTarget.querySelectorAll('[role="tab"]')];
+    const index = buttons.indexOf(event.target);
     if (index < 0) return;
-
     let nextIndex;
     switch (event.key) {
       case "ArrowRight":
-        nextIndex = (index + 1) % tabs.length;
+        nextIndex = (index + 1) % buttons.length;
         break;
       case "ArrowLeft":
-        nextIndex = (index + tabs.length - 1) % tabs.length;
+        nextIndex = (index + buttons.length - 1) % buttons.length;
         break;
       case "Home":
         nextIndex = 0;
         break;
       case "End":
-        nextIndex = tabs.length - 1;
+        nextIndex = buttons.length - 1;
         break;
       default:
         return;
     }
     event.preventDefault();
-    selectTab(tabs[nextIndex]);
-    selectedTab.button.focus();
+    selectTab(buttons[nextIndex].dataset.tab);
+    buttons[nextIndex].focus();
   }
 
-  // One panel moves between the desktop rail and the mobile dialog.
+  // The dialog owns its content permanently; opening it only changes visibility.
   function openDialog() {
-    dialog.append(panel);
     dialog.showModal();
     document.documentElement.classList.add("reading-modal-open");
-    revealCurrentItem();
+    revealCurrentItem(dialog);
   }
 
-  function restoreDesktopPanel() {
+  function handleDialogClose() {
     document.documentElement.classList.remove("reading-modal-open");
-    desktopRail.append(panel);
     updateReadingPosition();
   }
 
-  function handleBackdropClick(event) {
+  function handleDialogClick(event) {
+    if (event.target.closest("a[href]")) {
+      dialog.close();
+      return;
+    }
     if (event.target !== dialog) return;
     const bounds = dialog.getBoundingClientRect();
     const insideDialog =
@@ -120,11 +91,7 @@
     if (!insideDialog) dialog.close();
   }
 
-  function handleNavigationClick(event) {
-    if (dialog.open && event.target.closest("a[href]")) dialog.close();
-  }
-
-  // Both layouts appear after one screen, once the inline navigation has passed.
+  // Wait until the reader has passed both the first screen and inline navigation.
   function updateVisibility() {
     const pastIntroduction =
       window.scrollY > window.innerHeight && inlineNavigation.getBoundingClientRect().bottom < 0;
@@ -137,13 +104,21 @@
     updateReadingPosition();
   }
 
-  function findHeading(link) {
-    try {
-      const heading = document.getElementById(decodeURIComponent(link.hash.slice(1)));
-      return heading ? { link, heading } : null;
-    } catch {
-      return null; // Ignore malformed fragment identifiers.
+  // Group both panels' links by their target heading to keep highlights in sync.
+  function collectHeadings() {
+    const headings = new Map();
+    for (const link of document.querySelectorAll('.reading-list[id$="-toc"] a[href^="#"]')) {
+      let heading;
+      try {
+        heading = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+      } catch {
+        continue;
+      }
+      if (!heading) continue;
+      if (!headings.has(heading)) headings.set(heading, { heading, links: [] });
+      headings.get(heading).links.push(link);
     }
+    return [...headings.values()];
   }
 
   function updateActiveHeading() {
@@ -152,29 +127,26 @@
       if (entry.heading.getBoundingClientRect().top > headingOffset) break;
       currentHeading = entry;
     }
-    if (!currentHeading || currentHeading.link === activeHeadingLink) return;
-    activeHeadingLink?.removeAttribute("aria-current");
-    activeHeadingLink = currentHeading.link;
-    activeHeadingLink.setAttribute("aria-current", "location");
+    if (!currentHeading || currentHeading === activeHeading) return;
+    for (const link of activeHeading?.links ?? []) link.removeAttribute("aria-current");
+    for (const link of currentHeading.links) link.setAttribute("aria-current", "location");
+    activeHeading = currentHeading;
   }
 
   function keepActiveHeadingVisible() {
-    if (
-      !activeHeadingLink ||
-      desktopRail.hidden ||
-      !selectedTab.content.contains(activeHeadingLink)
-    )
-      return;
-    const itemBounds = activeHeadingLink.getBoundingClientRect();
-    const listBounds = selectedTab.content.getBoundingClientRect();
+    if (desktopRail.hidden) return;
+    const list = desktopRail.querySelector(".reading-list:not([hidden])");
+    const item = list.querySelector('[aria-current="location"]');
+    if (!item) return;
+    const itemBounds = item.getBoundingClientRect();
+    const listBounds = list.getBoundingClientRect();
     if (itemBounds.top < listBounds.top || itemBounds.bottom > listBounds.bottom) {
-      revealCurrentItem();
+      revealCurrentItem(desktopRail);
     }
   }
 
   function updateReadingPosition() {
     updateScheduled = false;
-    // Leave the trigger stable while the modal locks the page.
     if (dialog.open) return;
     updateVisibility();
     updateActiveHeading();
@@ -187,24 +159,15 @@
     requestAnimationFrame(updateReadingPosition);
   }
 
-  // Initialize tabs before resolving their heading links and binding page events.
-  const inlineToc = inlineNavigation.querySelector(":scope > .toc .inner");
-  const inlineSeries = inlineNavigation.querySelectorAll(".series-nav");
-  if (inlineToc) createTab("toc", panel.dataset.tocLabel, [inlineToc]);
-  if (inlineSeries.length) createTab("series", panel.dataset.seriesLabel, inlineSeries);
-  if (!tabs.length) return;
-
-  const headings = [...panel.querySelectorAll('#reading-toc a[href^="#"]')]
-    .map(findHeading)
-    .filter(Boolean);
-  selectTab(tabs[0]);
-  mobileTrigger.title = tabs.map((tab) => tab.button.textContent).join(" · ");
-
-  tabList.addEventListener("keydown", handleTabKeydown);
+  const headings = collectHeadings();
+  for (const panel of panels) {
+    const tabList = panel.querySelector(".reading-tabs");
+    tabList.addEventListener("click", handleTabClick);
+    tabList.addEventListener("keydown", handleTabKeydown);
+  }
   mobileTrigger.addEventListener("click", openDialog);
-  dialog.addEventListener("close", restoreDesktopPanel);
-  dialog.addEventListener("click", handleBackdropClick);
-  panel.addEventListener("click", handleNavigationClick);
+  dialog.addEventListener("close", handleDialogClose);
+  dialog.addEventListener("click", handleDialogClick);
   desktopViewport.addEventListener("change", handleViewportChange);
   window.addEventListener("scroll", scheduleReadingUpdate, { passive: true });
   window.addEventListener("resize", scheduleReadingUpdate);

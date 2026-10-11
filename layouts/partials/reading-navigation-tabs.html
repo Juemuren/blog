@@ -1,0 +1,7 @@
+<div class="reading-tabs" role="tablist">
+  {{- range $index, $tab := .tabs }}
+  <button type="button" id="reading-{{ $.scope }}-tab-{{ $tab.name }}" role="tab"
+    data-tab="{{ $tab.name }}" aria-controls="reading-{{ $.scope }}-{{ $tab.name }}"
+    aria-selected="{{ eq $index 0 }}" tabindex="{{ if eq $index 0 }}0{{ else }}-1{{ end }}">{{ $tab.label }}</button>
+  {{- end }}
+</div>

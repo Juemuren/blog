@@ -1,24 +1,41 @@
-<aside class="reading-rail" hidden>
-  <div class="reading-panel" data-toc-label="{{ i18n "toc" }}" data-series-label="{{ i18n "series" }}">
-    <div class="reading-panel-header">
-      <div class="reading-tabs" role="tablist"></div>
-      <form class="reading-close-form" method="dialog">
-        <button class="reading-close" autofocus>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-            <path d="m6 6 12 12M6 18 18 6" />
-          </svg>
-        </button>
-      </form>
-    </div>
+{{- $tabs := slice -}}
+{{- if .Param "ShowToc" -}}
+  {{- $toc := partial "toc-content.html" . -}}
+  {{- if strings.TrimSpace $toc -}}
+    {{- $tabs = $tabs | append (dict "name" "toc" "label" (i18n "toc") "content" $toc) -}}
+  {{- end -}}
+{{- end -}}
+{{- $series := partial "series.html" . -}}
+{{- if strings.TrimSpace $series -}}
+  {{- $tabs = $tabs | append (dict "name" "series" "label" (i18n "series") "content" $series) -}}
+{{- end -}}
+{{- if $tabs -}}
+<aside class="reading-rail reading-panel" hidden>
+  <div class="reading-panel-header">
+    {{ partial "reading-navigation-tabs.html" (dict "scope" "desktop" "tabs" $tabs) }}
   </div>
+  {{ partial "reading-navigation-content.html" (dict "scope" "desktop" "tabs" $tabs) }}
 </aside>
-<button class="reading-trigger" type="button" hidden aria-haspopup="dialog" aria-controls="reading-dialog">
+<button class="reading-trigger" type="button" hidden aria-haspopup="dialog" aria-controls="reading-dialog" title="{{ delimit (collections.Apply $tabs "index" "." "label") " · " }}">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
     <path d="M4 6h16M4 12h16M4 18h16" />
   </svg>
 </button>
-<dialog class="reading-dialog" id="reading-dialog"></dialog>
+<dialog class="reading-dialog reading-panel" id="reading-dialog">
+  <div class="reading-panel-header">
+    {{ partial "reading-navigation-tabs.html" (dict "scope" "mobile" "tabs" $tabs) }}
+    <form class="reading-close-form" method="dialog">
+      <button class="reading-close" autofocus>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="m6 6 12 12M6 18 18 6" />
+        </svg>
+      </button>
+    </form>
+  </div>
+  {{ partial "reading-navigation-content.html" (dict "scope" "mobile" "tabs" $tabs) }}
+</dialog>
 {{- $style := resources.Get "css/reading-navigation.css" | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
 {{- $script := resources.Get "js/reading-navigation.js" | minify | fingerprint -}}
 <script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
+{{- end -}}

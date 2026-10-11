@@ -1,0 +1,10 @@
+{{- range $index, $tab := .tabs }}
+<div class="reading-list" id="reading-{{ $.scope }}-{{ $tab.name }}" role="tabpanel"
+  aria-labelledby="reading-{{ $.scope }}-tab-{{ $tab.name }}" tabindex="0" {{ if ne $index 0 }}hidden{{ end }}>
+  {{- if eq $tab.name "toc" }}
+  <div class="inner">{{ replace $tab.content "id=\"TableOfContents\"" (printf "id=\"reading-%s-headings\"" $.scope) | safeHTML }}</div>
+  {{- else }}
+  {{ $tab.content }}
+  {{- end }}
+</div>
+{{- end }}

@@ -85,7 +85,7 @@
   display: inline;
 }
 
-/* Narrow screens share the same panel inside a bottom sheet. */
+/* The mobile dialog has its own header and navigation lists. */
 .reading-trigger {
   position: fixed;
   z-index: 100;
@@ -129,9 +129,6 @@
   flex-direction: column;
 }
 .reading-close-form {
-  display: none;
-}
-.reading-dialog .reading-close-form {
   display: flex;
   flex-shrink: 0;
 }
@@ -142,12 +139,6 @@
   min-width: 44px;
   padding: 8px;
   border-radius: var(--radius);
-}
-.reading-dialog .reading-panel {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
 }
 .reading-dialog .reading-list {
   flex: 1;

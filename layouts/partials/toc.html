@@ -1,0 +1,9 @@
+{{- $content := partial "toc-content.html" . -}}
+{{- if strings.TrimSpace $content -}}
+<details class="toc" {{ if (.Param "TocOpen") }}open{{ end }}>
+  <summary accesskey="c" title="(Alt + C)">
+    <span class="title">{{ i18n "toc" | default "Table of Contents" }}</span>
+  </summary>
+  <div class="inner">{{ $content }}</div>
+</details>
+{{- end -}}
