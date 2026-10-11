@@ -878,4 +878,6 @@ console.log(left(1)); // 2
 console.log(right(1)); // 4
 ```
 
+## 张量加法和张量乘法
+
 <!-- TODO ## 推广到张量上 -->
