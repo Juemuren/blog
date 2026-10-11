@@ -2,5 +2,5 @@
   <img alt="">
 </div>
 
-{{- $script := resources.Get "js/image-lightbox.js" | minify | fingerprint -}}
+{{- $script := resources.Get "js/images/lightbox.js" | minify | fingerprint -}}
 <script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>

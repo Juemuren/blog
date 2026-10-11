@@ -1,2 +1,2 @@
-{{- $style := resources.Get "css/image-lightbox.css" | minify | fingerprint -}}
+{{- $style := resources.Get "css/images/lightbox.css" | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
