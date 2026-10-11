@@ -3,6 +3,7 @@
 {{- if not $script -}}
   {{- errorf "Demo script %q not found in %s" $src .Page.File.Path -}}
 {{- else -}}
+  {{- .Page.Store.Set "hasCode" true -}}
   {{- $runtime := resources.Get "js/demo.js" -}}
   {{- if not (.Page.Store.Get "hasDemoStyles") -}}
     {{- $style := resources.Get "css/demo.css" -}}

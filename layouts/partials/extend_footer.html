@@ -1,3 +1,9 @@
 {{- if .Store.Get "hasImage" -}}
 {{ partial "images/lightbox.html" . }}
 {{- end -}}
+
+{{- if and (.Store.Get "hasCode") (.Param "ShowCodeCopyButtons") -}}
+{{- partial "code-copy-button.html" . }}
+{{- $script := resources.Get "js/code-copy.js" | minify | fingerprint -}}
+<script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
+{{- end -}}
