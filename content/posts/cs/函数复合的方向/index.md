@@ -87,6 +87,18 @@ const pulled = pullback(f)(
 console.log(pulled(5)); // "value=true"
 ```
 
+<!-- TODO
+
+考虑一下如何在用户的浏览器里运行 TypeScript 代码。
+
+目前比较好的想法是，在浏览器里运行 tsc 得到 js 然后运行 js
+
+不过不太清楚这样能否在 TypeScript 里 import 代码，实在不行就重复吧
+
+{{< demo src="demo/push-pull-main.js" source="demo/push-pull-run.ts" >}}
+
+-->
+
 ### 函数前推和函数拉回的结合律
 
 复合映射也可以诱导出前推和拉回。
