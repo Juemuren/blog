@@ -1,19 +1,28 @@
-interface FieldOptions {
+export interface BoundProperty {
+  number: { min: "min"; max: "max" };
+  string: { min: "minLength"; max: "maxLength" };
+}
+
+interface FieldOptionsBase {
   number: {
     default?: number;
-    min?: number;
-    max?: number;
     step?: number | "any";
   };
   string: {
     default?: string;
-    minLength?: number;
-    maxLength?: number;
   };
 }
 
+type FieldOptions = {
+  [K in keyof BoundProperty]: K extends keyof FieldOptionsBase
+    ? FieldOptionsBase[K] & Partial<Record<BoundProperty[K]["min" | "max"], number>>
+    : never;
+};
+
 export type InputKind = keyof FieldOptions;
-export type InputValue = string | number;
+export type InputValue = NonNullable<
+  FieldOptions[InputKind]["default"]
+>;
 export type InputValues = Record<string, InputValue>;
 
 export type Fields = {

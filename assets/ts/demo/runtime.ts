@@ -31,23 +31,20 @@ export function createDemo(container: HTMLElement, demo: Demo): DemoView {
     const parameterRow = createParameterRow(parameterTemplate, field, type);
 
     requireElement(form, ".interactive-demo-fields").append(element);
-    requireElement(container,"[data-demo-parameters]").append(parameterRow);
+    requireElement(container, "[data-demo-parameters]").append(parameterRow);
     inputs.push({ name: field.name, readValue });
   }
 
   inputTemplate.remove();
   parameterTemplate.remove();
 
-  function readValues() {
-    return Object.fromEntries(
-      inputs.map(({ name, readValue }) => [name, readValue()]),
-    );
-  }
-
   return {
     form,
     output: requireElement(container, ".interactive-demo-output code"),
-    readValues,
+    readValues: () =>
+      Object.fromEntries(
+        inputs.map(({ name, readValue }) => [name, readValue()]),
+      ),
   };
 }
 
@@ -81,13 +78,16 @@ function createInput(
   type: InputType,
 ) {
   const element = cloneTemplate(template);
-  const input = requireElement<HTMLInputElement>(element, "input");
   requireElement(element, "[data-field-label]").textContent = field.label;
 
+  const input = requireElement<HTMLInputElement>(element, "input");
   input.name = field.name;
   type.configure(input, field);
 
-  return { element, readValue: () => type.readValue(input) };
+  return {
+    element,
+    readValue: () => type.readValue(input),
+  };
 }
 
 function createParameterRow(

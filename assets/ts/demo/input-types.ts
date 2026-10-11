@@ -1,13 +1,9 @@
-import type { Fields, InputKind, InputValue } from "./types.ts";
+import type { BoundProperty, Fields, InputKind, InputValue } from "./types.ts";
 
 type Bound = "min" | "max";
-type BoundProperty<K extends InputKind> = Extract<
-  keyof Fields[K],
-  "min" | "max" | "minLength" | "maxLength"
->;
 
 interface InputTypeDefinition<K extends InputKind> {
-  bounds: Record<Bound, BoundProperty<K>>;
+  bounds: BoundProperty[K];
   configure(input: HTMLInputElement, field: Fields[K]): void;
   readValue(input: HTMLInputElement): InputValue;
 }
@@ -55,7 +51,7 @@ export function getInputType<K extends InputKind>(type: K): InputType<K> {
 
   function readBound(field: Fields[K], bound: Bound): number | undefined {
     const property = definition.bounds[bound];
-    const value: unknown = field[property];
+    const value: unknown = (field as Record<string, unknown>)[property];
     if (value !== undefined && typeof value !== "number") {
       throw new Error(`Demo constraint ${property} must be a number`);
     }
