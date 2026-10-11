@@ -1,39 +1,28 @@
-// Each type owns its control setup, value conversion, and displayed bounds.
+// Bounds map parameter-table columns to field options and DOM properties.
 // Add new types here without changing the form assembly or runner.
 const inputTypes = {
   number: {
+    bounds: { min: "min", max: "max" },
     configure(input, field) {
       input.type = "number";
       input.value = field.default ?? "";
       input.required = true;
       input.inputMode = field.step === 1 ? "numeric" : "decimal";
       input.step = field.step ?? "any";
-      for (const bound of ["min", "max"]) {
-        if (field[bound] !== undefined) input[bound] = field[bound];
-      }
     },
     readValue(input) {
       return input.valueAsNumber;
     },
-    getBounds(field) {
-      // Undefined keeps the template's translated "unbounded" label.
-      return { min: field.min, max: field.max };
-    },
   },
   string: {
+    bounds: { min: "minLength", max: "maxLength" },
     configure(input, field) {
       input.type = "text";
       input.value = field.default ?? "";
       input.required = true;
-      for (const bound of ["minLength", "maxLength"]) {
-        if (field[bound] !== undefined) input[bound] = field[bound];
-      }
     },
     readValue(input) {
       return input.value;
-    },
-    getBounds(field) {
-      return { min: field.minLength, max: field.maxLength };
     },
   },
 };
@@ -42,5 +31,23 @@ export function getInputType(type) {
   if (!Object.hasOwn(inputTypes, type)) {
     throw new Error(`Unsupported demo input type: ${type}`);
   }
-  return inputTypes[type];
+  const definition = inputTypes[type];
+  return {
+    configure(input, field) {
+      definition.configure(input, field);
+      for (const property of Object.values(definition.bounds)) {
+        if (field[property] !== undefined) input[property] = field[property];
+      }
+    },
+    readValue: definition.readValue,
+    getBounds(field) {
+      // Undefined keeps the template's translated "unbounded" label.
+      return Object.fromEntries(
+        Object.entries(definition.bounds).map(([bound, property]) => [
+          bound,
+          field[property],
+        ]),
+      );
+    },
+  };
 }

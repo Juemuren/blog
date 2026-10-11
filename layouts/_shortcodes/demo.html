@@ -7,6 +7,7 @@
   {{- $script = resources.Get (path.Join "demo-sources" .Page.File.Dir $entry) -}}
   {{- $script = $script | js.Build (dict "format" "esm" "targetPath" $target) -}}
   {{- .Page.Store.Set "hasCode" true -}}
+  {{- .Page.Store.Set "hasTable" true -}}
   {{- if not (.Page.Store.Get "hasDemoAssets") -}}
     {{- $style := resources.Get "css/demo/style.css" -}}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}">
@@ -15,7 +16,6 @@
     {{- .Page.Store.Set "hasDemoAssets" true -}}
   {{- end -}}
   {{- $id := printf "demo-%d" .Ordinal -}}
-  {{- .Page.Store.Set "hasTable" true -}}
   <div id="{{ $id }}" class="interactive-demo"
     data-entry="{{ $script.RelPermalink }}"
     data-load-failed="{{ i18n "demo_load_failed" }}"
