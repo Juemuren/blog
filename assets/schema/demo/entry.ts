@@ -1,4 +1,4 @@
-import type { Demo, InputField, InputValue } from "../../ts/demo/types";
+import type { Demo, InputField, InputValue } from "../../ts/demo/types.ts";
 
 export interface DemoEntry<TRun extends (value: never) => string>
   extends Omit<Demo, "inputs" | "run"> {

@@ -1,16 +1,9 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "strict": true,
+    "target": "esnext",
     "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "paths": {
-      "@demo/entry": ["./assets/schema/demo/entry.ts"]
-    }
+    "allowImportingTsExtensions": true
   },
   "include": ["content/**/*.ts"]
 }

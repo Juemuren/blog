@@ -42,6 +42,9 @@ new:
 lint:
     biome lint .
 
+typecheck:
+    deno check --config tsconfig.base.json content assets/ts assets/schema
+
 format:
     biome format . --fix
 

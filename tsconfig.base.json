@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ESNext", "DOM"],
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "paths": {
+      "@demo/entry": ["./assets/schema/demo/entry.ts"]
+    }
+  }
+}
