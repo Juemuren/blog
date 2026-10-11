@@ -1,0 +1,17 @@
+{{- $copyLabel := i18n "code_copy" | default "copy" -}}
+<template id="code-copy-button" data-copy-label="{{ $copyLabel }}"
+    data-copied-label="{{ i18n "code_copied" | default "copied!" }}">
+    <button type="button" class="copy-code" title="{{ $copyLabel }}" aria-label="{{ $copyLabel }}">
+        <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <svg class="copy-success-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="m5 12 4 4L19 6"></path>
+        </svg>
+    </button>
+</template>

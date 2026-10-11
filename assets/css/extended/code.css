@@ -4,6 +4,64 @@
 }
 
 .copy-code {
-  color: var(--primary);
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: var(--secondary);
   background: var(--code-bg);
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease;
+}
+
+div.highlight:hover .copy-code,
+pre:hover .copy-code {
+  display: grid;
+}
+
+.copy-code svg {
+  transition: transform 150ms ease, stroke-width 150ms ease;
+}
+
+.copy-code:hover,
+.copy-code:focus-visible {
+  color: var(--primary);
+  background: var(--border);
+}
+
+.copy-code:hover svg,
+.copy-code:focus-visible svg {
+  stroke-width: 2.25;
+  transform: scale(1.1);
+}
+
+.copy-code:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.copy-code .copy-success-icon,
+.copy-code.is-copied .copy-icon {
+  display: none;
+}
+
+.copy-code.is-copied .copy-success-icon {
+  display: block;
+}
+
+.copy-code.is-copied {
+  color: var(--ctp-green);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copy-code,
+  .copy-code svg {
+    transition: none;
+  }
+
+  .copy-code:hover svg,
+  .copy-code:focus-visible svg {
+    transform: none;
+  }
 }

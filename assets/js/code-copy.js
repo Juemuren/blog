@@ -1,25 +1,35 @@
 (() => {
-  const config = document.currentScript.dataset;
+  const template = document.getElementById('code-copy-button');
+  const config = template.dataset;
 
   document.querySelectorAll('pre > code').forEach((codeblock) => {
       const container = codeblock.parentNode.parentNode;
 
-      const copybutton = document.createElement('button');
-      copybutton.classList.add('copy-code');
-      copybutton.textContent = config.copyLabel;
+      const copybutton = template.content.cloneNode(true).querySelector('button');
+      let resetTimer;
 
-      function copyingDone() {
-          copybutton.textContent = config.copiedLabel;
-          setTimeout(() => {
-              copybutton.textContent = config.copyLabel;
-          }, 2000);
+      function setCopied(copied) {
+          const label = copied ? config.copiedLabel : config.copyLabel;
+          copybutton.classList.toggle('is-copied', copied);
+          copybutton.title = label;
+          copybutton.setAttribute('aria-label', label);
       }
 
-      copybutton.addEventListener('click', (cb) => {
+      setCopied(false);
+
+      function copyingDone() {
+          clearTimeout(resetTimer);
+          setCopied(true);
+          resetTimer = setTimeout(() => setCopied(false), 2000);
+      }
+
+      copybutton.addEventListener('click', async () => {
           if ('clipboard' in navigator) {
-              navigator.clipboard.writeText(codeblock.textContent);
-              copyingDone();
-              return;
+              try {
+                  await navigator.clipboard.writeText(codeblock.textContent);
+                  copyingDone();
+                  return;
+              } catch (e) { }
           }
 
           const range = document.createRange();
@@ -28,8 +38,9 @@
           selection.removeAllRanges();
           selection.addRange(range);
           try {
-              document.execCommand('copy');
-              copyingDone();
+              if (document.execCommand('copy')) {
+                  copyingDone();
+              }
           } catch (e) { };
           selection.removeRange(range);
       });

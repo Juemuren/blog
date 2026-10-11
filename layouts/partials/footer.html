@@ -46,8 +46,7 @@
 {{- end }}
 
 {{- if (and (eq .Kind "page") (ne .Layout "archives") (ne .Layout "search") (.Param "ShowCodeCopyButtons")) }}
+{{- partial "code-copy-button.html" . }}
 {{- $script := resources.Get "js/code-copy.js" | minify | fingerprint -}}
-<script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"
-    data-copy-label="{{ i18n "code_copy" | default "copy" }}"
-    data-copied-label="{{ i18n "code_copied" | default "copied!" }}"></script>
+<script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
 {{- end }}
