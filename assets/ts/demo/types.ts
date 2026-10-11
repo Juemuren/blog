@@ -1,12 +1,5 @@
-export const boundProperties = {
-  number: { min: "min", max: "max" },
-  string: { min: "minLength", max: "maxLength" },
-} as const;
-
-export type BoundProperty = typeof boundProperties;
-export type BoundValue = number;
-
-interface FieldOptionsBase {
+// Add an entry here.
+interface BaseFieldOptionsByKind {
   number: {
     default?: number;
     step?: number | "any";
@@ -15,29 +8,39 @@ interface FieldOptionsBase {
     default?: string;
   };
 }
+export type InputKind = keyof BaseFieldOptionsByKind;
 
-type BoundFields<T> = {
-  [K in keyof T as T[K] & PropertyKey]?: BoundValue;
+// Map table bounds to field option and DOM attribute names.
+export const boundPropertyNames = {
+  number: { min: "min", max: "max" },
+  string: { min: "minLength", max: "maxLength" },
+} as const satisfies Record<InputKind, object>;
+
+export type BoundValue = number;
+export type BoundPropertyNamesByKind = typeof boundPropertyNames;
+
+type BoundOptionsFrom<Names> = {
+  [Bound in keyof Names as Names[Bound] & PropertyKey]?: BoundValue;
 };
 
-type FieldOptions = {
-  [K in keyof BoundProperty]: K extends keyof FieldOptionsBase
-    ? FieldOptionsBase[K] & BoundFields<BoundProperty[K]>
-    : never;
+type FieldOptionsByKind = {
+  [K in InputKind]:
+    & BaseFieldOptionsByKind[K]
+    & BoundOptionsFrom<BoundPropertyNamesByKind[K]>;
 };
 
-export type InputKind = keyof FieldOptionsBase;
-export type InputValue = NonNullable<FieldOptions[InputKind]["default"]>;
+export interface FieldMetadata<K extends InputKind> {
+  type: K;
+  name: string;
+  label: string;
+}
+
+export type FieldsByKind = {
+  [K in InputKind]: FieldOptionsByKind[K] & FieldMetadata<K>;
+};
+export type InputField = FieldsByKind[InputKind];
+export type InputValue = NonNullable<FieldOptionsByKind[InputKind]["default"]>;
 export type InputValues = Record<string, InputValue>;
-
-export type Fields = {
-  [K in InputKind]: FieldOptions[K] & {
-    type: K;
-    name: string;
-    label: string;
-  };
-};
-export type InputField = Fields[InputKind];
 
 export interface Demo {
   title?: string;

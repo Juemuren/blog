@@ -1,23 +1,23 @@
 import type {
-  BoundProperty,
+  BoundPropertyNamesByKind,
   BoundValue,
-  Fields,
+  FieldsByKind,
   InputKind,
   InputValue,
 } from "./types.ts";
-import { boundProperties } from "./types.ts";
+import { boundPropertyNames } from "./types.ts";
 
 interface InputTypeDefinition<K extends InputKind> {
-  configure(input: HTMLInputElement, field: Fields[K]): void;
+  configure(input: HTMLInputElement, field: FieldsByKind[K]): void;
   readValue(input: HTMLInputElement): InputValue;
 }
 
 export interface InputType<K extends InputKind = InputKind> {
-  configure(input: HTMLInputElement, field: Fields[K]): void;
+  configure(input: HTMLInputElement, field: FieldsByKind[K]): void;
   readValue(input: HTMLInputElement): InputValue;
   getBounds(
-    field: Fields[K],
-  ): Record<keyof BoundProperty[InputKind], BoundValue | undefined>;
+    field: FieldsByKind[K],
+  ): Record<keyof BoundPropertyNamesByKind[InputKind], BoundValue | undefined>;
 }
 
 // Add new types here without changing the form assembly or runner.
@@ -51,10 +51,10 @@ export function getInputType<K extends InputKind>(type: K): InputType<K> {
     throw new Error(`Unsupported demo input type: ${type}`);
   }
   const definition = inputTypes[type];
-  const bounds = boundProperties[type];
+  const bounds = boundPropertyNames[type];
 
   function readBound(
-    field: Fields[K],
+    field: FieldsByKind[K],
     property: string,
   ): BoundValue | undefined {
     const value: unknown = (field as Record<string, unknown>)[property];
