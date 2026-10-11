@@ -1,5 +1,5 @@
 import { cloneTemplate, requireElement } from "./dom.ts";
-import { getInputType } from "./input-types.ts";
+import { getInputType } from "./input.ts";
 import type {
   Bounds,
   Demo,
