@@ -2,14 +2,23 @@ set default-list
 
 SOURCE := 'content'
 
-# 本地开发：包含草稿，不写入磁盘
+# 本地开发
 dev:
     hugo server \
         --environment development \
         --buildDrafts \
         --renderToMemory
 
-# 本地构建：与 .github\workflows\ci.yaml 中的构建对齐
+# 本地调试
+debug:
+    hugo server \
+        --environment development \
+        --buildDrafts \
+        --renderToMemory \
+        --disableFastRender \
+        --disableLiveReload
+
+# 本地构建
 build port="1313":
     TZ=Asia/Shanghai hugo build \
         --environment production \
@@ -19,7 +28,7 @@ build port="1313":
         --baseURL "http://localhost:{{ port }}/blog/" \
         --cacheDir "{{ justfile_directory() }}/.hugo_cache"
 
-# 本地预览：预览本地构建产物
+# 本地预览
 preview port="1313": (build port)
     miniserve public \
         --index index.html \
