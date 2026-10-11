@@ -1,9 +1,10 @@
 import { cloneTemplate, requireElement } from "./dom.ts";
-import { getInputType, type InputType } from "./input-types.ts";
+import { getInputType } from "./input-types.ts";
 import type {
   Demo,
   DemoView,
   InputField,
+  InputType,
   InputValue,
   RunMessages,
 } from "./types.ts";

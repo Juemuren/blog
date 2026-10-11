@@ -1,26 +1,13 @@
 import type {
-  BoundPropertyNamesByKind,
   BoundValue,
   FieldsByKind,
   InputKind,
-  InputValue,
+  InputType,
+  InputTypeDefinition,
 } from "./types.ts";
 import { boundPropertyNames } from "./types.ts";
 
-interface InputTypeDefinition<K extends InputKind> {
-  configure(input: HTMLInputElement, field: FieldsByKind[K]): void;
-  readValue(input: HTMLInputElement): InputValue;
-}
-
-export interface InputType<K extends InputKind = InputKind> {
-  configure(input: HTMLInputElement, field: FieldsByKind[K]): void;
-  readValue(input: HTMLInputElement): InputValue;
-  getBounds(
-    field: FieldsByKind[K],
-  ): Record<keyof BoundPropertyNamesByKind[InputKind], BoundValue | undefined>;
-}
-
-// Add new types here without changing the form assembly or runner.
+// Add input handlers here without changing the form assembly or runner.
 const inputTypes: { [K in InputKind]: InputTypeDefinition<K> } = {
   number: {
     configure(input, field) {

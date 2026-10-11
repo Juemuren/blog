@@ -24,12 +24,11 @@ type BoundOptionsFrom<Names> = {
 };
 
 type FieldOptionsByKind = {
-  [K in InputKind]:
-    & BaseFieldOptionsByKind[K]
-    & BoundOptionsFrom<BoundPropertyNamesByKind[K]>;
+  [K in InputKind]: BaseFieldOptionsByKind[K] &
+    BoundOptionsFrom<BoundPropertyNamesByKind[K]>;
 };
 
-export interface FieldMetadata<K extends InputKind> {
+interface FieldMetadata<K extends InputKind> {
   type: K;
   name: string;
   label: string;
@@ -41,6 +40,18 @@ export type FieldsByKind = {
 export type InputField = FieldsByKind[InputKind];
 export type InputValue = NonNullable<FieldOptionsByKind[InputKind]["default"]>;
 export type InputValues = Record<string, InputValue>;
+
+export interface InputTypeDefinition<K extends InputKind> {
+  configure(input: HTMLInputElement, field: FieldsByKind[K]): void;
+  readValue(input: HTMLInputElement): InputValue;
+}
+
+export interface InputType<K extends InputKind = InputKind>
+  extends InputTypeDefinition<K> {
+  getBounds(
+    field: FieldsByKind[K],
+  ): Record<keyof BoundPropertyNamesByKind[InputKind], BoundValue | undefined>;
+}
 
 export interface Demo {
   title?: string;
