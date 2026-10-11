@@ -4,9 +4,9 @@
   {{- errorf "Demo script %q not found in %s" $src .Page.File.Path -}}
 {{- else -}}
   {{- .Page.Store.Set "hasCode" true -}}
-  {{- $runtime := resources.Get "js/demo.js" -}}
+  {{- $runtime := resources.Get "js/demo/runtime.js" -}}
   {{- if not (.Page.Store.Get "hasDemoStyles") -}}
-    {{- $style := resources.Get "css/demo.css" -}}
+    {{- $style := resources.Get "css/demo/style.css" -}}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}">
     {{- .Page.Store.Set "hasDemoStyles" true -}}
   {{- end -}}

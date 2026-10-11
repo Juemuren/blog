@@ -34,8 +34,8 @@
   </div>
   {{ partial "reading-navigation-content.html" (dict "scope" "mobile" "tabs" $tabs) }}
 </dialog>
-{{- $style := resources.Get "css/reading-navigation.css" | minify | fingerprint -}}
+{{- $style := resources.Get "css/navigation/reading.css" | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
-{{- $script := resources.Get "js/reading-navigation.js" | minify | fingerprint -}}
+{{- $script := resources.Get "js/navigation/reading.js" | minify | fingerprint -}}
 <script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
 {{- end -}}
