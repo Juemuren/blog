@@ -1,7 +1,10 @@
-export interface BoundProperty {
-  number: { min: "min"; max: "max" };
-  string: { min: "minLength"; max: "maxLength" };
-}
+export const boundProperties = {
+  number: { min: "min", max: "max" },
+  string: { min: "minLength", max: "maxLength" },
+} as const;
+
+export type BoundProperty = typeof boundProperties;
+export type BoundValue = number;
 
 interface FieldOptionsBase {
   number: {
@@ -13,16 +16,18 @@ interface FieldOptionsBase {
   };
 }
 
+type BoundFields<T> = {
+  [K in keyof T as T[K] & PropertyKey]?: BoundValue;
+};
+
 type FieldOptions = {
   [K in keyof BoundProperty]: K extends keyof FieldOptionsBase
-    ? FieldOptionsBase[K] & Partial<Record<BoundProperty[K]["min" | "max"], number>>
+    ? FieldOptionsBase[K] & BoundFields<BoundProperty[K]>
     : never;
 };
 
-export type InputKind = keyof FieldOptions;
-export type InputValue = NonNullable<
-  FieldOptions[InputKind]["default"]
->;
+export type InputKind = keyof FieldOptionsBase;
+export type InputValue = NonNullable<FieldOptions[InputKind]["default"]>;
 export type InputValues = Record<string, InputValue>;
 
 export type Fields = {
