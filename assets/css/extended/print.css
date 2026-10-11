@@ -1,3 +1,4 @@
+/* Print overrides intentionally use !important to take precedence over screen styles. */
 @media print {
   @page {
     size: A4;

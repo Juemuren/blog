@@ -17,8 +17,8 @@
     background-color 150ms ease;
 }
 
-div.highlight:hover .copy-code,
-pre:hover .copy-code {
+pre:hover .copy-code,
+div.highlight:hover .copy-code {
   display: grid;
 }
 

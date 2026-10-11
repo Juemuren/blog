@@ -23,6 +23,18 @@
       "preset": "recommended"
     }
   },
+  "overrides": [
+    {
+      "includes": ["assets/css/extended/print.css"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noImportantStyles": "off"
+          }
+        }
+      }
+    }
+  ],
   "javascript": {
     "formatter": {
       "quoteStyle": "double",

@@ -29,7 +29,9 @@
           await navigator.clipboard.writeText(codeblock.textContent);
           copyingDone();
           return;
-        } catch (e) {}
+        } catch {
+          // Clipboard API failed; try the fallback below.
+        }
       }
 
       const range = document.createRange();
@@ -41,16 +43,18 @@
         if (document.execCommand("copy")) {
           copyingDone();
         }
-      } catch (e) {}
+      } catch {
+        // Keep the button unchanged when copying fails.
+      }
       selection.removeRange(range);
     });
 
     if (container.classList.contains("highlight")) {
       container.appendChild(copybutton);
-    } else if (container.parentNode.firstChild == container) {
+    } else if (container.parentNode.firstChild === container) {
     } else if (
       codeblock.parentNode.parentNode.parentNode.parentNode.parentNode
-        .nodeName == "TABLE"
+        .nodeName === "TABLE"
     ) {
       codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(
         copybutton,
