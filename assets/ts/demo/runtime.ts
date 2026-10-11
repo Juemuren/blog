@@ -35,7 +35,7 @@ export function createDemo(container: HTMLElement, demo: Demo): DemoView {
     "[data-demo-parameter]",
   );
 
-  const inputs: { name: string; readValue(): InputValue }[] = [];
+  const readers = new Map<string, () => InputValue>();
   for (const [name, options] of Object.entries(demo.inputs)) {
     const field: InputField = { ...options, name };
     const type = getInputType(field.type);
@@ -48,7 +48,7 @@ export function createDemo(container: HTMLElement, demo: Demo): DemoView {
 
     requireElement(form, ".interactive-demo-fields").append(element);
     requireElement(container, "[data-demo-parameters]").append(parameterRow);
-    inputs.push({ name: field.name, readValue });
+    readers.set(name, readValue);
   }
 
   inputTemplate.remove();
@@ -59,7 +59,7 @@ export function createDemo(container: HTMLElement, demo: Demo): DemoView {
     output: requireElement(container, ".interactive-demo-output code"),
     readValues: () =>
       Object.fromEntries(
-        inputs.map(({ name, readValue }) => [name, readValue()]),
+        Array.from(readers, ([name, readValue]) => [name, readValue()]),
       ),
   };
 }
