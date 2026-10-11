@@ -1,31 +1,22 @@
+import { setAttributes } from "./dom.ts";
 import type { InputKind, InputType } from "./types.ts";
-
-function setBound(
-  input: HTMLInputElement,
-  attribute: "min" | "max" | "minlength" | "maxlength",
-  value: number | undefined,
-): number | undefined {
-  if (value === undefined) return;
-  if (typeof value !== "number") {
-    throw new Error(`Demo constraint ${attribute} must be a number`);
-  }
-  input.setAttribute(attribute, String(value));
-  return value;
-}
 
 // Add input handlers here without changing the form assembly or runner.
 const inputTypes: { [K in InputKind]: InputType<K> } = {
   number: {
     configure(input, field) {
-      input.type = "number";
-      input.value = String(field.default ?? "");
-      input.required = true;
-      input.inputMode = field.step === 1 ? "numeric" : "decimal";
-      input.step = String(field.step ?? "any");
+      setAttributes(input, {
+        type: "number",
+        value: field.default,
+        inputmode: field.step === 1 ? "numeric" : "decimal",
+        step: field.step ?? "any",
+        min: field.min,
+        max: field.max,
+      });
       return {
-        min: setBound(input, "min", field.min),
-        max: setBound(input, "max", field.max),
-        step: field.step === "any" ? undefined : field.step,
+        min: field.min,
+        max: field.max,
+        step: field.step,
       };
     },
     readValue(input) {
@@ -34,14 +25,17 @@ const inputTypes: { [K in InputKind]: InputType<K> } = {
   },
   string: {
     configure(input, field) {
-      input.type = "text";
-      input.value = field.default ?? "";
-      input.required = true;
-      input.pattern = field.pattern ?? ".*";
-      return {
-        minLength: setBound(input, "minlength", field.minLength),
-        maxLength: setBound(input, "maxlength", field.maxLength),
+      setAttributes(input, {
+        type: "text",
+        value: field.default,
         pattern: field.pattern,
+        minlength: field.minLength,
+        maxlength: field.maxLength,
+      });
+      return {
+        pattern: field.pattern,
+        minlength: field.minLength,
+        maxlength: field.maxLength,
       };
     },
     readValue(input) {
@@ -50,10 +44,11 @@ const inputTypes: { [K in InputKind]: InputType<K> } = {
   },
   boolean: {
     configure(input, field) {
-      input.type = "text";
-      input.value = String(field.default ?? true);
-      input.required = true;
-      input.pattern = "true|false";
+      setAttributes(input, {
+        type: "text",
+        value: field.default,
+        pattern: "true|false",
+      });
       return {
         oneOf: [true, false],
       };
