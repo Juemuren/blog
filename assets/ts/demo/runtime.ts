@@ -1,25 +1,37 @@
-import { getInputType } from "./input-types.js";
+import { cloneTemplate, requireElement } from "./dom.ts";
+import { getInputType, type InputType } from "./input-types.ts";
+import type {
+  Demo,
+  DemoView,
+  InputField,
+  InputValue,
+  RunMessages,
+} from "./types.ts";
 
 // Build the form and parameter reference once, without running the example.
-export function createDemo(container, demo) {
-  const form = container.querySelector("form");
-  const fields = form.querySelector(".interactive-demo-fields");
-  const title = container.querySelector(".interactive-demo-title");
-  const inputTemplate = container.querySelector("[data-demo-input]");
-  const parameterTemplate = container.querySelector("[data-demo-parameter]");
-  const parameterTableBody = container.querySelector("[data-demo-parameters]");
+export function createDemo(container: HTMLElement, demo: Demo): DemoView {
+  const form = requireElement<HTMLFormElement>(container, "form");
+  const title = requireElement(container, ".interactive-demo-title");
+  const inputTemplate = requireElement<HTMLTemplateElement>(
+    container,
+    "[data-demo-input]",
+  );
+  const parameterTemplate = requireElement<HTMLTemplateElement>(
+    container,
+    "[data-demo-parameter]",
+  );
 
   title.textContent = demo.title ?? "";
   title.hidden = !demo.title;
 
-  const inputs = [];
+  const inputs: { name: string; readValue(): InputValue }[] = [];
   for (const field of demo.inputs) {
     const type = getInputType(field.type);
     const { element, readValue } = createInput(inputTemplate, field, type);
     const parameterRow = createParameterRow(parameterTemplate, field, type);
 
-    fields.append(element);
-    parameterTableBody.append(parameterRow);
+    requireElement(form, ".interactive-demo-fields").append(element);
+    requireElement(container,"[data-demo-parameters]").append(parameterRow);
     inputs.push({ name: field.name, readValue });
   }
 
@@ -34,13 +46,13 @@ export function createDemo(container, demo) {
 
   return {
     form,
-    output: container.querySelector(".interactive-demo-output code"),
+    output: requireElement(container, ".interactive-demo-output code"),
     readValues,
   };
 }
 
 // Bind execution only after the form has been initialized.
-export function bindRunner(view, demo, messages) {
+export function bindRunner(view: DemoView, demo: Demo, messages: RunMessages) {
   const { form, output, readValues } = view;
 
   function runDemo() {
@@ -63,10 +75,14 @@ export function bindRunner(view, demo, messages) {
   if (demo.autorun) runDemo();
 }
 
-function createInput(template, field, type) {
-  const element = template.content.firstElementChild.cloneNode(true);
-  const input = element.querySelector("input");
-  element.querySelector("[data-field-label]").textContent = field.label;
+function createInput(
+  template: HTMLTemplateElement,
+  field: InputField,
+  type: InputType,
+) {
+  const element = cloneTemplate(template);
+  const input = requireElement<HTMLInputElement>(element, "input");
+  requireElement(element, "[data-field-label]").textContent = field.label;
 
   input.name = field.name;
   type.configure(input, field);
@@ -74,16 +90,20 @@ function createInput(template, field, type) {
   return { element, readValue: () => type.readValue(input) };
 }
 
-function createParameterRow(template, field, type) {
-  const row = template.content.firstElementChild.cloneNode(true);
-  row.querySelector("[data-field-label]").textContent = field.label;
-  row.querySelector("[data-field-name]").textContent = field.name;
-  row.querySelector("[data-field-type]").textContent = field.type;
+function createParameterRow(
+  template: HTMLTemplateElement,
+  field: InputField,
+  type: InputType,
+) {
+  const row = cloneTemplate(template);
+  requireElement(row, "[data-field-label]").textContent = field.label;
+  requireElement(row, "[data-field-name]").textContent = field.name;
+  requireElement(row, "[data-field-type]").textContent = field.type;
 
   for (const [bound, value] of Object.entries(type.getBounds(field))) {
     // Preserve the translated "unbounded" text when no limit is configured.
     if (value !== undefined) {
-      row.querySelector(`[data-field-${bound}]`).textContent = value;
+      requireElement(row, `[data-field-${bound}]`).textContent = String(value);
     }
   }
 
