@@ -1,4 +1,4 @@
-import { run } from "./push-pull-run.ts";
+import { run } from "./01-push-pull.ts";
 
 export default {
   title: "前推和拉回",

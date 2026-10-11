@@ -478,4 +478,4 @@ for (let i = 0; i < COUNT; i++) console.log(g())
 
 移动端的话没法打开 `DevTools`，可以尝试运行下面的示例
 
-{{< demo entry="demo/main.js" code="demo/gaussian.js" >}}
+{{< demo entry="demo/entry.js" code="demo/gaussian.js" >}}
