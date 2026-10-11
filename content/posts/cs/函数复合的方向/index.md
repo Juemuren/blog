@@ -64,40 +64,9 @@ function pullback<A, B>(f: Fn<A, B>) {
 }
 ```
 
-示例为
-
-```ts
-const f = (x: number) => x > 2;
-// number => boolean
-
-// 前推：改变输出类型
-const pushed = pushforward(f)(
-  (s: string) => s.length
-);
-// (string => number) -> (string => boolean)
-
-console.log(pushed("hello")); // true
-
-// 拉回：改变输入类型
-const pulled = pullback(f)(
-  (x: boolean) => `value=${x}`
-);
-// (boolean => string) -> (number => string)
-
-console.log(pulled(5)); // "value=true"
-```
-
-<!-- TODO
-
-考虑一下如何在用户的浏览器里运行 TypeScript 代码。
-
-目前比较好的想法是，在浏览器里运行 tsc 得到 js 然后运行 js
-
-不过不太清楚这样能否在 TypeScript 里 import 代码，实在不行就重复吧
+运行示例为
 
 {{< demo src="demo/push-pull-main.js" source="demo/push-pull-run.ts" >}}
-
--->
 
 ### 函数前推和函数拉回的结合律
 

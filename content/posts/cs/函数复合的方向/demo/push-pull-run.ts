@@ -13,8 +13,9 @@ const pulled = pullback(f)(
   x => `value=${x}`
 );
 
-export function run({}) {
-  console.log(pushed("hello")); // true
-  console.log(pulled(5)); // "value=true"
+export function run() {
+  return [
+    String(pushed("hello")), // true
+    pulled(5), // "value=true"
+  ].join("\n");
 }
-
