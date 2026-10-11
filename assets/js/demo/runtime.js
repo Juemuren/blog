@@ -1,3 +1,5 @@
+import { getInputType } from "./input-types.js";
+
 // Build the form and parameter reference once, without running the example.
 export function createDemo(container, demo) {
   const form = container.querySelector("form");
@@ -12,12 +14,13 @@ export function createDemo(container, demo) {
 
   const inputs = [];
   for (const field of demo.inputs) {
-    const { element, input } = createInput(inputTemplate, field);
-    const parameterRow = createParameterRow(parameterTemplate, field);
+    const type = getInputType(field.type);
+    const { element, readValue } = createInput(inputTemplate, field, type);
+    const parameterRow = createParameterRow(parameterTemplate, field, type);
 
     fields.append(element);
     parameterTableBody.append(parameterRow);
-    inputs.push(input);
+    inputs.push({ name: field.name, readValue });
   }
 
   inputTemplate.remove();
@@ -25,7 +28,7 @@ export function createDemo(container, demo) {
 
   function readValues() {
     return Object.fromEntries(
-      inputs.map((input) => [input.name, input.valueAsNumber]),
+      inputs.map(({ name, readValue }) => [name, readValue()]),
     );
   }
 
@@ -60,38 +63,27 @@ export function bindRunner(view, demo, messages) {
   if (demo.autorun) runDemo();
 }
 
-function createInput(template, field) {
-  if (field.type !== "number") {
-    throw new Error(`Unsupported demo input type: ${field.type}`);
-  }
-
+function createInput(template, field, type) {
   const element = template.content.firstElementChild.cloneNode(true);
   const input = element.querySelector("input");
   element.querySelector("[data-field-label]").textContent = field.label;
 
   input.name = field.name;
-  input.value = field.default;
-  input.inputMode = field.step === 1 ? "numeric" : "decimal";
+  type.configure(input, field);
 
-  for (const attribute of ["min", "max", "step"]) {
-    if (field[attribute] !== undefined) {
-      input[attribute] = field[attribute];
-    }
-  }
-
-  return { element, input };
+  return { element, readValue: () => type.readValue(input) };
 }
 
-function createParameterRow(template, field) {
+function createParameterRow(template, field, type) {
   const row = template.content.firstElementChild.cloneNode(true);
   row.querySelector("[data-field-label]").textContent = field.label;
   row.querySelector("[data-field-name]").textContent = field.name;
   row.querySelector("[data-field-type]").textContent = field.type;
 
-  for (const bound of ["min", "max"]) {
+  for (const [bound, value] of Object.entries(type.getBounds(field))) {
     // Preserve the translated "unbounded" text when no limit is configured.
-    if (field[bound] !== undefined) {
-      row.querySelector(`[data-field-${bound}]`).textContent = field[bound];
+    if (value !== undefined) {
+      row.querySelector(`[data-field-${bound}]`).textContent = value;
     }
   }
 
