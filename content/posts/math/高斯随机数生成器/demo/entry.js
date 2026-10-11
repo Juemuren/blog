@@ -1,7 +1,7 @@
 import { run } from "./gaussian.js";
 
 export default {
-  autorun: true,
+  autoRun: true,
   title: "高斯随机数生成器",
   inputs: [
     {

@@ -12,8 +12,20 @@ import type {
 
 // Build the form and parameter reference once, without running the example.
 export function createDemo(container: HTMLElement, demo: Demo): DemoView {
-  const form = requireElement<HTMLFormElement>(container, "form");
   const title = requireElement(container, ".interactive-demo-title");
+  title.textContent = demo.title ?? "";
+  title.hidden = !demo.title;
+
+  const details = requireElement<HTMLDetailsElement>(
+    container,
+    ".interactive-demo-details",
+  );
+  details.open = demo.autoOpen ?? false;
+
+  const form = requireElement<HTMLFormElement>(
+    container,
+    ".interactive-demo-controls",
+  );
   const inputTemplate = requireElement<HTMLTemplateElement>(
     container,
     "[data-demo-input]",
@@ -22,9 +34,6 @@ export function createDemo(container: HTMLElement, demo: Demo): DemoView {
     container,
     "[data-demo-parameter]",
   );
-
-  title.textContent = demo.title ?? "";
-  title.hidden = !demo.title;
 
   const inputs: { name: string; readValue(): InputValue }[] = [];
   for (const field of demo.inputs) {
@@ -75,7 +84,7 @@ export function bindRunner(view: DemoView, demo: Demo, messages: RunMessages) {
     runDemo();
   });
 
-  if (demo.autorun) runDemo();
+  if (demo.autoRun) runDemo();
 }
 
 function createInput(

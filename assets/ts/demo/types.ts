@@ -45,7 +45,8 @@ export interface InputType<K extends InputKind = InputKind> {
 
 export interface Demo {
   title?: string;
-  autorun?: boolean;
+  autoRun?: boolean;
+  autoOpen?: boolean;
   inputs: InputField[];
   run(values: InputValues): string;
 }
