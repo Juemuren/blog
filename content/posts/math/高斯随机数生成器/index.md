@@ -133,7 +133,7 @@ const view = board.create('view3d', [
   }
 });
 
-const normal2DPDF = (x, y) =>
+const normal2dPDF = (x, y) =>
   1 / (
     2 * Math.PI
   ) * Math.exp(
@@ -141,7 +141,7 @@ const normal2DPDF = (x, y) =>
   );
 
 view.create('functiongraph3d', [
-  (x,y) => scale * normal2DPDF(x, y),
+  (x,y) => scale * normal2dPDF(x, y),
   range,
   range
 ], {

@@ -1,6 +1,8 @@
 arcsin
 arctan
 bigg
+bigl
+bigr
 binom
 bmatrix
 boldsymbol
@@ -8,6 +10,7 @@ infty
 mathbb
 mathbf
 mathcal
+mathfrak
 mathrm
 mathsf
 operatorname
@@ -15,3 +18,4 @@ overrightarrow
 stackrel
 textcolor
 vmatrix
+widehat
