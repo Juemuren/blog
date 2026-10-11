@@ -1,7 +1,7 @@
 import { cloneTemplate, requireElement } from "./dom.ts";
 import { getInputType } from "./input.ts";
 import type {
-  Bounds,
+  Constraints,
   Demo,
   DemoView,
   InputField,
@@ -38,7 +38,7 @@ export function createDemo(container: HTMLElement, demo: Demo): DemoView {
   const readers = new Map<string, () => InputValue>();
   for (const [name, field] of Object.entries(demo.inputs)) {
     const type = getInputType(field.type);
-    const { element, readValue, bounds } = createInput(
+    const { element, readValue, constraints } = createInput(
       inputTemplate,
       name,
       field,
@@ -48,7 +48,7 @@ export function createDemo(container: HTMLElement, demo: Demo): DemoView {
       parameterTemplate,
       name,
       field,
-      bounds,
+      constraints,
     );
 
     requireElement(form, ".interactive-demo-fields").append(element);
@@ -104,12 +104,12 @@ function createInput(
 
   const input = requireElement<HTMLInputElement>(element, "input");
   input.name = name;
-  const bounds = type.configure(input, field);
+  const constraints = type.configure(input, field);
 
   return {
     element,
     readValue: () => type.readValue(input),
-    bounds,
+    constraints,
   };
 }
 
@@ -117,19 +117,14 @@ function createParameterRow(
   template: HTMLTemplateElement,
   name: string,
   field: InputField,
-  bounds: Bounds,
+  constraints: Constraints,
 ) {
   const row = cloneTemplate(template);
   requireElement(row, "[data-field-label]").textContent = field.label;
   requireElement(row, "[data-field-name]").textContent = name;
   requireElement(row, "[data-field-type]").textContent = field.type;
-
-  for (const [bound, value] of Object.entries(bounds)) {
-    // Preserve the translated "unbounded" text when no limit is configured.
-    if (value !== undefined) {
-      requireElement(row, `[data-field-${bound}]`).textContent = String(value);
-    }
-  }
+  requireElement(row, "[data-field-constraints]").textContent =
+    JSON.stringify(constraints);
 
   return row;
 }

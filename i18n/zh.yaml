@@ -40,14 +40,8 @@
 - id: demo_type
   translation: "数据类型"
 
-- id: demo_min
-  translation: "最小值"
-
-- id: demo_max
-  translation: "最大值"
-
-- id: demo_unbounded
-  translation: "不限"
+- id: demo_constraints
+  translation: "约束"
 
 - id: demo_details
   translation: "查看详情"

@@ -27,13 +27,13 @@ export type InputField = FieldsByKind[InputKind];
 export type InputValue = NonNullable<InputField["default"]>;
 export type InputValues = Record<string, InputValue>;
 
-export interface Bounds {
-  min?: number | string;
-  max?: number | string;
-}
+export type Constraints = Record<
+  string,
+  number | string | boolean[] | undefined
+>;
 
 export interface InputType<K extends InputKind = InputKind> {
-  configure(input: HTMLInputElement, field: FieldsByKind[K]): Bounds;
+  configure(input: HTMLInputElement, field: FieldsByKind[K]): Constraints;
   readValue(input: HTMLInputElement): InputValue;
 }
 

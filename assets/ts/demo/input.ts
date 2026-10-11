@@ -25,6 +25,7 @@ const inputTypes: { [K in InputKind]: InputType<K> } = {
       return {
         min: setBound(input, "min", field.min),
         max: setBound(input, "max", field.max),
+        step: field.step === "any" ? undefined : field.step,
       };
     },
     readValue(input) {
@@ -38,8 +39,9 @@ const inputTypes: { [K in InputKind]: InputType<K> } = {
       input.required = true;
       input.pattern = field.pattern ?? ".*";
       return {
-        min: setBound(input, "minlength", field.minLength),
-        max: setBound(input, "maxlength", field.maxLength),
+        minLength: setBound(input, "minlength", field.minLength),
+        maxLength: setBound(input, "maxlength", field.maxLength),
+        pattern: field.pattern,
       };
     },
     readValue(input) {
@@ -53,8 +55,7 @@ const inputTypes: { [K in InputKind]: InputType<K> } = {
       input.required = true;
       input.pattern = "true|false";
       return {
-        min: "false",
-        max: "true",
+        oneOf: [true, false],
       };
     },
     readValue(input) {

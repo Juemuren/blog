@@ -40,14 +40,8 @@
 - id: demo_type
   translation: "Data type"
 
-- id: demo_min
-  translation: "Minimum"
-
-- id: demo_max
-  translation: "Maximum"
-
-- id: demo_unbounded
-  translation: "Unbounded"
+- id: demo_constraints
+  translation: "Constraints"
 
 - id: demo_details
   translation: "View details"
