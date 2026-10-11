@@ -1,21 +1,11 @@
 import type { Demo, InputField } from "../../ts/demo/types";
 
-type InputKindForValue<T> = {
-  [Kind in InputField["type"]]: Extract<
-    T,
-    NonNullable<Extract<InputField, { type: Kind }>["default"]>
-  > extends never
-    ? never
-    : Kind;
-}[InputField["type"]];
-
-type InputFieldFor<Name extends string, TValue> = Extract<
-  InputField,
-  { type: InputKindForValue<TValue> }
-> & { name: Name };
-
+// Match each run parameter with fields whose values it can accept.
 type InputFieldForValues<TValues> = {
-  [Name in keyof TValues & string]: InputFieldFor<Name, TValues[Name]>;
+  [Name in keyof TValues & string]: Extract<
+    InputField,
+    { default?: TValues[Name] }
+  > & { name: Name };
 }[keyof TValues & string];
 
 export interface DemoEntry<TRun extends (values: never) => string>
