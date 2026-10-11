@@ -36,7 +36,8 @@ export function createDemo(container: HTMLElement, demo: Demo): DemoView {
   );
 
   const inputs: { name: string; readValue(): InputValue }[] = [];
-  for (const field of demo.inputs) {
+  for (const [name, options] of Object.entries(demo.inputs)) {
+    const field: InputField = { ...options, name };
     const type = getInputType(field.type);
     const { element, readValue, bounds } = createInput(
       inputTemplate,

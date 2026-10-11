@@ -5,9 +5,8 @@ import type { DemoEntry } from "@demo/entry";
 export default {
   autoRun: true,
   title: "高斯随机数生成器",
-  inputs: [
-    {
-      name: "seed",
+  inputs: {
+    seed: {
       label: "种子",
       type: "number",
       default: 114514,
@@ -15,8 +14,7 @@ export default {
       max: 4294967295,
       step: 1,
     },
-    {
-      name: "count",
+    count: {
       label: "生成数量",
       type: "number",
       default: 5,
@@ -24,6 +22,6 @@ export default {
       max: 1000,
       step: 1,
     },
-  ],
+  },
   run,
 } satisfies DemoEntry<typeof run>;

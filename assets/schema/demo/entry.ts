@@ -1,15 +1,15 @@
-import type { Demo, InputField } from "../../ts/demo/types";
+import type { Demo, InputFieldOptions } from "../../ts/demo/types";
 
-// Match each run parameter with fields whose values it can accept.
+// Each run parameter must have exactly one compatible input field.
 type InputFieldForValues<TValues> = {
-  [Name in keyof TValues & string]: Extract<
-    InputField,
+  [Name in keyof TValues & string]-?: Extract<
+    InputFieldOptions,
     { default?: TValues[Name] }
-  > & { name: Name };
-}[keyof TValues & string];
+  >;
+};
 
 export interface DemoEntry<TRun extends (values: never) => string>
   extends Omit<Demo, "inputs" | "run"> {
-  inputs: InputFieldForValues<Parameters<TRun>[0]>[];
+  inputs: InputFieldForValues<Parameters<TRun>[0]>;
   run: TRun;
 }
