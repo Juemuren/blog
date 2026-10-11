@@ -95,6 +95,7 @@
 
 /* Desktop rail: leave 32px beside the article and at the viewport edge. */
 .reading-rail {
+  display: none;
   position: fixed;
   top: 32px;
   right: 32px;
@@ -194,7 +195,19 @@
   outline-offset: -2px;
 }
 
-/* Keep hidden elements hidden even when their layout uses grid or flex. */
+/* Narrow layouts use the corner button; wide layouts use the desktop rail. */
+@media (min-width: 1360px) {
+  .reading-rail {
+    display: block;
+  }
+
+  .reading-trigger,
+  .reading-dialog[open] {
+    display: none;
+  }
+}
+
+/* Reading progress and tab selection may hide either layout. */
 .reading-rail[hidden],
 .reading-trigger[hidden],
 .reading-list[hidden] {

@@ -5,7 +5,6 @@
 
   const mobileTrigger = document.querySelector(".reading-trigger");
   const dialog = document.querySelector(".reading-dialog");
-  const desktopViewport = matchMedia("(min-width: 1360px)");
   const headingOffset = 120;
   const panels = [desktopRail, dialog];
   let activeHeading;
@@ -97,13 +96,8 @@
     const pastIntroduction =
       window.scrollY > window.innerHeight &&
       inlineNavigation.getBoundingClientRect().bottom < 0;
-    desktopRail.hidden = !desktopViewport.matches || !pastIntroduction;
-    mobileTrigger.hidden = desktopViewport.matches || !pastIntroduction;
-  }
-
-  function handleViewportChange() {
-    if (dialog.open) dialog.close();
-    updateReadingPosition();
+    desktopRail.hidden = !pastIntroduction;
+    mobileTrigger.hidden = !pastIntroduction;
   }
 
   // Group both panels' links by their target heading to keep highlights in sync.
@@ -142,7 +136,7 @@
   }
 
   function keepActiveHeadingVisible() {
-    if (desktopRail.hidden) return;
+    if (!desktopRail.getClientRects().length) return;
     const list = desktopRail.querySelector(".reading-list:not([hidden])");
     const item = list.querySelector('[aria-current="location"]');
     if (!item) return;
@@ -158,7 +152,11 @@
 
   function updateReadingPosition() {
     updateScheduled = false;
-    if (dialog.open) return;
+    if (dialog.open) {
+      // CSS hides the dialog in wide layouts; close it to release focus and scroll lock.
+      if (getComputedStyle(dialog).display !== "none") return;
+      dialog.close();
+    }
     updateVisibility();
     updateActiveHeading();
     keepActiveHeadingVisible();
@@ -179,7 +177,6 @@
   mobileTrigger.addEventListener("click", openDialog);
   dialog.addEventListener("close", handleDialogClose);
   dialog.addEventListener("click", handleDialogClick);
-  desktopViewport.addEventListener("change", handleViewportChange);
   window.addEventListener("scroll", scheduleReadingUpdate, { passive: true });
   window.addEventListener("resize", scheduleReadingUpdate);
   updateReadingPosition();
