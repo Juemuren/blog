@@ -1,179 +1,212 @@
 (() => {
-  const source = document.querySelector(".article-navigation-source");
-  const rail = document.querySelector(".reading-rail");
-  if (!source || !rail) return;
-  const panel = rail.querySelector(".reading-panel");
-  const tabs = panel.querySelector(".reading-tabs");
-  const trigger = document.querySelector(".reading-trigger");
-  const dialog = document.querySelector(".reading-dialog");
-  const wide = matchMedia("(min-width: 1360px)");
-  const entries = [];
-  const toc = source.querySelector(":scope > .toc .inner");
-  const series = source.querySelectorAll(".series-nav");
+  const inlineNavigation = document.querySelector(".article-navigation-source");
+  const desktopRail = document.querySelector(".reading-rail");
+  if (!inlineNavigation || !desktopRail) return;
 
-  // Build the extra navigation from the existing article links.
-  function addTab(name, label, nodes) {
+  const panel = desktopRail.querySelector(".reading-panel");
+  const tabList = panel.querySelector(".reading-tabs");
+  const mobileTrigger = document.querySelector(".reading-trigger");
+  const dialog = document.querySelector(".reading-dialog");
+  const desktopViewport = matchMedia("(min-width: 1360px)");
+  const headingOffset = 120;
+  const tabs = [];
+  let selectedTab;
+  let activeHeadingLink;
+  let updateScheduled = false;
+
+  // Reuse the inline links, removing IDs and shortcuts that must stay unique.
+  function cloneNavigation(source) {
+    const copy = source.cloneNode(true);
+    const elements = [copy, ...copy.querySelectorAll("[id], [accesskey]")];
+    for (const element of elements) {
+      element.removeAttribute("id");
+      element.removeAttribute("accesskey");
+    }
+    return copy;
+  }
+
+  function createTab(name, label, sources) {
     const button = document.createElement("button");
     button.type = "button";
     button.id = `reading-tab-${name}`;
+    button.textContent = label;
     button.setAttribute("role", "tab");
     button.setAttribute("aria-controls", `reading-${name}`);
-    button.textContent = label;
+
     const content = document.createElement("div");
     content.id = `reading-${name}`;
     content.className = "reading-list";
+    content.tabIndex = 0;
     content.setAttribute("role", "tabpanel");
     content.setAttribute("aria-labelledby", button.id);
-    content.tabIndex = 0;
-    for (const node of nodes) {
-      const copy = node.cloneNode(true);
-      for (const item of [
-        copy,
-        ...copy.querySelectorAll("[id], [accesskey]"),
-      ]) {
-        item.removeAttribute("id");
-        item.removeAttribute("accesskey");
-      }
-      content.append(copy);
-    }
-    tabs.append(button);
+    for (const source of sources) content.append(cloneNavigation(source));
+
+    const tab = { button, content };
+    button.addEventListener("click", () => selectTab(tab));
+    tabList.append(button);
     panel.append(content);
-    entries.push({ button, content });
-    button.addEventListener("click", () => selectTab(button));
+    tabs.push(tab);
   }
 
-  function revealCurrent() {
-    const content = entries.find(({ content }) => !content.hidden)?.content;
-    const current = content?.querySelector("[aria-current]");
-    if (current) {
-      const itemBox = current.getBoundingClientRect();
-      const listBox = content.getBoundingClientRect();
-      content.scrollTop += itemBox.top - listBox.top - listBox.height / 2;
+  function revealCurrentItem() {
+    const content = selectedTab.content;
+    const currentItem = content.querySelector("[aria-current]");
+    if (!currentItem) return;
+
+    const itemBounds = currentItem.getBoundingClientRect();
+    const listBounds = content.getBoundingClientRect();
+    content.scrollTop += itemBounds.top - listBounds.top - listBounds.height / 2;
+  }
+
+  function selectTab(nextTab) {
+    selectedTab = nextTab;
+    for (const tab of tabs) {
+      const selected = tab === nextTab;
+      tab.button.setAttribute("aria-selected", String(selected));
+      tab.button.tabIndex = selected ? 0 : -1;
+      tab.content.hidden = !selected;
     }
+    revealCurrentItem();
   }
 
-  function selectTab(selected) {
-    for (const { button, content } of entries) {
-      const active = button === selected;
-      button.setAttribute("aria-selected", String(active));
-      button.tabIndex = active ? 0 : -1;
-      content.hidden = !active;
-    }
-    revealCurrent();
-  }
-
-  if (toc) addTab("toc", panel.dataset.tocLabel, [toc]);
-  if (series.length) addTab("series", panel.dataset.seriesLabel, series);
-  if (!entries.length) return;
-  selectTab(entries[0].button);
-  trigger.textContent = entries
-    .map(({ button }) => button.textContent)
-    .join(" · ");
-
-  tabs.addEventListener("keydown", (event) => {
-    const index = entries.findIndex(
-      ({ button }) => button === document.activeElement,
-    );
+  function handleTabKeydown(event) {
+    const index = tabs.findIndex((tab) => tab.button === event.target);
     if (index < 0) return;
-    let next;
-    if (event.key === "ArrowRight") next = (index + 1) % entries.length;
-    if (event.key === "ArrowLeft")
-      next = (index + entries.length - 1) % entries.length;
-    if (event.key === "Home") next = 0;
-    if (event.key === "End") next = entries.length - 1;
-    if (next === undefined) return;
-    event.preventDefault();
-    selectTab(entries[next].button);
-    entries[next].button.focus();
-  });
 
-  // Move one panel between the desktop rail and the native modal dialog.
-  trigger.addEventListener("click", () => {
+    let nextIndex;
+    switch (event.key) {
+      case "ArrowRight":
+        nextIndex = (index + 1) % tabs.length;
+        break;
+      case "ArrowLeft":
+        nextIndex = (index + tabs.length - 1) % tabs.length;
+        break;
+      case "Home":
+        nextIndex = 0;
+        break;
+      case "End":
+        nextIndex = tabs.length - 1;
+        break;
+      default:
+        return;
+    }
+    event.preventDefault();
+    selectTab(tabs[nextIndex]);
+    selectedTab.button.focus();
+  }
+
+  // One panel moves between the desktop rail and the mobile dialog.
+  function openDialog() {
     dialog.append(panel);
     dialog.showModal();
     document.documentElement.classList.add("reading-modal-open");
-    revealCurrent();
-  });
-  dialog.addEventListener("close", () => {
+    revealCurrentItem();
+  }
+
+  function restoreDesktopPanel() {
     document.documentElement.classList.remove("reading-modal-open");
-    rail.append(panel);
-  });
-  dialog.addEventListener("click", (event) => {
+    desktopRail.append(panel);
+    updateReadingPosition();
+  }
+
+  function handleBackdropClick(event) {
     if (event.target !== dialog) return;
-    const rect = dialog.getBoundingClientRect();
-    if (
-      event.clientY < rect.top ||
-      event.clientX < rect.left ||
-      event.clientX > rect.right ||
-      event.clientY > rect.bottom
-    )
-      dialog.close();
-  });
-  panel.addEventListener("click", (event) => {
-    if (event.target.closest("a[href]") && dialog.open) dialog.close();
-  });
+    const bounds = dialog.getBoundingClientRect();
+    const insideDialog =
+      event.clientX >= bounds.left &&
+      event.clientX <= bounds.right &&
+      event.clientY >= bounds.top &&
+      event.clientY <= bounds.bottom;
+    if (!insideDialog) dialog.close();
+  }
+
+  function handleNavigationClick(event) {
+    if (dialog.open && event.target.closest("a[href]")) dialog.close();
+  }
+
+  // Both layouts appear after one screen, once the inline navigation has passed.
   function updateVisibility() {
-    // Match top-link's one-screen threshold and wait until the inline navigation has passed.
     const pastIntroduction =
-      window.scrollY > window.innerHeight &&
-      source.getBoundingClientRect().bottom < 0;
-    rail.hidden = !wide.matches || !pastIntroduction;
-    trigger.hidden = wide.matches;
+      window.scrollY > window.innerHeight && inlineNavigation.getBoundingClientRect().bottom < 0;
+    desktopRail.hidden = !desktopViewport.matches || !pastIntroduction;
+    mobileTrigger.hidden = desktopViewport.matches || !pastIntroduction;
   }
 
-  function updateLayout() {
+  function handleViewportChange() {
     if (dialog.open) dialog.close();
-    updateVisibility();
+    updateReadingPosition();
   }
-  wide.addEventListener("change", updateLayout);
-  updateLayout();
 
-  // Track the heading nearest the top of the reading area.
-  const links = [...panel.querySelectorAll('#reading-toc a[href^="#"]')];
-  const headings = links
-    .map((link) => {
-      let id;
-      try {
-        id = decodeURIComponent(link.hash.slice(1));
-      } catch {
-        return null;
-      }
-      const heading = document.getElementById(id);
+  function findHeading(link) {
+    try {
+      const heading = document.getElementById(decodeURIComponent(link.hash.slice(1)));
       return heading ? { link, heading } : null;
-    })
-    .filter(Boolean);
-  let pending = false;
-  let activeLink;
-  function updateReadingPosition() {
-    pending = false;
-    updateVisibility();
-    let active = headings[0];
-    for (const item of headings) {
-      if (item.heading.getBoundingClientRect().top > 120) break;
-      active = item;
-    }
-    if (!active || active.link === activeLink) return;
-    activeLink?.removeAttribute("aria-current");
-    activeLink = active.link;
-    activeLink.setAttribute("aria-current", "location");
-    const content = activeLink.closest(".reading-list");
-    if (wide.matches && !content.hidden) {
-      const itemBox = activeLink.getBoundingClientRect();
-      const listBox = content.getBoundingClientRect();
-      if (itemBox.top < listBox.top || itemBox.bottom > listBox.bottom)
-        revealCurrent();
+    } catch {
+      return null; // Ignore malformed fragment identifiers.
     }
   }
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (!pending) {
-        pending = true;
-        requestAnimationFrame(updateReadingPosition);
-      }
-    },
-    { passive: true },
-  );
-  window.addEventListener("resize", updateReadingPosition);
+
+  function updateActiveHeading() {
+    let currentHeading = headings[0];
+    for (const entry of headings) {
+      if (entry.heading.getBoundingClientRect().top > headingOffset) break;
+      currentHeading = entry;
+    }
+    if (!currentHeading || currentHeading.link === activeHeadingLink) return;
+    activeHeadingLink?.removeAttribute("aria-current");
+    activeHeadingLink = currentHeading.link;
+    activeHeadingLink.setAttribute("aria-current", "location");
+  }
+
+  function keepActiveHeadingVisible() {
+    if (
+      !activeHeadingLink ||
+      desktopRail.hidden ||
+      !selectedTab.content.contains(activeHeadingLink)
+    )
+      return;
+    const itemBounds = activeHeadingLink.getBoundingClientRect();
+    const listBounds = selectedTab.content.getBoundingClientRect();
+    if (itemBounds.top < listBounds.top || itemBounds.bottom > listBounds.bottom) {
+      revealCurrentItem();
+    }
+  }
+
+  function updateReadingPosition() {
+    updateScheduled = false;
+    // Leave the trigger stable while the modal locks the page.
+    if (dialog.open) return;
+    updateVisibility();
+    updateActiveHeading();
+    keepActiveHeadingVisible();
+  }
+
+  function scheduleReadingUpdate() {
+    if (updateScheduled) return;
+    updateScheduled = true;
+    requestAnimationFrame(updateReadingPosition);
+  }
+
+  // Initialize tabs before resolving their heading links and binding page events.
+  const inlineToc = inlineNavigation.querySelector(":scope > .toc .inner");
+  const inlineSeries = inlineNavigation.querySelectorAll(".series-nav");
+  if (inlineToc) createTab("toc", panel.dataset.tocLabel, [inlineToc]);
+  if (inlineSeries.length) createTab("series", panel.dataset.seriesLabel, inlineSeries);
+  if (!tabs.length) return;
+
+  const headings = [...panel.querySelectorAll('#reading-toc a[href^="#"]')]
+    .map(findHeading)
+    .filter(Boolean);
+  selectTab(tabs[0]);
+  mobileTrigger.textContent = tabs.map((tab) => tab.button.textContent).join(" · ");
+
+  tabList.addEventListener("keydown", handleTabKeydown);
+  mobileTrigger.addEventListener("click", openDialog);
+  dialog.addEventListener("close", restoreDesktopPanel);
+  dialog.addEventListener("click", handleBackdropClick);
+  panel.addEventListener("click", handleNavigationClick);
+  desktopViewport.addEventListener("change", handleViewportChange);
+  window.addEventListener("scroll", scheduleReadingUpdate, { passive: true });
+  window.addEventListener("resize", scheduleReadingUpdate);
   updateReadingPosition();
 })();

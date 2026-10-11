@@ -1,12 +1,19 @@
 <aside class="reading-rail" hidden>
   <div class="reading-panel" data-toc-label="{{ i18n "toc" }}" data-series-label="{{ i18n "series" }}">
-    <div class="reading-tabs" role="tablist"></div>
+    <div class="reading-panel-header">
+      <div class="reading-tabs" role="tablist"></div>
+      <form class="reading-close-form" method="dialog">
+        <button class="reading-close" autofocus>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="m6 6 12 12M6 18 18 6" />
+          </svg>
+        </button>
+      </form>
+    </div>
   </div>
 </aside>
 <button class="reading-trigger" type="button" hidden aria-haspopup="dialog" aria-controls="reading-dialog"></button>
-<dialog class="reading-dialog" id="reading-dialog">
-  <form method="dialog"><button class="reading-close" autofocus>×</button></form>
-</dialog>
+<dialog class="reading-dialog" id="reading-dialog"></dialog>
 {{- $style := resources.Get "css/reading-navigation.css" | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
 {{- $script := resources.Get "js/reading-navigation.js" | minify | fingerprint -}}
