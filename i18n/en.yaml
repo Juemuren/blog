@@ -10,6 +10,9 @@
 - id: series
   translation: "Series"
 
+- id: go_to_top
+  translation: "Go to Top"
+
 - id: demo_loading
   translation: "Loading demo. Please make sure JavaScript is enabled in your browser."
 

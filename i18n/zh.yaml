@@ -10,6 +10,9 @@
 - id: series
   translation: "系列"
 
+- id: go_to_top
+  translation: "返回顶部"
+
 - id: demo_loading
   translation: "演示正在加载，请确保浏览器已启用 JavaScript。"
 
