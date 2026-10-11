@@ -1,14 +1,20 @@
-import type {
-  BoundValue,
-  FieldsByKind,
-  InputKind,
-  InputType,
-  InputTypeDefinition,
-} from "./types.ts";
-import { boundPropertyNames } from "./types.ts";
+import type { InputKind, InputType } from "./types.ts";
+
+function setBound(
+  input: HTMLInputElement,
+  attribute: "min" | "max" | "minlength" | "maxlength",
+  value: number | undefined,
+): number | undefined {
+  if (value === undefined) return;
+  if (typeof value !== "number") {
+    throw new Error(`Demo constraint ${attribute} must be a number`);
+  }
+  input.setAttribute(attribute, String(value));
+  return value;
+}
 
 // Add input handlers here without changing the form assembly or runner.
-const inputTypes: { [K in InputKind]: InputTypeDefinition<K> } = {
+const inputTypes: { [K in InputKind]: InputType<K> } = {
   number: {
     configure(input, field) {
       input.type = "number";
@@ -16,6 +22,10 @@ const inputTypes: { [K in InputKind]: InputTypeDefinition<K> } = {
       input.required = true;
       input.inputMode = field.step === 1 ? "numeric" : "decimal";
       input.step = String(field.step ?? "any");
+      return {
+        min: setBound(input, "min", field.min),
+        max: setBound(input, "max", field.max),
+      };
     },
     readValue(input) {
       return input.valueAsNumber;
@@ -26,6 +36,10 @@ const inputTypes: { [K in InputKind]: InputTypeDefinition<K> } = {
       input.type = "text";
       input.value = field.default ?? "";
       input.required = true;
+      return {
+        min: setBound(input, "minlength", field.minLength),
+        max: setBound(input, "maxlength", field.maxLength),
+      };
     },
     readValue(input) {
       return input.value;
@@ -37,39 +51,5 @@ export function getInputType<K extends InputKind>(type: K): InputType<K> {
   if (!Object.hasOwn(inputTypes, type)) {
     throw new Error(`Unsupported demo input type: ${type}`);
   }
-  const definition = inputTypes[type];
-  const bounds = boundPropertyNames[type];
-
-  function readBound(
-    field: FieldsByKind[K],
-    property: string,
-  ): BoundValue | undefined {
-    const value: unknown = (field as Record<string, unknown>)[property];
-    if (value !== undefined && typeof value !== "number") {
-      throw new Error(`Demo constraint ${property} must be a number`);
-    }
-    return value;
-  }
-
-  return {
-    configure(input, field) {
-      definition.configure(input, field);
-      for (const property of Object.values(bounds)) {
-        const value = readBound(field, property);
-        if (value !== undefined) {
-          input.setAttribute(property.toLowerCase(), String(value));
-        }
-      }
-    },
-    readValue: definition.readValue,
-    getBounds(field) {
-      // Undefined keeps the template's translated "unbounded" label.
-      return Object.fromEntries(
-        Object.entries(bounds).map(([bound, property]) => [
-          bound,
-          readBound(field, property),
-        ]),
-      ) as ReturnType<InputType<K>["getBounds"]>;
-    },
-  };
+  return inputTypes[type];
 }

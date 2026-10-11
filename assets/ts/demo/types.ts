@@ -2,31 +2,17 @@
 interface BaseFieldOptionsByKind {
   number: {
     default?: number;
+    min?: number;
+    max?: number;
     step?: number | "any";
   };
   string: {
     default?: string;
+    minLength?: number;
+    maxLength?: number;
   };
 }
 export type InputKind = keyof BaseFieldOptionsByKind;
-
-// Map table bounds to field option and DOM attribute names.
-export const boundPropertyNames = {
-  number: { min: "min", max: "max" },
-  string: { min: "minLength", max: "maxLength" },
-} as const satisfies Record<InputKind, object>;
-
-export type BoundValue = number;
-export type BoundPropertyNamesByKind = typeof boundPropertyNames;
-
-type BoundOptionsFrom<Names> = {
-  [Bound in keyof Names as Names[Bound] & PropertyKey]?: BoundValue;
-};
-
-type FieldOptionsByKind = {
-  [K in InputKind]: BaseFieldOptionsByKind[K] &
-    BoundOptionsFrom<BoundPropertyNamesByKind[K]>;
-};
 
 interface FieldMetadata<K extends InputKind> {
   type: K;
@@ -34,23 +20,23 @@ interface FieldMetadata<K extends InputKind> {
   label: string;
 }
 
-export type FieldsByKind = {
-  [K in InputKind]: FieldOptionsByKind[K] & FieldMetadata<K>;
+type FieldsByKind = {
+  [K in InputKind]: BaseFieldOptionsByKind[K] & FieldMetadata<K>;
 };
 export type InputField = FieldsByKind[InputKind];
-export type InputValue = NonNullable<FieldOptionsByKind[InputKind]["default"]>;
+export type InputValue = NonNullable<
+  BaseFieldOptionsByKind[InputKind]["default"]
+>;
 export type InputValues = Record<string, InputValue>;
 
-export interface InputTypeDefinition<K extends InputKind> {
-  configure(input: HTMLInputElement, field: FieldsByKind[K]): void;
-  readValue(input: HTMLInputElement): InputValue;
+export interface Bounds {
+  min?: number;
+  max?: number;
 }
 
-export interface InputType<K extends InputKind = InputKind>
-  extends InputTypeDefinition<K> {
-  getBounds(
-    field: FieldsByKind[K],
-  ): Record<keyof BoundPropertyNamesByKind[InputKind], BoundValue | undefined>;
+export interface InputType<K extends InputKind = InputKind> {
+  configure(input: HTMLInputElement, field: FieldsByKind[K]): Bounds;
+  readValue(input: HTMLInputElement): InputValue;
 }
 
 export interface Demo {
