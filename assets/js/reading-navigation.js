@@ -198,7 +198,7 @@
     .map(findHeading)
     .filter(Boolean);
   selectTab(tabs[0]);
-  mobileTrigger.textContent = tabs.map((tab) => tab.button.textContent).join(" · ");
+  mobileTrigger.title = tabs.map((tab) => tab.button.textContent).join(" · ");
 
   tabList.addEventListener("keydown", handleTabKeydown);
   mobileTrigger.addEventListener("click", openDialog);

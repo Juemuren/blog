@@ -7,8 +7,8 @@
 .reading-rail {
   position: fixed;
   top: 32px;
-  right: var(--gap);
-  width: min(380px, calc((100vw - var(--main-width)) / 2 - var(--gap) * 2));
+  right: 24px;
+  width: min(380px, calc((100vw - var(--main-width)) / 2 - 48px));
 }
 .reading-panel {
   color: var(--primary);
@@ -24,12 +24,12 @@
 .reading-tabs {
   display: flex;
   flex: 1;
-  padding-inline: calc(var(--gap) / 3);
-  gap: calc(var(--gap) / 3);
+  padding-inline: 8px;
+  gap: 8px;
 }
 .reading-tabs button {
   min-height: 44px;
-  padding: calc(var(--gap) / 3) calc(var(--gap) / 2);
+  padding: 8px 12px;
   color: var(--secondary);
 }
 .reading-tabs button[aria-selected="true"] {
@@ -40,7 +40,7 @@
   max-height: calc(100dvh - 120px);
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: calc(var(--gap) / 2);
+  padding: 12px;
   scrollbar-width: none;
   overflow-wrap: anywhere;
 }
@@ -49,7 +49,7 @@
 }
 .reading-list ul,
 .reading-list ol {
-  padding-inline-start: var(--content-gap);
+  padding-inline-start: 20px;
 }
 .reading-list .inner > ul {
   padding-inline-start: 16px;
@@ -71,7 +71,7 @@
   padding: 6px 4px;
 }
 .reading-list details.toc {
-  margin-bottom: calc(var(--gap) / 2);
+  margin-bottom: 12px;
   border: 0;
   background: transparent;
 }
@@ -90,12 +90,14 @@
   position: fixed;
   z-index: 100;
   bottom: calc(16px + env(safe-area-inset-bottom));
-  left: 50%;
-  transform: translateX(-50%);
-  min-height: 44px;
-  padding: 10px 22px;
+  left: max(16px, env(safe-area-inset-left));
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius) * 3);
+  border-radius: 50%;
   background: var(--button-bg);
   color: var(--primary);
   box-shadow: 0 4px 20px #0002;
@@ -113,9 +115,9 @@
   max-width: 100%;
   height: 75dvh;
   max-height: 75dvh;
-  padding: 0 calc(var(--gap) / 2) calc(var(--gap) / 2 + env(safe-area-inset-bottom));
+  padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius) * 2) calc(var(--radius) * 2) 0 0;
+  border-radius: 16px 16px 0 0;
   background: var(--theme);
   color: var(--primary);
 }
@@ -138,7 +140,7 @@
   place-items: center;
   min-height: 44px;
   min-width: 44px;
-  padding: calc(var(--gap) / 3);
+  padding: 8px;
   border-radius: var(--radius);
 }
 .reading-dialog .reading-panel {
@@ -168,11 +170,6 @@
 .reading-close:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: -2px;
-}
-@media (max-width: 1359px) {
-  body:has(.reading-trigger:not(:empty)) .footer {
-    padding-bottom: calc(90px + env(safe-area-inset-bottom));
-  }
 }
 @media print {
   .reading-rail,
