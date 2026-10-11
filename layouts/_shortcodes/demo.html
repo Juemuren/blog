@@ -3,6 +3,9 @@
 {{- if not $script -}}
   {{- errorf "Demo script %q not found in %s" $src .Page.File.Path -}}
 {{- else -}}
+  {{- $target := printf "js/demo/%s/%s.js" .Page.File.UniqueID (strings.TrimSuffix (path.Ext $src) $src) -}}
+  {{- $script = resources.Get (path.Join "demo-sources" .Page.File.Dir $src) -}}
+  {{- $script = $script | js.Build (dict "format" "esm" "targetPath" $target) -}}
   {{- .Page.Store.Set "hasCode" true -}}
   {{- $runtime := resources.Get "js/demo/runtime.js" -}}
   {{- if not (.Page.Store.Get "hasDemoStyles") -}}
@@ -45,7 +48,8 @@
             {{- errorf "Demo source %q not found in %s" . $.Page.File.Path -}}
           {{- else -}}
             <p class="interactive-demo-source-label">{{ i18n "demo_source" }}</p>
-            <div class="interactive-demo-source">{{ highlight $resource.Content "js" }}</div>
+            {{- $language := strings.TrimPrefix "." (path.Ext .) -}}
+            <div class="interactive-demo-source">{{ highlight $resource.Content $language }}</div>
           {{- end -}}
         {{- end -}}
       </details>

@@ -8,6 +8,17 @@ copyright: "&copy; Copyright 2026, **[Raind](https://github.com/Juemuren)**"
 theme: PaperMod
 mainSections: ["posts"]
 
+module:
+  mounts:
+    - source: assets
+      target: assets
+    - source: content
+      target: assets/demo-sources
+      files: ["**/demo/**"]
+
+build:
+  noJSConfigInAssets: true
+
 taxonomies:
   category: categories
   tag: tags
