@@ -1,25 +1,25 @@
-{{- $src := .Get "src" -}}
-{{- $script := .Page.Resources.Get $src -}}
+{{- $entry := .Get "entry" -}}
+{{- $script := .Page.Resources.Get $entry -}}
 {{- if not $script -}}
-  {{- errorf "Demo script %q not found in %s" $src .Page.File.Path -}}
+  {{- errorf "Demo entry %q not found in %s" $entry .Page.File.Path -}}
 {{- else -}}
-  {{- $target := printf "js/demo/%s/%s.js" .Page.File.UniqueID (strings.TrimSuffix (path.Ext $src) $src) -}}
-  {{- $script = resources.Get (path.Join "demo-sources" .Page.File.Dir $src) -}}
+  {{- $target := printf "js/demo/%s/%s.js" .Page.File.UniqueID (strings.TrimSuffix (path.Ext $entry) $entry) -}}
+  {{- $script = resources.Get (path.Join "demo-sources" .Page.File.Dir $entry) -}}
   {{- $script = $script | js.Build (dict "format" "esm" "targetPath" $target) -}}
   {{- .Page.Store.Set "hasCode" true -}}
-  {{- $runtime := resources.Get "js/demo/runtime.js" -}}
-  {{- if not (.Page.Store.Get "hasDemoStyles") -}}
+  {{- if not (.Page.Store.Get "hasDemoAssets") -}}
     {{- $style := resources.Get "css/demo/style.css" -}}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}">
-    {{- .Page.Store.Set "hasDemoStyles" true -}}
+    {{- $init := resources.Get "js/demo/init.js" | js.Build (dict "format" "esm") -}}
+    <script type="module" src="{{ $init.RelPermalink }}"></script>
+    {{- .Page.Store.Set "hasDemoAssets" true -}}
   {{- end -}}
   {{- $id := printf "demo-%d" .Ordinal -}}
   {{- .Page.Store.Set "hasTable" true -}}
-  {{- $messages := dict
-    "loadFailed" (i18n "demo_load_failed")
-    "runFailed" (i18n "demo_run_failed")
-  -}}
-  <div id="{{ $id }}" class="interactive-demo" data-src="{{ $script.RelPermalink }}">
+  <div id="{{ $id }}" class="interactive-demo"
+    data-entry="{{ $script.RelPermalink }}"
+    data-load-failed="{{ i18n "demo_load_failed" }}"
+    data-run-failed="{{ i18n "demo_run_failed" }}">
     <div data-demo-content hidden>
       <h4 class="interactive-demo-title" hidden></h4>
       <form class="interactive-demo-controls">
@@ -42,10 +42,10 @@
             <tbody data-demo-parameters></tbody>
           </table>
         </div>
-        {{- with .Get "source" -}}
+        {{- with .Get "code" -}}
           {{- $resource := $.Page.Resources.Get . -}}
           {{- if not $resource -}}
-            {{- errorf "Demo source %q not found in %s" . $.Page.File.Path -}}
+            {{- errorf "Demo code %q not found in %s" . $.Page.File.Path -}}
           {{- else -}}
             <p class="interactive-demo-source-label">{{ i18n "demo_source" }}</p>
             {{- $language := strings.TrimPrefix "." (path.Ext .) -}}
@@ -73,27 +73,4 @@
       </tr>
     </template>
   </div>
-  <script type="module">
-    const container = document.getElementById({{ $id }});
-    const loading = container.querySelector("[data-demo-loading]");
-    const messages = {{ $messages | jsonify | safeJS }};
-    let demo, view, bindRunner;
-    try {
-      const [runtime, definition] = await Promise.all([
-        import({{ $runtime.RelPermalink }}),
-        import(container.dataset.src),
-      ]);
-      demo = definition.default;
-      view = runtime.createDemo(container, demo);
-      bindRunner = runtime.bindRunner;
-    } catch (error) {
-      loading.textContent = messages.loadFailed;
-      console.error(error);
-    }
-    if (view) {
-      loading.remove();
-      container.querySelector("[data-demo-content]").hidden = false;
-      bindRunner(view, demo, messages);
-    }
-  </script>
 {{- end -}}
