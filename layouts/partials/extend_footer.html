@@ -1,1 +1,3 @@
-{{- /* Page-specific assets are loaded from extend_head.html. */ -}}
+{{- if .Store.Get "hasImage" -}}
+{{ partial "images/lightbox.html" . }}
+{{- end -}}

@@ -2,10 +2,6 @@
   cursor: zoom-in;
 }
 
-.post-content a img {
-  cursor: inherit;
-}
-
 .image-lightbox {
   position: fixed;
   inset: 0;
@@ -32,6 +28,10 @@
   transition: transform 120ms ease;
   user-select: none;
   -webkit-user-drag: none;
+}
+
+.post-content a img {
+  cursor: inherit;
 }
 
 .image-lightbox.is-zooming img {

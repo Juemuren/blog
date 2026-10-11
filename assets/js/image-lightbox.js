@@ -1,15 +1,9 @@
 (() => {
   const content = document.querySelector(".post-content");
-  if (!content) return;
+  const lightbox = document.querySelector("[data-image-lightbox]");
+  const lightboxImage = lightbox?.querySelector("img");
+  if (!content || !lightbox || !lightboxImage) return;
 
-  const lightbox = document.createElement("div");
-  lightbox.className = "image-lightbox";
-  lightbox.dataset.imageLightbox = "";
-  lightbox.setAttribute("aria-hidden", "true");
-  lightbox.innerHTML = '<img alt="">';
-  document.body.append(lightbox);
-
-  const lightboxImage = lightbox.querySelector("img");
   const dragThreshold = 4;
   let scale = 1;
   let offsetX = 0;
