@@ -66,7 +66,7 @@ function pullback<A, B>(f: Fn<A, B>) {
 
 运行示例为
 
-{{< demo entry="demo/01-push-pull-entry.js" code="demo/01-push-pull.ts" >}}
+{{< demo entry="demo/01-entry.ts" code="demo/01-push-pull.ts" >}}
 
 ### 函数前推和函数拉回的结合律
 

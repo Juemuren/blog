@@ -1,4 +1,4 @@
-function createUniformRandomGenerator(seed) {
+function createUniformRandomGenerator(seed: number) {
   let state = seed >>> 0;
 
   return () => {
@@ -7,9 +7,9 @@ function createUniformRandomGenerator(seed) {
   };
 }
 
-export function createGaussianRandomGenerator(seed) {
+export function createGaussianRandomGenerator(seed: number) {
   const getUniformRandom = createUniformRandomGenerator(seed);
-  let spare = null;
+  let spare: number | null = null;
 
   return () => {
     if (spare !== null) {
@@ -32,7 +32,12 @@ export function createGaussianRandomGenerator(seed) {
   };
 }
 
-export function run({ seed, count }) {
+interface Param {
+  seed: number,
+  count: number
+}
+
+export function run({ seed, count }: Param) {
   const next = createGaussianRandomGenerator(seed);
   return Array.from({ length: count }, () => next()).join("\n");
 }

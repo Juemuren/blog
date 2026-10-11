@@ -1,5 +1,7 @@
 import { run } from "./01-push-pull.ts";
 
+import type { DemoEntry } from "@demo/entry";
+
 export default {
   title: "前推和拉回",
   autoOpen: true,
@@ -18,4 +20,4 @@ export default {
     },
   ],
   run,
-};
+} satisfies DemoEntry<typeof run>;

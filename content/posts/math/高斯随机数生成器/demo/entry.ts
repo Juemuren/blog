@@ -1,4 +1,6 @@
-import { run } from "./gaussian.js";
+import { run } from "./gaussian.ts";
+
+import type { DemoEntry } from "@demo/entry";
 
 export default {
   autoRun: true,
@@ -23,6 +25,5 @@ export default {
       step: 1,
     },
   ],
-
   run,
-};
+} satisfies DemoEntry<typeof run>;
