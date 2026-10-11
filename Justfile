@@ -39,24 +39,23 @@ preview port="1313": (build port)
 new:
     ./scripts/content/new-content.sh
 
-lint:
-    biome lint .
+code-check: type-check web-check
+docs-check: md-check spell-check punct-check
 
-typecheck:
+type-check:
     deno check --config tsconfig.base.json content assets/ts assets/schema
 
-format:
-    biome format . --fix
+web-check:
+    biome check . --fix
 
-check:
+md-check:
     rumdl check "{{ SOURCE }}"
 
 spell-check:
     typos "{{ SOURCE }}"
     cspell lint "{{ SOURCE }}"
-    # ltex-cli-plus --client-configuration .ltex.json "{{ SOURCE }}"
 
-punctuation-check:
+punct-check:
     autocorrect "{{ SOURCE }}" --lint
 
 ocd-check:
@@ -64,7 +63,6 @@ ocd-check:
 
 sort-dictionary:
     ./scripts/check/sort-dictionary.sh .cspell
-    ./scripts/check/sort-dictionary.sh .ltex
 
 export-standalone file:
     ./scripts/export/export-standalone.sh "{{ file }}" "output/{{ file_stem(file) }}/{{ file_name(file) }}"
