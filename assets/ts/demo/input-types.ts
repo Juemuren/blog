@@ -36,6 +36,7 @@ const inputTypes: { [K in InputKind]: InputType<K> } = {
       input.type = "text";
       input.value = field.default ?? "";
       input.required = true;
+      input.pattern = field.pattern ?? ".*";
       return {
         min: setBound(input, "minlength", field.minLength),
         max: setBound(input, "maxlength", field.maxLength),
@@ -43,6 +44,21 @@ const inputTypes: { [K in InputKind]: InputType<K> } = {
     },
     readValue(input) {
       return input.value;
+    },
+  },
+  boolean: {
+    configure(input, field) {
+      input.type = "text";
+      input.value = String(field.default ?? true);
+      input.required = true;
+      input.pattern = "true|false";
+      return {
+        min: "false",
+        max: "true",
+      };
+    },
+    readValue(input) {
+      return input.value === "true";
     },
   },
 };
