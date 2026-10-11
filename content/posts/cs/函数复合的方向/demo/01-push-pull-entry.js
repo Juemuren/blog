@@ -2,6 +2,7 @@ import { run } from "./01-push-pull.ts";
 
 export default {
   title: "前推和拉回",
+  autoOpen: true,
   inputs: [
     {
       name: "s",

@@ -134,29 +134,7 @@ function compose<A, B, C>(
 
 前推示例为
 
-```ts
-const h = (x: number) => x + 1;
-const g = (x: number) => x * 2;
-const f = (x: number) => `Result: ${x}`;
-
-// 复合映射诱导的前推
-const comp = pushforward(
-  compose(f, g)
-)(h)
-// 前推左结合
-const lhs = pushforward(
-  pushforward(f)(g)
-)(h);
-// 前推右结合
-const rhs = pushforward(f)(
-  pushforward(g)(h)
-);
-
-for (const x of [0, 1, 2, 3]) {
-  console.assert(lhs(x) === rhs(x));
-  console.assert(lhs(x) === comp(x));
-}
-```
+{{< demo entry="demo/02-entry.ts" code="demo/02-comp-push.ts" >}}
 
 拉回示例为
 

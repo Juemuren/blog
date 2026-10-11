@@ -13,6 +13,14 @@ export function pullback<A, B>(f: Fn<A, B>) {
     a => g(f(a));
 }
 
+// 函数复合
+export function compose<A, B, C>(
+  f: Fn<B, C>,
+  g: Fn<A, B>
+): Fn<A, C> {
+  return a => f(g(a));
+}
+
 // 函数加法
 export function add<X>(
   f: Fn<X, number>,
