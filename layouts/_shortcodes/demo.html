@@ -11,7 +11,7 @@
   {{- if not (.Page.Store.Get "hasDemoAssets") -}}
     {{- $style := resources.Get "css/demo/style.css" -}}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}">
-    {{- $init := resources.Get "js/demo/init.js" | js.Build (dict "format" "esm") -}}
+    {{- $init := resources.Get "ts/demo/init.ts" | js.Build (dict "format" "esm" "targetPath" "js/demo/init.js") -}}
     <script type="module" src="{{ $init.RelPermalink }}"></script>
     {{- .Page.Store.Set "hasDemoAssets" true -}}
   {{- end -}}
