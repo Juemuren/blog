@@ -30,6 +30,12 @@ preview port="1313": (build port)
 new:
     ./scripts/content/new-content.sh
 
+lint:
+    biome lint .
+
+format:
+    biome format . --fix
+
 check:
     rumdl check "{{ SOURCE }}"
 
