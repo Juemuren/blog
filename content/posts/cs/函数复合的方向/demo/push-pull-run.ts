@@ -1,7 +1,7 @@
 import { pushforward, pullback } from "./utils.ts";
 
 // number => boolean
-const f = (x: number) => x > 2;
+const f = (x: number) => x > 4;
 
 // (string => number) -> (string => boolean)
 const pushed = pushforward(f)(
@@ -13,9 +13,14 @@ const pulled = pullback(f)(
   x => `value=${x}`
 );
 
-export function run() {
+interface Param {
+  s: string
+  n: number
+}
+
+export function run({ s, n }: Param) {
   return [
-    String(pushed("hello")), // true
-    pulled(5), // "value=true"
+    String(pushed(s)),
+    pulled(n),
   ].join("\n");
 }
