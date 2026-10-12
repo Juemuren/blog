@@ -76,6 +76,10 @@
   margin: calc(var(--content-gap) / 2) 0 0;
 }
 
+.interactive-demo .interactive-demo-output code[data-demo-pending] {
+  padding: var(--content-gap);
+}
+
 .interactive-demo .interactive-demo-title {
   margin: 0 0 var(--content-gap);
   font-size: 1.15rem;

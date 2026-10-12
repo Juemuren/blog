@@ -28,7 +28,7 @@
       </form>
       <details class="interactive-demo-details">
         <summary>{{ i18n "demo_details" }}</summary>
-        <div class="interactive-demo-parameters" tabindex="0" role="region" aria-label="{{ i18n "demo_parameter_details" }}">
+        <div class="interactive-demo-parameters" tabindex="0" role="region" aria-label="{{ i18n "demo_parameter_details" }}" hidden>
           <table>
             <thead>
               <tr>
@@ -53,7 +53,7 @@
         {{- end -}}
       </details>
       <p id="{{ $id }}-output-label" class="interactive-demo-output-label">{{ i18n "demo_output" }}</p>
-      <pre class="interactive-demo-output" tabindex="0" aria-labelledby="{{ $id }}-output-label"><code></code></pre>
+      <pre class="interactive-demo-output" tabindex="0" aria-labelledby="{{ $id }}-output-label"><code data-demo-pending></code></pre>
     </div>
     <p class="interactive-demo-loading" data-demo-loading role="status">{{ i18n "demo_loading" }}</p>
     <template data-demo-input>

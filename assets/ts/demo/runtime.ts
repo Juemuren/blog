@@ -34,6 +34,7 @@ export function createDemo(container: HTMLElement, demo: Demo): DemoView {
     container,
     "[data-demo-parameter]",
   );
+  const parameters = requireElement(container, ".interactive-demo-parameters");
 
   const readers = new Map<string, () => InputValue>();
   for (const [name, field] of Object.entries(demo.inputs)) {
@@ -52,10 +53,11 @@ export function createDemo(container: HTMLElement, demo: Demo): DemoView {
     );
 
     requireElement(form, ".interactive-demo-fields").append(element);
-    requireElement(container, "[data-demo-parameters]").append(parameterRow);
+    requireElement(parameters, "[data-demo-parameters]").append(parameterRow);
     readers.set(name, readValue);
   }
 
+  parameters.hidden = readers.size === 0;
   inputTemplate.remove();
   parameterTemplate.remove();
 
@@ -83,6 +85,7 @@ export function bindRunner(view: DemoView, demo: Demo, messages: RunMessages) {
       output.textContent = messages.runFailed;
       console.error(error);
     }
+    output.removeAttribute("data-demo-pending");
   }
 
   form.addEventListener("submit", (event) => {
