@@ -1,5 +1,6 @@
 /* PaperMod otherwise uses a fixed light foreground for every code block. */
 .md-content pre code {
+  min-height: 40px;
   color: var(--content);
 }
 
