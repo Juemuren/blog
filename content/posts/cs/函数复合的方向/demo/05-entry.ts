@@ -3,7 +3,7 @@ import { run } from "./05-binop.ts";
 import type { DemoEntry } from "@demo/entry";
 
 export default {
-  title: "前推和拉回的结合性",
+  title: "前推和拉回作为二元运算",
   autoOpen: true,
   inputs: {
     x: {

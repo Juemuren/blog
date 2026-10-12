@@ -314,25 +314,7 @@ $$
 (g_*f)_*T=g_*(f_*T)
 $$
 
-代码示例为
-
-```ts
-const T = (x: number, y: number) => x*x + y*y;
-const f = (x: number) => x + 1;
-const g = (x: number) => `value=${x}`;
-
-// 张量前推左结合
-const pushLeft = tensorPushforward(
-  pushforward(g)(f)
-)(T);
-// 张量前推右结合
-const pushRight = tensorPushforward(g)(
-  tensorPushforward(f)(T)
-);
-
-console.log(pushLeft(2, 3)); // value=14
-console.log(pushRight(2, 3)); // value=14
-```
+{{< demo entry="demo/07-entry.ts" code="demo/07-tensor-push-assoc.ts" >}}
 
 ### 张量拉回的结合律
 
@@ -374,25 +356,7 @@ $$
 (k^*h)^*T=k^*(h^*T)
 $$
 
-代码示例为
-
-```ts
-const T = (x: number, y: number) => x*x + y*y;
-const h = (x: string) => Number(x);
-const k = (x: boolean) => x ? "2" : "3";
-
-// 张量拉回左结合
-const pullLeft = tensorPullback(
-  (x: boolean) => h(k(x))
-)(T);
-// 张量拉回右结合
-const pullRight = tensorPullback(k)(
-  tensorPullback(h)(T)
-);
-
-console.log(pullLeft(true, false)); // 13
-console.log(pullRight(true, false)); // 13
-```
+{{< demo entry="demo/08-entry.ts" code="demo/08-tensor-pull-assoc.ts" >}}
 
 ### 张量前推和张量前推的交换律
 

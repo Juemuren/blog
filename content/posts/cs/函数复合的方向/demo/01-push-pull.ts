@@ -20,7 +20,7 @@ interface Param {
 
 export function run({ s, n }: Param) {
   return [
-    `pushed: ${String(pushed(s))}`,
+    `pushed: ${pushed(s)}`,
     `pulled: ${pulled(n)}`,
   ].join("\n");
 }

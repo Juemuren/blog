@@ -3,7 +3,7 @@ import { run } from "./06-tensor.ts";
 import type { DemoEntry } from "@demo/entry";
 
 export default {
-  title: "前推和拉回的结合性",
+  title: "张量前推和张量拉回",
   autoOpen: true,
   inputs: {
     n1: {
