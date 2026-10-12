@@ -1,31 +1,29 @@
 {{- /* Render content before reading flags set by Markdown render hooks. */ -}}
 {{- $noop := .Content -}}
 {{- $isArticle := and .IsPage (not (in (slice "search" "archives") .Layout)) -}}
-{{- $styles := slice -}}
+
 {{- if .Store.Get "hasCode" -}}
-  {{- $styles = $styles | append "css/code/style.css" -}}
+{{- partial "content/style.html" "code" -}}
 {{- end -}}
+
 {{- if .Store.Get "hasAlert" -}}
-  {{- $styles = $styles | append "css/alerts/style.css" -}}
+{{- partial "content/style.html" "alerts" -}}
 {{- end -}}
+
 {{- if .Store.Get "hasTable" -}}
-  {{- $styles = $styles | append "css/table/style.css" -}}
+{{- partial "content/style.html" "table" -}}
 {{- end -}}
+
 {{- if and $isArticle (.GetTerms "series") -}}
-  {{- $styles = $styles | append "css/navigation/series.css" -}}
-{{- end -}}
-{{- range $styles -}}
-  {{- $style := resources.Get . | minify | fingerprint -}}
-  <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+{{- partial "navigation/series.html" . -}}
 {{- end -}}
 
 {{- if $isArticle -}}
-  {{- $style := resources.Get "css/print/style.css" | minify | fingerprint -}}
-  <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}" media="print">
+{{- partial "print/style.html" . -}}
 {{- end -}}
 
 {{- if .HasShortcode "demo" -}}
-  {{- partial "demo/assets.html" . -}}
+{{- partial "demo/assets.html" . -}}
 {{- end -}}
 
 {{- if .Store.Get "hasImage" -}}
