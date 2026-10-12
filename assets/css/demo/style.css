@@ -31,7 +31,7 @@
 .interactive-demo-controls button {
   min-height: 44px;
   padding: 0.5rem calc(var(--content-gap) / 2);
-  border: 1px solid var(--secondary);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   font: inherit;
 }
@@ -77,7 +77,8 @@
 }
 
 .interactive-demo .interactive-demo-output code[data-demo-pending] {
-  padding: var(--content-gap);
+  color: var(--secondary);
+  font-style: italic;
 }
 
 .interactive-demo .interactive-demo-title {

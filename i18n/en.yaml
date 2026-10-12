@@ -28,23 +28,28 @@
 - id: demo_output
   translation: "Output"
 
+- id: demo_pending
+  translation: "Click Run to see the result"
+
+- id: demo_details
+  translation: "View details"
+
 - id: demo_source
   translation: "Source code"
 
 - id: demo_parameter_details
   translation: "Parameter details"
 
+- id: demo_parameter
+  translation: "Parameter"
+
 - id: demo_variable
   translation: "Variable name"
 
 - id: demo_type
-  translation: "Data type"
+  translation: "Type"
 
 - id: demo_constraints
   translation: "Constraints"
 
-- id: demo_details
-  translation: "View details"
 
-- id: demo_parameter
-  translation: "Parameter"
