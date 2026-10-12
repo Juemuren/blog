@@ -1,0 +1,4 @@
+{{- $style := resources.Get "css/demo/style.css" | minify | fingerprint -}}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+{{- $init := resources.Get "ts/demo/init.ts" | js.Build (dict "format" "esm" "targetPath" "js/demo/init.js") -}}
+<script type="module" src="{{ $init.RelPermalink }}"></script>

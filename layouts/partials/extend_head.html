@@ -18,9 +18,14 @@
   {{- $style := resources.Get . | minify | fingerprint -}}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
 {{- end -}}
+
 {{- if $isArticle -}}
   {{- $style := resources.Get "css/print/style.css" | minify | fingerprint -}}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}" media="print">
+{{- end -}}
+
+{{- if .HasShortcode "demo" -}}
+  {{- partial "demo/assets.html" . -}}
 {{- end -}}
 
 {{- if .Store.Get "hasImage" -}}
