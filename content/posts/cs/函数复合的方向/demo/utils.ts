@@ -21,6 +21,22 @@ export function compose<A, B, C>(
   return a => f(g(a));
 }
 
+// 前推二元运算
+export function pushBin<A, B, C>(
+  f: Fn<B, C>,
+  g: Fn<A, B>
+): Fn<A, C> {
+  return pushforward(f)(g);
+}
+
+// 拉回二元运算
+export function pullBin<A, B, C>(
+  f: Fn<A, B>,
+  g: Fn<B, C>
+): Fn<A, C> {
+  return pullback(f)(g);
+}
+
 // 函数加法
 export function add<X>(
   f: Fn<X, number>,

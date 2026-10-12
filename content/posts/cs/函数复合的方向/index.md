@@ -138,29 +138,7 @@ function compose<A, B, C>(
 
 拉回示例为
 
-```ts
-const f = (x: number) => x + 1;
-const g = (x: number) => x * 2;
-const h = (x: number) => `Result: ${x}`;
-
-// 复合映射诱导的拉回
-const comp = pullback(
-  compose(g, f)
-)(h)
-// 拉回左结合
-const lhs = pullback(
-  pullback(f)(g)
-)(h);
-// 拉回右结合
-const rhs = pullback(f)(
-  pullback(g)(h)
-);
-
-for (const x of [0, 1, 2, 3]) {
-  console.assert(lhs(x) === rhs(x));
-  console.assert(lhs(x) === comp(x));
-}
-```
+{{< demo entry="demo/03-entry.ts" code="demo/03-comp-pull.ts" >}}
 
 ### 函数前推和函数拉回的交换律
 
@@ -195,20 +173,7 @@ $$
 
 代码示例为
 
-```ts
-const g = (x: number) => x + 1;
-const h = (x: number) => x * 2;
-const f = (x: number) => `Result: ${x}`;
-
-// 先前推再拉回
-const lhs = pullback(g)(pushforward(f)(h));
-// 先拉回再前推
-const rhs = pushforward(f)(pullback(g)(h));
-
-for (const x of [0, 1, 2, 3]) {
-  console.assert(lhs(x) === rhs(x));
-}
-```
+{{< demo entry="demo/04-entry.ts" code="demo/04-assoc.ts" >}}
 
 ### 作为二元运算的前推和拉回
 
@@ -241,7 +206,7 @@ $$
 
 ```ts
 // 前推二元运算
-function mul<A, B, C>(
+function pushBin<A, B, C>(
   f: Fn<B, C>,
   g: Fn<A, B>
 ): Fn<A, C> {
@@ -249,7 +214,7 @@ function mul<A, B, C>(
 }
 
 // 拉回二元运算
-function star<A, B, C>(
+function pullBin<A, B, C>(
   f: Fn<A, B>,
   g: Fn<B, C>
 ): Fn<A, C> {
@@ -259,27 +224,7 @@ function star<A, B, C>(
 
 示例为
 
-```ts
-const f = (x: number) => x + 1;
-const g = (x: number) => x * 2;
-const h = (x: number) => `Result: ${x}`;
-
-// 前推左结合
-const mulLeft = mul(mul(h, g), f);
-//前推右结合
-const mulRight = mul(h, mul(g, f));
-
-// 拉回左结合
-const starLeft = star(star(f, g), h);
-// 拉回右结合
-const starRight = star(f, star(g, h));
-
-for (const x of [0, 1, 2, 3]) {
-  console.assert(mulLeft(x) === mulRight(x));
-  console.assert(starLeft(x) === starRight(x));
-  console.assert(mulLeft(x) === starLeft(x));
-}
-```
+{{< demo entry="demo/05-entry.ts" code="demo/05-binop.ts" >}}
 
 ## 张量的前推和拉回
 
