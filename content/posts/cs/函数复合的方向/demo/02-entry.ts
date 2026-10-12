@@ -1,9 +1,9 @@
-import { run } from "./02-comp-push.ts";
+import { run } from "./02-push-assoc.ts";
 
 import type { DemoEntry } from "@demo/entry";
 
 export default {
-  title: "复合函数的前推",
+  title: "前推的结合律",
   autoOpen: true,
   inputs: {
     x: {

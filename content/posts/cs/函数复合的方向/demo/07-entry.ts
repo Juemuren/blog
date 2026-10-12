@@ -3,7 +3,7 @@ import { run } from "./07-tensor-push-assoc.ts";
 import type { DemoEntry } from "@demo/entry";
 
 export default {
-  title: "张量前推的结合性",
+  title: "张量前推的结合律",
   autoOpen: true,
   inputs: {
     n1: {

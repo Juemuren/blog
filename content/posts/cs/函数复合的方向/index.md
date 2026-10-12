@@ -131,9 +131,9 @@ function compose<A, B, C>(
 }
 ```
 
-{{< demo entry="demo/02-entry.ts" code="demo/02-comp-push.ts" >}}
+{{< demo entry="demo/02-entry.ts" code="demo/02-push-assoc.ts" >}}
 
-{{< demo entry="demo/03-entry.ts" code="demo/03-comp-pull.ts" >}}
+{{< demo entry="demo/03-entry.ts" code="demo/03-pull-assoc.ts" >}}
 
 ### 函数前推和函数拉回的交换律
 
@@ -166,7 +166,7 @@ $$
 
 即函数先前推再拉回等于先拉回再前推。
 
-{{< demo entry="demo/04-entry.ts" code="demo/04-assoc.ts" >}}
+{{< demo entry="demo/04-entry.ts" code="demo/04-comm.ts" >}}
 
 ### 作为二元运算的前推和拉回
 
@@ -386,25 +386,7 @@ $$
 
 即对张量先前推再拉回等于先拉回再前推。
 
-代码示例为
-
-```ts
-const T = (x: number, y: number) => x*x + y*y;
-const f = (x: number) => x + 1;
-const g = (x: string) => Number(x);
-
-// 先拉回再前推
-const left = tensorPushforward(f)(
-  tensorPullback(g)(T)
-);
-// 先前推再拉回
-const right = tensorPullback(g)(
-  tensorPushforward(f)(T)
-);
-
-console.log(left("he", "llo")); // 14
-console.log(right("he", "llo")); // 14
-```
+{{< demo entry="demo/09-entry.ts" code="demo/09-tensor-comm.ts" >}}
 
 ## 函数加法
 

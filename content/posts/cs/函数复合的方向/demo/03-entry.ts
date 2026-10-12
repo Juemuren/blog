@@ -1,9 +1,9 @@
-import { run } from "./03-comp-pull.ts";
+import { run } from "./03-pull-assoc.ts";
 
 import type { DemoEntry } from "@demo/entry";
 
 export default {
-  title: "复合函数的拉回",
+  title: "拉回的结合律",
   autoOpen: true,
   inputs: {
     x: {

@@ -3,7 +3,7 @@ import { run } from "./08-tensor-pull-assoc.ts";
 import type { DemoEntry } from "@demo/entry";
 
 export default {
-  title: "张量拉回的结合性",
+  title: "张量拉回的结合律",
   autoOpen: true,
   inputs: {
     b1: {
