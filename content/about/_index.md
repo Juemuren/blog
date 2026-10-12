@@ -64,9 +64,7 @@ layout: about
 - VSCode 插件
   - [AutoCorrect](https://marketplace.visualstudio.com/items?itemName=huacnlee.autocorrect)
   - [Better Todo Tree](https://marketplace.visualstudio.com/items?itemName=FanaticPythoner.better-todo-tree)
-  - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
   - [GitDoc](https://marketplace.visualstudio.com/items?itemName=vsls-contrib.gitdoc)
-  - [LTeX+ – grammar/spell checking using LanguageTool](https://marketplace.visualstudio.com/items?itemName=ltex-plus.vscode-ltex-plus)
   - [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
   - [Markdown Preview Enhanced](https://marketplace.visualstudio.com/items?itemName=shd101wyy.markdown-preview-enhanced)
   - [Markdown Word Count](https://marketplace.visualstudio.com/items?itemName=CurlyBrackets.markdown-word-count)

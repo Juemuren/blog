@@ -1,7 +1,0 @@
-errorf
-getenv
-goldmark
-lastmod
-markdownify
-pctx
-plainify

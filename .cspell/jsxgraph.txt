@@ -1,5 +1,0 @@
-BOARDID
-boundingbox
-functiongraph
-fzero
-jsxgraph

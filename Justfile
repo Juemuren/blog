@@ -53,16 +53,12 @@ md-check:
 
 spell-check:
     typos "{{ SOURCE }}"
-    cspell lint "{{ SOURCE }}"
 
 punct-check:
     autocorrect "{{ SOURCE }}" --lint
 
 ocd-check:
     ./scripts/check/check-alerts.sh "{{ SOURCE }}"
-
-sort-dictionary:
-    ./scripts/check/sort-dictionary.sh .cspell
 
 export-standalone file:
     ./scripts/export/export-standalone.sh "{{ file }}" "output/{{ file_stem(file) }}/{{ file_name(file) }}"

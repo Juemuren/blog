@@ -1,9 +1,0 @@
-documentclass
-filldraw
-ifnum
-normalsize
-pgfmathsetmacro
-tikz
-tikzpicture
-usepackage
-yshift

@@ -1,7 +1,0 @@
-eeimg
-fullwidth
-halfwidth
-mathtype
-noresize
-nullglob
-quotepath
