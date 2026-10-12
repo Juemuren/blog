@@ -440,27 +440,7 @@ $$
 h^*(f + g)=h^*f + h^*g
 $$
 
-代码示例为
-
-```ts
-const f = (x: number) => x + 1;
-const g = (x: number) => x * x;
-const h = (x: number) => x * 2;
-
-// 先相加后拉回
-const lhs = pullback(h)(
-  add(f, g)
-);
-
-// 先拉回后相加
-const rhs = add(
-  pullback(h)(f),
-  pullback(h)(g)
-);
-
-console.log(lhs(3)); // 43
-console.log(rhs(3)); // 43
-```
+{{< demo entry="demo/10-entry.ts" code="demo/10-pull-add.ts" >}}
 
 ### 前推不一定保持加法
 
@@ -524,24 +504,7 @@ $$
 
 当 $x=1$ 时二者就不相等。
 
-代码示例为
-
-```ts
-const f = (x: number) => x * x;
-const u = (x: number) => x;
-const v = (x: number) => 1;
-
-const left = pushforward(f)(
-  add(u, v)
-);
-const right = add(
-  pushforward(f)(u),
-  pushforward(f)(v)
-);
-
-console.log(left(1)); // 4
-console.log(right(1)); // 2
-```
+{{< demo entry="demo/11-entry.ts" code="demo/11-push-add.ts" >}}
 
 ## 函数乘法
 
