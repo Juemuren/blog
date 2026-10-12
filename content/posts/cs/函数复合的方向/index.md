@@ -558,27 +558,7 @@ $$
 h^*(f\times g)=h^*f\times h^*g
 $$
 
-代码示例为
-
-```ts
-const f = (x: number) => x + 1;
-const g = (x: number) => x * x;
-const h = (x: number) => x * 2;
-
-// 先相乘后拉回
-const lhs = pullback(h)(
-  mul(f, g)
-);
-
-// 先拉回后相乘
-const rhs = mul(
-  pullback(h)(f),
-  pullback(h)(g)
-);
-
-console.log(lhs(3)); // 252
-console.log(rhs(3)); // 252
-```
+{{< demo entry="demo/12-entry.ts" code="demo/12-pull-mul.ts" >}}
 
 ### 前推不一定保持乘法
 
@@ -642,24 +622,7 @@ $$
 
 当 $x=1$ 时二者就不相等。
 
-代码示例为
-
-```ts
-const f = (x: number) => x + 1;
-const u = (x: number) => x;
-const v = (x: number) => 1;
-
-const left = pushforward(f)(
-  mul(u, v)
-);
-const right = mul(
-  pushforward(f)(u),
-  pushforward(f)(v)
-);
-
-console.log(left(1)); // 2
-console.log(right(1)); // 4
-```
+{{< demo entry="demo/13-entry.ts" code="demo/13-push-mul.ts" >}}
 
 ## 张量加法和张量乘法
 
