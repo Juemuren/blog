@@ -49,6 +49,7 @@ $$
 这里使用 TypeScript 实现对函数的前推和拉回
 
 ```ts
+// 函数
 type Fn<A, B> = (a: A) => B;
 
 // 前推：后复合
@@ -63,8 +64,6 @@ function pullback<A, B>(f: Fn<A, B>) {
     a => g(f(a));
 }
 ```
-
-运行示例为
 
 {{< demo entry="demo/01-entry.ts" code="demo/01-push-pull.ts" >}}
 
@@ -132,11 +131,7 @@ function compose<A, B, C>(
 }
 ```
 
-前推示例为
-
 {{< demo entry="demo/02-entry.ts" code="demo/02-comp-push.ts" >}}
-
-拉回示例为
 
 {{< demo entry="demo/03-entry.ts" code="demo/03-comp-pull.ts" >}}
 
@@ -170,8 +165,6 @@ f_*(g^*h)=g^*(f_*h)
 $$
 
 即函数先前推再拉回等于先拉回再前推。
-
-代码示例为
 
 {{< demo entry="demo/04-entry.ts" code="demo/04-assoc.ts" >}}
 
@@ -222,8 +215,6 @@ function pullBin<A, B, C>(
 }
 ```
 
-示例为
-
 {{< demo entry="demo/05-entry.ts" code="demo/05-binop.ts" >}}
 
 ## 张量的前推和拉回
@@ -261,7 +252,7 @@ $$
 使用 TypeScript 实现一个张量
 
 ```ts
-// 张量：X^n -> Y
+// 张量
 type Tensor<X, Y, Args extends X[]> =
   (...args: Args) => Y;
 
@@ -282,28 +273,7 @@ function tensorPullback<A, B>(g: Fn<A, B>) {
 }
 ```
 
-示例为
-
-```ts
-const T = (x: number, y: number) => x*x + y*y;
-// number^2 => number
-
-// 张量前推
-const pushed = tensorPushforward(
-  (x: number) => `value=${x}`
-)(T);
-// number^2 => string
-
-console.log(pushed(3, 4)) // "value=25"
-
-// 张量拉回
-const pulled = tensorPullback(
-  (x: boolean) => x ? 2 : 3
-)(T);
-// boolean^2 => number
-
-console.log(pulled(false, true)) // 13
-```
+{{< demo entry="demo/06-entry.ts" code="demo/06-tensor.ts" >}}
 
 ### 张量前推的结合律
 
