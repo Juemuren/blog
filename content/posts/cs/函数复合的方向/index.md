@@ -222,7 +222,13 @@ function pullBin<A, B, C>(
 张量是线性代数里的术语，这里我们将其抽象为输入类型相同的多参数函数
 
 $$
-T(x_1, x_2, \cdots, x_n): X \times X \times \cdots \times X \to Y
+T: X \times X \times \cdots \times X \to Y
+$$
+
+或者简记为
+
+$$
+T: X^n \to Y
 $$
 
 函数 $f:Y \to A$ 诱导出一个对张量的前推
@@ -594,7 +600,7 @@ $$
 f(u \times v) = f(u) \times f(v)
 $$
 
-这并不是所有函数都满足的性质。一个简单的反例是
+这要求用于前推的函数本身满足满足这一性质——但显然并非函数都满足。一个简单的反例是
 
 $$
 f(x)=x+1
@@ -611,7 +617,7 @@ $$
 左侧为
 
 $$
-f_*(u\times v)(x)=x+2
+f_*(u\times v)(x)=x+1
 $$
 
 右侧为
@@ -626,4 +632,150 @@ $$
 
 ## 张量加法和张量乘法
 
-<!-- TODO ## 推广到张量上 -->
+对于张量，我们可以定义两种加法和两种乘法。
+
+### 第一种张量加法和张量乘法
+
+第一种加法和乘法类似于函数的加法和乘法，逐点定义为
+
+$$
+(T+S)(x_1, \cdots, x_n) = T(x_1, \cdots, x_n) + S(x_1, \cdots, x_n)
+\qquad
+\forall (x_1, \cdots, x_n)\in X^n
+$$
+
+$$
+(T\times S)(x_1, \cdots, x_n) = T(x_1, \cdots, x_n)\times S(x_1, \cdots, x_n)
+\qquad
+\forall (x_1, \cdots, x_n) \in X^n
+$$
+
+这要求两个张量的类型相同，并且值位于一个具有加法结构和乘法结构的集合中，比如实数
+
+$$
+T,S: X^n \to \mathbb{R}
+$$
+
+因此，两个 $n$ 阶张量相加或相乘，得到的是一个 $n$ 阶张量。并且，这种张量加法和张量乘法与函数加法和函数乘法没有什么区别。
+
+对于
+
+$$
+f: A \to X
+$$
+
+拉回保持张量加法
+
+$$
+\begin{align*}
+  f^*(T+S)(a_1, \cdots, a_n)
+  &= (T+S)(f(a_1), \cdots, f(a_n))\\
+  &= T(f(a_1), \cdots, f(a_n)) + S(f(a_1), \cdots, f(a_n))\\
+  &=f^*T(a_1, \cdots, a_n)+f^*S(a_1, \cdots, a_n)
+\end{align*}
+$$
+
+拉回保持张量乘法
+
+$$
+\begin{align*}
+  f^*(T\times S)(a_1, \cdots, a_n)
+  &= (T\times S)(f(a_1), \cdots, f(a_n))\\
+  &= T(f(a_1), \cdots, f(a_n)) \times S(f(a_1), \cdots, f(a_n))\\
+  &=f^*T(a_1, \cdots, a_n) \times f^*S(a_1, \cdots, a_n)
+\end{align*}
+$$
+
+对于
+
+$$
+g: \mathbb{R} \to B
+$$
+
+前推不一定保持张量加法
+
+$$
+\begin{align*}
+  (g_*(T+S))(x_1, \cdots, x_n)
+  &=g(T(x_1, \cdots, x_n)+S(x_1, \cdots, x_n)) \\
+  (g_*T + g_*S)(x_1, \cdots, x_n)
+  &=g(T(x_1, \cdots, x_n)) + g(S(x_1, \cdots, x_n))
+\end{align*}
+$$
+
+即 $g(T+S) = g(T) + g(S)$ 不是所有的 $g$ 都满足。
+
+前推不一定保持张量乘法
+
+$$
+\begin{align*}
+  (g_*(T\times S))(x_1, \cdots, x_n)
+  &=g(T(x_1, \cdots, x_n) \times S(x_1, \cdots, x_n)) \\
+  (g_*T \times g_*S)(x_1, \cdots, x_n)
+  &=g(T(x_1, \cdots, x_n)) \times g(S(x_1, \cdots, x_n))
+\end{align*}
+$$
+
+即 $g(T\times S) = g(T) \times g(S)$ 不是所有的 $g$ 都满足。
+
+### 第二种张量加法和张量乘法
+
+第二种张量加法和张量乘法允许两个张量的类型不同
+
+$$
+T: X^n \to \mathbb{R}
+\qquad
+S: Y^m \to \mathbb{R}
+$$
+
+第二种加法称为张量和，对 $\forall (x_1, \cdots, x_n)\in X^n, (y_1, \cdots, y_n)\in Y^m$ 逐点定义为
+
+$$
+(T\oplus S)(x_1, \cdots, x_n, y_1, \cdots, y_m)
+= T(x_1, \cdots, x_n) + S(y_1, \cdots, y_m)
+$$
+
+第二种乘法称为张量积，对 $\forall (x_1, \cdots, x_n)\in X^n, (y_1, \cdots, y_n)\in Y^m$ 逐点定义为
+
+$$
+(T\otimes S)(x_1, \cdots, x_n, y_1, \cdots, y_m)
+= T(x_1, \cdots, x_n) \times S(y_1, \cdots, y_m)
+$$
+
+因此，一个 $n$ 阶张量和一个 $m$ 阶张量进行张量和或张量积，得到的是一个 $n+m$ 阶张量。
+
+TypeScript 实现为
+
+```ts
+// 张量和
+export function tensorPlus<
+  X,
+  Y,
+  A extends X[],
+  B extends Y[]
+>(
+  T: Tensor<X, number, A>,
+  S: Tensor<Y, number, B>,
+): Tensor<X | Y, number, [...A, ...B]> {
+  return (...args) =>
+    T(...args.slice(0, T.length) as A) +
+    S(...args.slice(T.length) as B);
+}
+
+// 张量积
+export function tensorTimes<
+  X,
+  Y,
+  A extends X[],
+  B extends Y[]
+>(
+  T: Tensor<X, number, A>,
+  S: Tensor<Y, number, B>,
+): Tensor<X | Y, number, [...A, ...B]> {
+  return (...args) =>
+    T(...args.slice(0, T.length) as A) *
+    S(...args.slice(T.length) as B);
+}
+```
+
+<!-- TODO ## 张量和与张量积的运行示ii例 -->

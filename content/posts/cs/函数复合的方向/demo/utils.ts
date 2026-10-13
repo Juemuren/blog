@@ -54,21 +54,51 @@ export function mul<X>(
 }
 
 // 张量
-export type Tensor<X, Y, Args extends X[]> =
+export type Tensor<X, Y, Args extends X[] = X[]> =
   (...args: Args) => Y;
 
 // 张量前推：作用于输出
-export function tensorPushforward<A, B>(f: Fn<A, B>) {
-  return <X, Args extends X[]>(
-    tensor: Tensor<X, A, Args>
-  ): Tensor<X, B, Args> =>
+export function tensorPushforward<Y, A>(f: Fn<Y, A>) {
+  return <X>(
+    tensor: Tensor<X, Y>
+  ): Tensor<X, A> =>
     (...xs) => f(tensor(...xs));
 }
 
 // 张量拉回：作用于每个输入
-export function tensorPullback<A, B>(g: Fn<A, B>) {
-  return <Y, Args extends B[]>(
-    tensor: Tensor<B, Y, Args>
-  ): Tensor<A, Y, { [K in keyof Args]: A }> =>
-    (...xs) => tensor(...xs.map(g) as Args);
+export function tensorPullback<B, X>(g: Fn<B, X>) {
+  return <Y, Args extends X[]>(
+    tensor: Tensor<X, Y, Args>
+  ): Tensor<B, Y, { [K in keyof Args]: B }> =>
+    (...bs) => tensor(...bs.map(g) as Args);
+}
+
+// 张量和
+export function tensorPlus<
+  X,
+  Y,
+  A extends X[],
+  B extends Y[]
+>(
+  T: Tensor<X, number, A>,
+  S: Tensor<Y, number, B>,
+): Tensor<X | Y, number, [...A, ...B]> {
+  return (...args) =>
+    T(...args.slice(0, T.length) as A) +
+    S(...args.slice(T.length) as B);
+}
+
+// 张量积
+export function tensorTimes<
+  X,
+  Y,
+  A extends X[],
+  B extends Y[]
+>(
+  T: Tensor<X, number, A>,
+  S: Tensor<Y, number, B>,
+): Tensor<X | Y, number, [...A, ...B]> {
+  return (...args) =>
+    T(...args.slice(0, T.length) as A) *
+    S(...args.slice(T.length) as B);
 }
