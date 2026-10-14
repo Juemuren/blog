@@ -48,7 +48,6 @@ declare module "mdast" {
 declare module "micromark-util-types" {
   interface TokenTypeMap {
     textInlineMath: "textInlineMath";
-    textInlineMathIgnored: "textInlineMathIgnored";
     textMath: "textMath";
     textMathData: "textMathData";
     textMathClose: "textMathClose";
@@ -73,37 +72,25 @@ const isLineEnd = (code: number | null): boolean =>
   code === codes.eof || code === codes.carriageReturnLineFeed ||
   code === codes.lineFeed || code === codes.carriageReturn;
 
-// This text construct emits textInlineMath for \( and textMath for \[.
-// Code spans and existing dollar math consume their contents first.
-const textDelimitedMath: Construct = {
-  name: "textDelimitedMath",
+// This text construct recognizes \(...\) inline.
+// Text parsing begins after inlineCode and inlineMath have been consume.
+const textInlineMath: Construct = {
+  name: "textInlineMath",
   tokenize(effects, ok, nok) {
-    let token: ReturnType<typeof effects.enter>;
-    let close: number;
-    let invalid = false;
     return start;
 
     function start(code: number | null) {
-      token = effects.enter("textInlineMath");
+      effects.enter("textInlineMath");
       effects.consume(code);
-      return openingMark;
+      return openingParenthesis;
     }
-    function openingMark(code: number | null) {
-      if (code !== codes.leftParenthesis && code !== codes.leftSquareBracket) {
-        return nok(code);
-      }
-      close = code === codes.leftParenthesis
-        ? codes.rightParenthesis
-        : codes.rightSquareBracket;
-      if (code === codes.leftSquareBracket) token.type = "textMath";
+    function openingParenthesis(code: number | null) {
+      if (code !== codes.leftParenthesis) return nok(code);
       effects.consume(code);
       return body;
     }
     function body(code: number | null): State | undefined {
-      if (
-        code === codes.eof ||
-        (isLineEnd(code) && close !== codes.rightParenthesis)
-      ) return nok(code);
+      if (code === codes.eof) return nok(code);
       if (isLineEnd(code)) {
         effects.enter("lineEnding");
         effects.consume(code);
@@ -118,19 +105,10 @@ const textDelimitedMath: Construct = {
       return body;
     }
     function afterSlash(code: number | null): State | undefined {
-      if (
-        code === codes.eof ||
-        (isLineEnd(code) && close !== codes.rightParenthesis)
-      ) return nok(code);
-      if (code === codes.leftParenthesis || code === codes.leftSquareBracket) {
-        invalid = true;
-      }
-      if (
-        code === codes.rightParenthesis || code === codes.rightSquareBracket
-      ) {
+      if (code === codes.eof) return nok(code);
+      if (code === codes.rightParenthesis) {
         effects.consume(code);
-        if (invalid || code !== close) token.type = "textInlineMathIgnored";
-        effects.exit(token.type);
+        effects.exit("textInlineMath");
         return ok;
       }
       if (code === codes.backslash) {
@@ -142,6 +120,7 @@ const textDelimitedMath: Construct = {
   },
 };
 
+// This flow construct recognizes \[...\] block.
 // Flow parsing begins after blockquote and list prefixes have been removed.
 const textMath: Construct = {
   name: "textMath",
@@ -236,16 +215,13 @@ const textMath: Construct = {
 };
 
 const micromarkExtension: MicromarkExtension = {
-  text: { [codes.backslash]: textDelimitedMath },
+  text: { [codes.backslash]: textInlineMath },
   flow: { [codes.backslash]: textMath },
 };
 const fromMarkdownExtension: FromMarkdownExtension = {
   enter: {
     textInlineMath(token) {
       this.enter({ type: "textInlineMath", value: "" }, token);
-    },
-    textInlineMathIgnored(token) {
-      this.enter({ type: "text", value: "" }, token);
     },
     textMath(token) {
       this.enter({ type: "textMath", value: "" }, token);
@@ -262,12 +238,6 @@ const fromMarkdownExtension: FromMarkdownExtension = {
         token.end.offset === undefined
           ? undefined
           : token.end.offset - delimiterLength,
-      );
-      this.exit(token);
-    },
-    textInlineMathIgnored(token) {
-      (this.stack.at(-1) as { value: string }).value = this.sliceSerialize(
-        token,
       );
       this.exit(token);
     },
