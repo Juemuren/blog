@@ -3,10 +3,11 @@
   "tasks": [
     {
       "label": "Convert Math Delimiters in Markdown",
-      "type": "shell",
-      "command": "python",
+      "type": "process",
+      "command": "deno",
       "args": [
-        "scripts/content/convert-math-delimiters.py",
+        "task",
+        "convert-math-delimiters",
         "${relativeFile}"
       ],
       "problemMatcher": [],
