@@ -69,8 +69,14 @@ function setDelimiterRanges(
 }
 
 const isLineEnd = (code: number | null): boolean =>
-  code === codes.eof || code === codes.carriageReturnLineFeed ||
-  code === codes.lineFeed || code === codes.carriageReturn;
+  code === codes.eof ||
+  code === codes.carriageReturnLineFeed ||
+  code === codes.lineFeed ||
+  code === codes.carriageReturn;
+
+const isSpaceOrTab = (code: number | null): boolean =>
+  code === codes.space ||
+  code === codes.horizontalTab;
 
 // This text construct recognizes \(...\) inline.
 // Text parsing begins after inlineCode and inlineMath have been consume.
@@ -140,7 +146,7 @@ const textMath: Construct = {
       return afterOpen;
     }
     function afterOpen(code: number | null) {
-      if (code === codes.space || code === codes.horizontalTab) {
+      if (isSpaceOrTab(code)) {
         effects.consume(code);
         return afterOpen;
       }
@@ -160,6 +166,7 @@ const textMath: Construct = {
     }
     function lineStart(code: number | null): State | undefined {
       if (code === codes.backslash) {
+        // A failed close attempt returns to content at the same position.
         return effects.attempt(
           { tokenize: closingLine, partial: true },
           done,
@@ -181,6 +188,7 @@ const textMath: Construct = {
       effects.consume(code);
       return data;
     }
+    // A closing delimiter must be alone on its line, apart from trailing spaces.
     function closingLine(
       closeEffects: typeof effects,
       closeOk: typeof ok,
@@ -195,12 +203,12 @@ const textMath: Construct = {
       function bracket(code: number | null) {
         if (code !== codes.rightSquareBracket) return closeNok(code);
         closeEffects.consume(code);
-        return end;
+        return trailingSpace;
       }
-      function end(code: number | null) {
-        if (code === codes.space || code === codes.horizontalTab) {
+      function trailingSpace(code: number | null) {
+        if (isSpaceOrTab(code)) {
           closeEffects.consume(code);
-          return end;
+          return trailingSpace;
         }
         if (!isLineEnd(code)) return closeNok(code);
         closeEffects.exit("textMathClose");
