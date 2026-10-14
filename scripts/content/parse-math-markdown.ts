@@ -18,13 +18,13 @@ type PositionedMath = {
 };
 export type TextInlineMathNode = PositionedMath & {
   type: "textInlineMath";
-  delimiter: "(" | "[";
 };
 export type TextMathNode = PositionedMath & { type: "textMath" };
 
 declare module "mdast" {
   interface PhrasingContentMap {
     textInlineMath: TextInlineMathNode;
+    textMath: TextMathNode;
   }
   interface BlockContentMap {
     textMath: TextMathNode;
@@ -48,10 +48,10 @@ declare module "micromark-util-types" {
 const isLineEnd = (code: number | null): boolean =>
   code === null || code === -3 || code === -4 || code === -5;
 
-// A text construct runs inside ordinary phrasing content. Code spans and
-// existing dollar math consume their contents before this construct sees them.
-const textInlineMath: Construct = {
-  name: "textInlineMath",
+// This text construct emits textInlineMath for \( and textMath for \[.
+// Code spans and existing dollar math consume their contents first.
+const textDelimitedMath: Construct = {
+  name: "textDelimitedMath",
   tokenize(effects, ok, nok) {
     let token: ReturnType<typeof effects.enter>;
     let close: number;
@@ -66,6 +66,7 @@ const textInlineMath: Construct = {
     function openingMark(code: number | null) {
       if (code !== 40 && code !== 91) return nok(code);
       close = code === 40 ? 41 : 93;
+      if (code === 91) token.type = "textMath";
       effects.consume(code);
       return body;
     }
@@ -90,7 +91,7 @@ const textInlineMath: Construct = {
       if (code === 41 || code === 93) {
         effects.consume(code);
         if (invalid || code !== close) token.type = "textInlineMathIgnored";
-        effects.exit("textInlineMath");
+        effects.exit(token.type);
         return ok;
       }
       if (code === 92) {
@@ -196,13 +197,13 @@ const textMath: Construct = {
 };
 
 const micromarkExtension: MicromarkExtension = {
-  text: { 92: textInlineMath },
+  text: { 92: textDelimitedMath },
   flow: { 92: textMath },
 };
 const fromMarkdownExtension: FromMarkdownExtension = {
   enter: {
     textInlineMath(token) {
-      this.enter({ type: "textInlineMath", value: "", delimiter: "(" }, token);
+      this.enter({ type: "textInlineMath", value: "" }, token);
     },
     textInlineMathIgnored(token) {
       this.enter({ type: "text", value: "" }, token);
@@ -216,7 +217,6 @@ const fromMarkdownExtension: FromMarkdownExtension = {
       const node = this.stack.at(-1) as TextInlineMathNode;
       const raw = this.sliceSerialize(token);
       node.value = raw.slice(2, -2);
-      node.delimiter = raw[1] as "(" | "[";
       this.exit(token);
     },
     textInlineMathIgnored(token) {

@@ -11,9 +11,7 @@ export function convertMathDelimiters(source: string): string {
     const start = node.position?.start.offset;
     const end = node.position?.end.offset;
     if (start === undefined || end === undefined) return;
-    const delimiter = node.type === "textMath" || node.delimiter === "["
-      ? "$$"
-      : "$";
+    const delimiter = node.type === "textMath" ? "$$" : "$";
     edits.push({ start, end: start + 2, text: delimiter });
     const closeStart = node.type === "textMath"
       ? source.lastIndexOf(String.raw`\]`, end)
