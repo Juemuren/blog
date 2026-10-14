@@ -15,5 +15,8 @@
     "hugo.yaml": ".hugo_build.lock",
     ".gitignore": ".git*"
   },
+  "deno.enable": true,
+  "deno.enablePaths": ["./scripts/content"],
+  "deno.config": "./deno.json",
   "Lua.diagnostics.globals": ["PANDOC_STATE", "pandoc"]
 }

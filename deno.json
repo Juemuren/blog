@@ -1,0 +1,13 @@
+{
+  "nodeModulesDir": "auto",
+  "imports": {
+    "remark-frontmatter": "npm:remark-frontmatter@5.0.0",
+    "remark-math": "npm:remark-math@6.0.0",
+    "remark-parse": "npm:remark-parse@11.0.0",
+    "unified": "npm:unified@11.0.5",
+    "unist-util-visit": "npm:unist-util-visit@5.1.0"
+  },
+  "tasks": {
+    "convert-math-delimiters": "deno run --allow-read --allow-write scripts/content/convert-math-delimiters.ts"
+  }
+}
