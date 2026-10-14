@@ -110,6 +110,7 @@ params:
   showWordCount: true
   showReadingTime: true
   hideFooter: false
+  hideAuthor: true
 
   editPost:
     URL: "https://github.com/Juemuren/blog/tree/main/content"
