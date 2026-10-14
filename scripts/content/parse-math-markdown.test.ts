@@ -20,20 +20,28 @@ Deno.test("parses inline math as one node inside emphasis", () => {
   const source = String.raw`
 *before \(x * y\) after*
 `;
-  const math = [] as Array<
-    { value: string; start?: number; end?: number }
-  >;
+  const math = [] as Array<{
+    value: string;
+    start?: number;
+    end?: number;
+    delimiters?: TextInlineMathNode["delimiters"];
+  }>;
   visit(parseMathMarkdown(source), "textInlineMath", (node) => {
     math.push({
       value: node.value,
       start: node.position?.start.offset,
       end: node.position?.end.offset,
+      delimiters: node.delimiters,
     });
   });
   assert.deepEqual(math, [{
     value: "x * y",
     start: 9,
     end: 18,
+    delimiters: {
+      opening: { start: 9, end: 11 },
+      closing: { start: 16, end: 18 },
+    },
   }]);
 });
 
@@ -54,6 +62,10 @@ Deno.test("parses display math after blockquote prefixes", () => {
 > E = mc^2
 > \]`,
   );
+  assert.deepEqual(math.delimiters, {
+    opening: { start: 3, end: 5 },
+    closing: { start: 19, end: 21 },
+  });
 });
 
 Deno.test("does not parse math delimiters in frontmatter", () => {
@@ -139,14 +151,14 @@ b\) after
 });
 
 Deno.test("keeps display delimiter line spaces outside the math value", () => {
-  const source = String.raw`
-\[
-x + y
-\]
-`;
+  const source = "\\[  \nx + y\n\\]   \n";
   const nodes = mathNodes(source);
   assert.equal(nodes.length, 1);
   assert.equal(nodes[0].type, "textMath");
   assert.equal(nodes[0].value, "x + y");
+  assert.deepEqual(nodes[0].delimiters, {
+    opening: { start: 0, end: 2 },
+    closing: { start: 11, end: 13 },
+  });
   assert.equal(source.slice(nodes[0].position?.end.offset), "\n");
 });

@@ -1,28 +1,25 @@
 import { visit } from "unist-util-visit";
 import { parseMathMarkdown } from "./parse-math-markdown.ts";
 
-type Edit = { start: number; end: number; text: string };
+type DelimiterEdit = { start: number; end: number; replacement: string };
 
 export function convertMathDelimiters(source: string): string {
-  const edits: Edit[] = [];
+  const edits: DelimiterEdit[] = [];
   visit(parseMathMarkdown(source), (node) => {
     if (node.type !== "textInlineMath" && node.type !== "textMath") return;
 
-    const start = node.position?.start.offset;
-    const end = node.position?.end.offset;
-    if (start === undefined || end === undefined) return;
-    const delimiter = node.type === "textMath" ? "$$" : "$";
-    edits.push({ start, end: start + 2, text: delimiter });
-    const closeStart = node.type === "textMath"
-      ? source.lastIndexOf(String.raw`\]`, end)
-      : end - 2;
-    edits.push({ start: closeStart, end: closeStart + 2, text: delimiter });
+    if (!node.delimiters) return;
+    const replacement = node.type === "textMath" ? "$$" : "$";
+    edits.push(
+      { ...node.delimiters.opening, replacement },
+      { ...node.delimiters.closing, replacement },
+    );
   });
 
   let output = "";
   let cursor = 0;
   for (const edit of edits.sort((a, b) => a.start - b.start)) {
-    output += source.slice(cursor, edit.start) + edit.text;
+    output += source.slice(cursor, edit.start) + edit.replacement;
     cursor = edit.end;
   }
   return output + source.slice(cursor);

@@ -9,13 +9,34 @@ import remarkMath from "remark-math";
 import remarkParse from "remark-parse";
 import { unified } from "unified";
 
+type DelimiterRange = { start: number; end: number };
+
 type PositionedMath = {
   value: string;
+  delimiters?: {
+    opening: DelimiterRange;
+    closing: DelimiterRange;
+  };
   position?: {
     start: { line: number; column: number; offset?: number };
     end: { line: number; column: number; offset?: number };
   };
 };
+
+const delimiterLength = 2;
+
+function setDelimiterRanges(
+  node: PositionedMath,
+  openingStart: number | undefined,
+  closingStart: number | undefined,
+): void {
+  if (openingStart === undefined || closingStart === undefined) return;
+  node.delimiters = {
+    opening: { start: openingStart, end: openingStart + delimiterLength },
+    closing: { start: closingStart, end: closingStart + delimiterLength },
+  };
+}
+
 export type TextInlineMathNode = PositionedMath & {
   type: "textInlineMath";
 };
@@ -216,7 +237,14 @@ const fromMarkdownExtension: FromMarkdownExtension = {
     textInlineMath(token) {
       const node = this.stack.at(-1) as TextInlineMathNode;
       const raw = this.sliceSerialize(token);
-      node.value = raw.slice(2, -2);
+      node.value = raw.slice(delimiterLength, -delimiterLength);
+      setDelimiterRanges(
+        node,
+        token.start.offset,
+        token.end.offset === undefined
+          ? undefined
+          : token.end.offset - delimiterLength,
+      );
       this.exit(token);
     },
     textInlineMathIgnored(token) {
@@ -228,10 +256,15 @@ const fromMarkdownExtension: FromMarkdownExtension = {
     textMath(token) {
       const node = this.stack.at(-1) as TextMathNode;
       const raw = this.sliceSerialize(token);
-      node.value = raw.slice(2, raw.lastIndexOf(String.raw`\]`))
+      const closingStartInRaw = raw.lastIndexOf(String.raw`\]`);
+      node.value = raw.slice(delimiterLength, closingStartInRaw)
         .replace(/^[ \t]*(?:\r\n|\r|\n)/, "")
         .replace(/(?:\r\n|\r|\n)$/, "");
       this.exit(token);
+    },
+    textMathClose(token) {
+      const node = this.stack.at(-1) as TextMathNode;
+      setDelimiterRanges(node, node.position?.start.offset, token.start.offset);
     },
   },
 };

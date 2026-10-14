@@ -7,7 +7,7 @@ Deno.test("replaces inline math delimiters without changing nearby text", () => 
 `;
   const expected = String.raw`
 中文 $x_i + y$ 文本
-`
+`;
   assert.equal(
     convertMathDelimiters(source),
     expected,
@@ -23,7 +23,7 @@ x + y
 \]
 
 文本
-`
+`;
   const expected = String.raw`
 中文
 
@@ -32,11 +32,25 @@ x + y
 $$
 
 文本
-`
+`;
   assert.equal(
     convertMathDelimiters(source),
-    expected
+    expected,
   );
+});
+
+Deno.test("replaces display delimiters inside a blockquote", () => {
+  const source = String.raw`
+> \[
+> E = mc^2
+> \]
+`;
+  const expected = `
+> $$
+> E = mc^2
+> $$
+`;
+  assert.equal(convertMathDelimiters(source), expected);
 });
 
 Deno.test("does not change already converted math", () => {
@@ -49,6 +63,6 @@ $$
   `;
   assert.equal(
     convertMathDelimiters(source),
-    source
+    source,
   );
 });
