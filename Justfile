@@ -39,6 +39,9 @@ preview port="1313": (build port)
 new:
     ./scripts/content/new-content.sh
 
+clean:
+    ./scripts/maintenance/clean-tmp.sh
+
 code-check: type-check web-check
 docs-check: md-check spell-check punct-check
 
