@@ -1,6 +1,9 @@
 {
   "nodeModulesDir": "auto",
   "imports": {
+    "mdast": "npm:@types/mdast@4.0.4",
+    "mdast-util-from-markdown": "npm:mdast-util-from-markdown@2.1.0",
+    "micromark-util-types": "npm:micromark-util-types@2.0.3",
     "remark-frontmatter": "npm:remark-frontmatter@5.0.0",
     "remark-math": "npm:remark-math@6.0.0",
     "remark-parse": "npm:remark-parse@11.0.0",
