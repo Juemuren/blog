@@ -1,4 +1,5 @@
 import type { Extension as FromMarkdownExtension } from "mdast-util-from-markdown";
+import { codes } from "micromark-util-symbol";
 import type {
   Construct,
   Extension as MicromarkExtension,
@@ -23,24 +24,12 @@ type PositionedMath = {
   };
 };
 
-const delimiterLength = 2;
-
-function setDelimiterRanges(
-  node: PositionedMath,
-  openingStart: number | undefined,
-  closingStart: number | undefined,
-): void {
-  if (openingStart === undefined || closingStart === undefined) return;
-  node.delimiters = {
-    opening: { start: openingStart, end: openingStart + delimiterLength },
-    closing: { start: closingStart, end: closingStart + delimiterLength },
-  };
-}
-
 export type TextInlineMathNode = PositionedMath & {
   type: "textInlineMath";
 };
-export type TextMathNode = PositionedMath & { type: "textMath" };
+export type TextMathNode = PositionedMath & {
+  type: "textMath";
+};
 
 declare module "mdast" {
   interface PhrasingContentMap {
@@ -66,8 +55,23 @@ declare module "micromark-util-types" {
   }
 }
 
+const delimiterLength = 2;
+
+function setDelimiterRanges(
+  node: PositionedMath,
+  openingStart: number | undefined,
+  closingStart: number | undefined,
+): void {
+  if (openingStart === undefined || closingStart === undefined) return;
+  node.delimiters = {
+    opening: { start: openingStart, end: openingStart + delimiterLength },
+    closing: { start: closingStart, end: closingStart + delimiterLength },
+  };
+}
+
 const isLineEnd = (code: number | null): boolean =>
-  code === null || code === -3 || code === -4 || code === -5;
+  code === codes.eof || code === codes.carriageReturnLineFeed ||
+  code === codes.lineFeed || code === codes.carriageReturn;
 
 // This text construct emits textInlineMath for \( and textMath for \[.
 // Code spans and existing dollar math consume their contents first.
@@ -85,21 +89,28 @@ const textDelimitedMath: Construct = {
       return openingMark;
     }
     function openingMark(code: number | null) {
-      if (code !== 40 && code !== 91) return nok(code);
-      close = code === 40 ? 41 : 93;
-      if (code === 91) token.type = "textMath";
+      if (code !== codes.leftParenthesis && code !== codes.leftSquareBracket) {
+        return nok(code);
+      }
+      close = code === codes.leftParenthesis
+        ? codes.rightParenthesis
+        : codes.rightSquareBracket;
+      if (code === codes.leftSquareBracket) token.type = "textMath";
       effects.consume(code);
       return body;
     }
     function body(code: number | null): State | undefined {
-      if (code === null || (isLineEnd(code) && close !== 41)) return nok(code);
+      if (
+        code === codes.eof ||
+        (isLineEnd(code) && close !== codes.rightParenthesis)
+      ) return nok(code);
       if (isLineEnd(code)) {
         effects.enter("lineEnding");
         effects.consume(code);
         effects.exit("lineEnding");
         return body;
       }
-      if (code === 92) {
+      if (code === codes.backslash) {
         effects.consume(code);
         return afterSlash;
       }
@@ -107,15 +118,22 @@ const textDelimitedMath: Construct = {
       return body;
     }
     function afterSlash(code: number | null): State | undefined {
-      if (code === null || (isLineEnd(code) && close !== 41)) return nok(code);
-      if (code === 40 || code === 91) invalid = true;
-      if (code === 41 || code === 93) {
+      if (
+        code === codes.eof ||
+        (isLineEnd(code) && close !== codes.rightParenthesis)
+      ) return nok(code);
+      if (code === codes.leftParenthesis || code === codes.leftSquareBracket) {
+        invalid = true;
+      }
+      if (
+        code === codes.rightParenthesis || code === codes.rightSquareBracket
+      ) {
         effects.consume(code);
         if (invalid || code !== close) token.type = "textInlineMathIgnored";
         effects.exit(token.type);
         return ok;
       }
-      if (code === 92) {
+      if (code === codes.backslash) {
         effects.consume(code);
         return body;
       }
@@ -138,12 +156,12 @@ const textMath: Construct = {
       return openingBracket;
     }
     function openingBracket(code: number | null) {
-      if (code !== 91) return nok(code);
+      if (code !== codes.leftSquareBracket) return nok(code);
       effects.consume(code);
       return afterOpen;
     }
     function afterOpen(code: number | null) {
-      if (code === 32 || code === -2) {
+      if (code === codes.space || code === codes.horizontalTab) {
         effects.consume(code);
         return afterOpen;
       }
@@ -155,14 +173,14 @@ const textMath: Construct = {
       return lineEnd(code);
     }
     function lineEnd(code: number | null): State | undefined {
-      if (code === null) return nok(code);
+      if (code === codes.eof) return nok(code);
       effects.enter("lineEnding");
       effects.consume(code);
       effects.exit("lineEnding");
       return lineStart;
     }
     function lineStart(code: number | null): State | undefined {
-      if (code === 92) {
+      if (code === codes.backslash) {
         return effects.attempt(
           { tokenize: closingLine, partial: true },
           done,
@@ -196,12 +214,12 @@ const textMath: Construct = {
         return bracket;
       }
       function bracket(code: number | null) {
-        if (code !== 93) return closeNok(code);
+        if (code !== codes.rightSquareBracket) return closeNok(code);
         closeEffects.consume(code);
         return end;
       }
       function end(code: number | null) {
-        if (code === 32 || code === -2) {
+        if (code === codes.space || code === codes.horizontalTab) {
           closeEffects.consume(code);
           return end;
         }
@@ -218,8 +236,8 @@ const textMath: Construct = {
 };
 
 const micromarkExtension: MicromarkExtension = {
-  text: { 92: textDelimitedMath },
-  flow: { 92: textMath },
+  text: { [codes.backslash]: textDelimitedMath },
+  flow: { [codes.backslash]: textMath },
 };
 const fromMarkdownExtension: FromMarkdownExtension = {
   enter: {
