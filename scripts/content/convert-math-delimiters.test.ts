@@ -53,3 +53,19 @@ Deno.test("skips unmatched, nested, and escaped delimiters", () => {
     source.replace(String.raw`\(valid\)`, "$valid$"),
   );
 });
+
+Deno.test("converts only odd-length runs of backslashes", () => {
+  const source = [
+    String.raw`\(one\)`,
+    String.raw`\\(two\\)`,
+    String.raw`\\\(three\\\)`,
+    String.raw`\\\\(four\\\\)`,
+  ].join(" ");
+  const expected = [
+    "$one$",
+    String.raw`\\(two\\)`,
+    String.raw`\\$three\\$`,
+    String.raw`\\\\(four\\\\)`,
+  ].join(" ");
+  assert.equal(convertMathDelimiters(source), expected);
+});

@@ -8,9 +8,10 @@ type Range = { start: number; end: number };
 type Edit = Range & { text: string };
 type Opening = { start: number; close: ")" | "]"; valid: boolean };
 
-const markdown = unified().use(remarkParse).use(remarkFrontmatter).use(
-  remarkMath,
-);
+const markdown = unified()
+  .use(remarkParse)
+  .use(remarkFrontmatter)
+  .use(remarkMath);
 const protectedTypes = new Set([
   "code",
   "inlineCode",
@@ -43,27 +44,32 @@ function protectedRanges(source: string): Range[] {
 
 function scan(source: string, range: Range, edits: Edit[]): void {
   let opening: Opening | undefined;
+  let backslashes = 0;
 
-  for (let i = range.start; i + 1 < range.end; i++) {
-    if (source[i] !== "\\") continue;
-
-    let preceding = 0;
-    while (
-      i - preceding - 1 >= range.start && source[i - preceding - 1] === "\\"
-    ) {
-      preceding++;
+  for (let i = range.start; i < range.end; i++) {
+    if (source[i] === "\\") {
+      backslashes++;
+      continue;
     }
-    if (preceding % 2 !== 0) continue;
+    // Only an odd run leaves a backslash to form a delimiter.
+    const isDelimiter = backslashes % 2 === 1;
+    backslashes = 0;
+    if (!isDelimiter) continue;
 
-    const mark = source[i + 1];
+    const delimiterStart = i - 1;
+    const mark = source[i];
     if (mark === "(" || mark === "[") {
       // Nested openings are ambiguous, so leave both pairs unchanged.
-      opening = { start: i, close: mark === "(" ? ")" : "]", valid: !opening };
+      opening = {
+        start: delimiterStart,
+        close: mark === "(" ? ")" : "]",
+        valid: !opening,
+      };
     } else if (mark === ")" || mark === "]") {
       if (opening?.close === mark && opening.valid) {
         const text = mark === ")" ? "$" : "$$";
         edits.push({ start: opening.start, end: opening.start + 2, text });
-        edits.push({ start: i, end: i + 2, text });
+        edits.push({ start: delimiterStart, end: i + 1, text });
       }
       opening = undefined;
     }
