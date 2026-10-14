@@ -2,7 +2,7 @@
   translation: "Updated on {{ . }}"
 
 - id: archive_summary
-  translation: "{{ .Articles }} articles in total, with {{ .Words }} words altogether."
+  translation: "{{ .Articles }} articles | {{ .Words }} words"
 
 - id: rss_description
   translation: "The latest articles under '{{ .Title }}'"

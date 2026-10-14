@@ -2,7 +2,7 @@
   translation: "更新于 {{ . }}"
 
 - id: archive_summary
-  translation: "共 {{ .Articles }} 篇文章，累计 {{ .Words }} 字。"
+  translation: "{{ .Articles }} 篇 | {{ .Words }} 字"
 
 - id: rss_description
   translation: "「{{ .Title }}」下的最新文章"
