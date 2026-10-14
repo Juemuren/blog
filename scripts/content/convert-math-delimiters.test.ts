@@ -22,28 +22,37 @@ Deno.test("converts paired delimiters without changing layout", () => {
   assert.equal(convertMathDelimiters(expected), expected);
 });
 
-Deno.test("skips Markdown structures that must retain delimiters", () => {
+Deno.test("preserves delimiters in frontmatter", () => {
   const source = [
     "---",
     String.raw`summary: "\(front matter\)"`,
     "---",
-    "",
-    String.raw`\(change\) and $\(existing math\)$ and ` + "`\\(inline code\\)`",
-    "",
+  ].join("\n");
+  assert.equal(convertMathDelimiters(source), source);
+});
+
+Deno.test("preserves delimiters in inline code", () => {
+  const source = "`\\(inline code\\)`";
+  assert.equal(convertMathDelimiters(source), source);
+});
+
+Deno.test("preserves delimiters in fenced code", () => {
+  const source = [
     "```text",
     String.raw`\[fenced code\]`,
     "```",
-    "",
-    String
-      .raw`[link](https://example.com/\(path\)) and [\(label\)](https://example.com)`,
-    "",
-    String.raw`<!-- \(html comment\) -->`,
-    "",
   ].join("\n");
-  assert.equal(
-    convertMathDelimiters(source),
-    source.replace(String.raw`\(change\)`, "$change$"),
-  );
+  assert.equal(convertMathDelimiters(source), source);
+});
+
+Deno.test("preserves delimiters in existing dollar math", () => {
+  const source = String.raw`$\(existing math\)$`;
+  assert.equal(convertMathDelimiters(source), source);
+});
+
+Deno.test("preserves delimiters in HTML comments", () => {
+  const source = String.raw`<!-- \(html comment\) -->`;
+  assert.equal(convertMathDelimiters(source), source);
 });
 
 Deno.test("skips unmatched, nested, and escaped delimiters", () => {

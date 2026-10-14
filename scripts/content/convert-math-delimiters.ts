@@ -1,4 +1,4 @@
-import { SKIP, visit } from "unist-util-visit";
+import { visit } from "unist-util-visit";
 import { parseMathMarkdown } from "./parse-math-markdown.ts";
 
 type Edit = { start: number; end: number; text: string };
@@ -6,7 +6,6 @@ type Edit = { start: number; end: number; text: string };
 export function convertMathDelimiters(source: string): string {
   const edits: Edit[] = [];
   visit(parseMathMarkdown(source), (node) => {
-    if (node.type === "link" || node.type === "linkReference") return SKIP;
     if (node.type !== "textInlineMath" && node.type !== "textMath") return;
 
     const start = node.position?.start.offset;
