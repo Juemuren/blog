@@ -1,6 +1,20 @@
 import assert from "node:assert/strict";
 import { visit } from "unist-util-visit";
-import { parseMathMarkdown } from "./parse-math-markdown.ts";
+import {
+  parseMathMarkdown,
+  type TextInlineMathNode,
+  type TextMathNode,
+} from "./parse-math-markdown.ts";
+
+function mathNodes(source: string): Array<TextInlineMathNode | TextMathNode> {
+  const nodes: Array<TextInlineMathNode | TextMathNode> = [];
+  visit(parseMathMarkdown(source), (node) => {
+    if (node.type === "textInlineMath" || node.type === "textMath") {
+      nodes.push(node);
+    }
+  });
+  return nodes;
+}
 
 Deno.test("parses inline math as one node inside emphasis", () => {
   const source = String.raw`*before \(x * y\) after*`;
@@ -57,18 +71,80 @@ Deno.test("distinguishes same-line brackets from a display block", () => {
   assert.deepEqual(types, ["textInlineMath", "textMath"]);
 });
 
-Deno.test("leaves code, existing math, and escaped openers outside custom nodes", () => {
-  const source = [
-    String.raw`\\(escaped\\) $\(existing\)$`,
-    "```md",
-    String.raw`\[code\]`,
-    "```",
-  ].join("\n");
-  const types: string[] = [];
-  visit(parseMathMarkdown(source), (node) => {
-    if (node.type === "textInlineMath" || node.type === "textMath") {
-      types.push(node.type);
-    }
-  });
-  assert.deepEqual(types, []);
+Deno.test("does not parse math delimiters in frontmatter", () => {
+  const source = ["---", String.raw`summary: "\(front matter\)"`, "---"]
+    .join("\n");
+  assert.deepEqual(mathNodes(source), []);
+});
+
+Deno.test("does not parse math delimiters in inline code", () => {
+  assert.deepEqual(mathNodes("`\\(inline code\\)`"), []);
+});
+
+Deno.test("does not parse math delimiters in fenced code", () => {
+  const source = ["```text", String.raw`\[fenced code\]`, "```"].join("\n");
+  assert.deepEqual(mathNodes(source), []);
+});
+
+Deno.test("does not parse math delimiters inside existing dollar math", () => {
+  assert.deepEqual(mathNodes(String.raw`$\(existing math\)$`), []);
+});
+
+Deno.test("does not parse math delimiters in HTML comments", () => {
+  assert.deepEqual(mathNodes(String.raw`<!-- \(html comment\) -->`), []);
+});
+
+Deno.test("does not parse an unmatched inline opener", () => {
+  assert.deepEqual(mathNodes(String.raw`\(unmatched`), []);
+});
+
+Deno.test("does not parse nested inline openers", () => {
+  assert.deepEqual(mathNodes(String.raw`\(nested \(inner\) outer\)`), []);
+});
+
+Deno.test("does not parse mismatched inline delimiters", () => {
+  assert.deepEqual(mathNodes(String.raw`\[wrong\)`), []);
+});
+
+Deno.test("uses Markdown backslash escaping for openers", () => {
+  assert.deepEqual(mathNodes(String.raw`\\(escaped\\)`), []);
+  const source = String.raw`\\\(math\\\)`;
+  const nodes = mathNodes(source);
+  assert.equal(nodes.length, 1);
+  assert.equal(nodes[0].type, "textInlineMath");
+  assert.equal(nodes[0].position?.start.offset, 2);
+});
+
+Deno.test("parses display math after list prefixes", () => {
+  const source = ["- item", String.raw`  \[`, "  x + y", String.raw`  \]`]
+    .join("\n");
+  const nodes = mathNodes(source);
+  assert.equal(nodes.length, 1);
+  assert.equal(nodes[0].type, "textMath");
+  assert.equal(nodes[0].value, "x + y");
+});
+
+Deno.test("does not parse an unclosed display block", () => {
+  const source = [String.raw`\[`, "x + y", String.raw`\(later\)`].join("\n");
+  const nodes = mathNodes(source);
+  assert.equal(nodes.length, 1);
+  assert.equal(nodes[0].type, "textInlineMath");
+  assert.equal(nodes[0].value, "later");
+});
+
+Deno.test("parses inline math across a soft line break", () => {
+  const source = [String.raw`before \(a +`, String.raw`b\) after`].join("\n");
+  const nodes = mathNodes(source);
+  assert.equal(nodes.length, 1);
+  assert.equal(nodes[0].type, "textInlineMath");
+  assert.equal(nodes[0].value, "a +\nb");
+});
+
+Deno.test("keeps display delimiter line spaces outside the math value", () => {
+  const source = [String.raw`\[  `, "x + y", String.raw`\]   `].join("\n");
+  const nodes = mathNodes(source);
+  assert.equal(nodes.length, 1);
+  assert.equal(nodes[0].type, "textMath");
+  assert.equal(nodes[0].value, "x + y");
+  assert.equal(nodes[0].position?.end.offset, source.length);
 });
