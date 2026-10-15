@@ -14,7 +14,7 @@ Deno.test("replaces inline math delimiters without changing nearby text", () => 
   );
 });
 
-Deno.test("replaces display delimiters without changing line layout", () => {
+Deno.test("replaces display math delimiters without changing line layout", () => {
   const source = String.raw`
 中文
 
@@ -39,7 +39,7 @@ $$
   );
 });
 
-Deno.test("replaces display delimiters inside a blockquote", () => {
+Deno.test("replaces display math delimiters inside a blockquote", () => {
   const source = String.raw`
 > \[
 > E = mc^2
@@ -50,6 +50,41 @@ Deno.test("replaces display delimiters inside a blockquote", () => {
 > E = mc^2
 > $$
 `;
+  assert.equal(convertMathDelimiters(source), expected);
+});
+
+Deno.test("replaces display math delimiters inside a list item", () => {
+  const source = String.raw`
+- item
+    \[
+    x + y
+    \]
+`;
+  const expected = `
+- item
+    $$
+    x + y
+    $$
+`;
+  assert.equal(convertMathDelimiters(source), expected);
+});
+
+
+Deno.test("leaves frontmatter untouched while converting body math", () => {
+  const source = String.raw`
+---
+summary: "\(front matter\)"
+---
+
+正文 \(x\)
+`.trimStart();
+  const expected = String.raw`
+---
+summary: "\(front matter\)"
+---
+
+正文 $x$
+`.trimStart();
   assert.equal(convertMathDelimiters(source), expected);
 });
 

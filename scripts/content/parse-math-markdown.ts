@@ -133,6 +133,8 @@ const textMath: Construct = {
   concrete: true,
   tokenize(effects, ok, nok) {
     const interrupt = this.interrupt;
+    const openingColumn = this.now().column;
+    const currentColumn = () => this.now().column;
     return start;
 
     function start(code: number | null) {
@@ -165,15 +167,13 @@ const textMath: Construct = {
       return lineStart;
     }
     function lineStart(code: number | null): State | undefined {
-      if (code === codes.backslash) {
-        // A failed close attempt returns to content at the same position.
-        return effects.attempt(
-          { tokenize: closingLine, partial: true },
-          done,
-          content,
-        )(code);
-      }
-      return content(code);
+      if (code !== codes.backslash && !isSpaceOrTab(code)) return content(code);
+      // A failed close attempt returns to content at the same position.
+      return effects.attempt(
+        { tokenize: closingLine, partial: true },
+        done,
+        content,
+      )(code);
     }
     function content(code: number | null): State | undefined {
       if (isLineEnd(code)) return lineEnd(code);
@@ -188,14 +188,23 @@ const textMath: Construct = {
       effects.consume(code);
       return data;
     }
-    // A closing delimiter must be alone on its line, apart from trailing spaces.
+    // The closing delimiter aligns with the opening delimiter.
     function closingLine(
       closeEffects: typeof effects,
       closeOk: typeof ok,
       closeNok: typeof nok,
     ) {
-      return slash;
+      return indentation;
+      function indentation(code: number | null): State | undefined {
+        if (isSpaceOrTab(code) && currentColumn() < openingColumn) {
+          closeEffects.consume(code);
+          return indentation;
+        }
+        if (currentColumn() !== openingColumn) return closeNok(code);
+        return slash(code);
+      }
       function slash(code: number | null) {
+        if (code !== codes.backslash) return closeNok(code);
         closeEffects.enter("textMathClose");
         closeEffects.consume(code);
         return bracket;
@@ -255,7 +264,7 @@ const fromMarkdownExtension: FromMarkdownExtension = {
       const closingStartInRaw = raw.lastIndexOf(String.raw`\]`);
       node.value = raw.slice(delimiterLength, closingStartInRaw)
         .replace(/^[ \t]*(?:\r\n|\r|\n)/, "")
-        .replace(/(?:\r\n|\r|\n)$/, "");
+        .replace(/(?:\r\n|\r|\n)[ \t]*$/, "");
       this.exit(token);
     },
     textMathClose(token) {

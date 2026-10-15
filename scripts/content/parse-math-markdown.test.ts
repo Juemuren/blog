@@ -77,3 +77,19 @@ Deno.test("parses block math and records delimiter positions", () => {
     },
   }]);
 });
+
+Deno.test("does not parse unclosed math delimiters", () => {
+  const sources = [
+    String.raw`\(unclosed`,
+    String.raw`
+\[
+unclosed
+`,
+  ];
+  assert.deepEqual(
+    sources.map(mathSnapshots),[
+      [],
+      []
+    ]
+  );
+});
