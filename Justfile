@@ -42,14 +42,24 @@ new:
 clean:
     ./scripts/maintenance/clean-tmp.sh
 
-code-check: type-check web-check
+code-check: type-check web-check script-check
 docs-check: md-check spell-check punct-check
 
 type-check:
-    deno check --config tsconfig.base.json content assets/ts assets/schema
+    deno check --no-lock --config tsconfig.base.json content assets/ts assets/schema
 
 web-check:
+    biome check .
+
+web-fix:
     biome check . --fix
+
+script-check:
+    deno lint
+    deno fmt --check
+
+script-fix:
+    deno fmt
 
 md-check:
     rumdl check "{{ SOURCE }}"

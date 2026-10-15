@@ -16,7 +16,7 @@
     ".gitignore": ".git*"
   },
   "deno.enable": true,
-  "deno.enablePaths": ["./scripts/content"],
+  "deno.enablePaths": ["./scripts"],
   "deno.config": "./deno.json",
   "Lua.diagnostics.globals": ["PANDOC_STATE", "pandoc"]
 }

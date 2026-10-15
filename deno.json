@@ -11,6 +11,12 @@
     "unified": "npm:unified@11.0.5",
     "unist-util-visit": "npm:unist-util-visit@5.1.0"
   },
+  "lint": {
+    "include": ["scripts/"]
+  },
+  "fmt": {
+    "include": ["scripts/"]
+  },
   "tasks": {
     "convert-math-delimiters": "deno run --allow-read --allow-write scripts/content/convert-math-delimiters.ts"
   }
