@@ -18,6 +18,7 @@
     "include": ["scripts/"]
   },
   "tasks": {
-    "convert-math-delimiters": "deno run --allow-read --allow-write scripts/content/convert-math-delimiters.ts"
+    "convert-math-delimiters": "deno run --allow-read --allow-write scripts/content/convert-math-delimiters.ts",
+    "check-alerts": "deno run --allow-read scripts/check/check-alerts.ts"
   }
 }

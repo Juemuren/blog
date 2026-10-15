@@ -71,7 +71,7 @@ punct-check:
     autocorrect "{{ SOURCE }}" --lint
 
 ocd-check:
-    ./scripts/check/check-alerts.sh "{{ SOURCE }}"
+    deno task check-alerts "{{ SOURCE }}"
 
 export-standalone file:
     ./scripts/export/export-standalone.sh "{{ file }}" "output/{{ file_stem(file) }}/{{ file_name(file) }}"
