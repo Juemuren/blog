@@ -69,7 +69,6 @@ Deno.test("replaces display math delimiters inside a list item", () => {
   assert.equal(convertMathDelimiters(source), expected);
 });
 
-
 Deno.test("leaves frontmatter untouched while converting body math", () => {
   const source = String.raw`
 ---

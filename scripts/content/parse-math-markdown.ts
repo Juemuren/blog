@@ -49,8 +49,6 @@ declare module "micromark-util-types" {
   interface TokenTypeMap {
     textInlineMath: "textInlineMath";
     textMath: "textMath";
-    textMathData: "textMathData";
-    textMathClose: "textMathClose";
   }
 }
 
@@ -177,16 +175,8 @@ const textMath: Construct = {
     }
     function content(code: number | null): State | undefined {
       if (isLineEnd(code)) return lineEnd(code);
-      effects.enter("textMathData");
-      return data(code);
-    }
-    function data(code: number | null): State | undefined {
-      if (isLineEnd(code)) {
-        effects.exit("textMathData");
-        return lineEnd(code);
-      }
       effects.consume(code);
-      return data;
+      return content;
     }
     // The closing delimiter aligns with the opening delimiter.
     function closingLine(
@@ -205,23 +195,31 @@ const textMath: Construct = {
       }
       function slash(code: number | null) {
         if (code !== codes.backslash) return closeNok(code);
-        closeEffects.enter("textMathClose");
         closeEffects.consume(code);
         return bracket;
       }
       function bracket(code: number | null) {
         if (code !== codes.rightSquareBracket) return closeNok(code);
         closeEffects.consume(code);
-        return trailingSpace;
+        return closeEffects.check(
+          { tokenize: checkTrailingSpace, partial: true },
+          closeOk,
+          closeNok,
+        );
       }
-      function trailingSpace(code: number | null) {
-        if (isSpaceOrTab(code)) {
-          closeEffects.consume(code);
-          return trailingSpace;
+      function checkTrailingSpace(
+        checkEffects: typeof effects,
+        checkOk: typeof ok,
+        checkNok: typeof nok,
+      ) {
+        return trailingSpace;
+        function trailingSpace(code: number | null): State | undefined {
+          if (isSpaceOrTab(code)) {
+            checkEffects.consume(code);
+            return trailingSpace;
+          }
+          return isLineEnd(code) ? checkOk(code) : checkNok(code);
         }
-        if (!isLineEnd(code)) return closeNok(code);
-        closeEffects.exit("textMathClose");
-        return closeOk(code);
       }
     }
     function done(code: number | null) {
@@ -261,15 +259,17 @@ const fromMarkdownExtension: FromMarkdownExtension = {
     textMath(token) {
       const node = this.stack.at(-1) as TextMathNode;
       const raw = this.sliceSerialize(token);
-      const closingStartInRaw = raw.lastIndexOf(String.raw`\]`);
-      node.value = raw.slice(delimiterLength, closingStartInRaw)
+      node.value = raw.slice(delimiterLength, -delimiterLength)
         .replace(/^[ \t]*(?:\r\n|\r|\n)/, "")
         .replace(/(?:\r\n|\r|\n)[ \t]*$/, "");
+      setDelimiterRanges(
+        node,
+        token.start.offset,
+        token.end.offset === undefined
+          ? undefined
+          : token.end.offset - delimiterLength,
+      );
       this.exit(token);
-    },
-    textMathClose(token) {
-      const node = this.stack.at(-1) as TextMathNode;
-      setDelimiterRanges(node, node.position?.start.offset, token.start.offset);
     },
   },
 };

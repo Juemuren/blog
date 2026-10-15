@@ -87,9 +87,10 @@ unclosed
 `,
   ];
   assert.deepEqual(
-    sources.map(mathSnapshots),[
+    sources.map(mathSnapshots),
+    [
       [],
-      []
-    ]
+      [],
+    ],
   );
 });
