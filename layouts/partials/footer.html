@@ -32,7 +32,10 @@
 </a>
 {{- end }}
 
-{{- $script := resources.Get "js/navigation/scroll.js" | minify | fingerprint -}}
+{{- $script := resources.Get "js/navigation/menu-scroll.js" | minify | fingerprint -}}
+<script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
+
+{{- $script := resources.Get "js/navigation/anchor-scroll.js" | minify | fingerprint -}}
 <script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
 
 {{- if (not site.Params.disableScrollToTop) }}
