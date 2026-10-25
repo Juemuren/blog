@@ -11,11 +11,23 @@ output=$2
 output_dir=$(dirname "$output")
 mkdir -p "$output_dir"
 
+output_parts=(
+  markdown
+  -smart
+  -yaml_metadata_block
+  -pandoc_title_block
+  -simple_tables
+  -grid_tables
+  -multiline_tables
+  -raw_attribute
+)
+printf -v output_format '%s' "${output_parts[@]}"
+
 # Convert Markdown
 pandoc "$input" -o "$output" \
   --standalone \
   --from markdown \
-  --to markdown-smart-yaml_metadata_block-simple_tables-grid_tables-multiline_tables-raw_attribute \
+  --to "$output_format" \
   --lua-filter="$SCRIPT_DIR/extract-codeblocks.lua" \
   --lua-filter="$SCRIPT_DIR/shift-headers.lua" \
   --lua-filter="$SCRIPT_DIR/remove-comments.lua" \
