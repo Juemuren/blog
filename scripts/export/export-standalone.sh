@@ -11,6 +11,14 @@ output=$2
 output_dir=$(dirname "$output")
 mkdir -p "$output_dir"
 
+join() {
+  local IFS=$1
+  shift
+  printf '%s' "$*"
+}
+
+# --- Convert Markdown ---
+
 output_parts=(
   markdown
   -smart
@@ -21,9 +29,8 @@ output_parts=(
   -multiline_tables
   -raw_attribute
 )
-printf -v output_format '%s' "${output_parts[@]}"
+output_format=$(join '' "${output_parts[@]}")
 
-# Convert Markdown
 pandoc "$input" -o "$output" \
   --standalone \
   --from markdown \
@@ -35,6 +42,8 @@ pandoc "$input" -o "$output" \
   --wrap=preserve
 
 cd "$output_dir"
+
+# --- Compile Diagram ---
 
 # Compile TikZ
 for tex in *-tikz-*.tex; do
