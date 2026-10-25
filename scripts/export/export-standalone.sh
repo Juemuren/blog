@@ -15,7 +15,7 @@ mkdir -p "$output_dir"
 pandoc "$input" -o "$output" \
   --standalone \
   --from markdown \
-  --to markdown-smart-simple_tables-grid_tables-multiline_tables-raw_attribute \
+  --to markdown-smart-yaml_metadata_block-simple_tables-grid_tables-multiline_tables-raw_attribute \
   --lua-filter="$SCRIPT_DIR/extract-codeblocks.lua" \
   --lua-filter="$SCRIPT_DIR/shift-headers.lua" \
   --lua-filter="$SCRIPT_DIR/remove-comments.lua" \
