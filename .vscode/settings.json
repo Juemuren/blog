@@ -12,6 +12,7 @@
   },
   "explorer.fileNesting.patterns": {
     ".markdownlint.yaml": ".autocorrectrc, .typos.toml",
+    "tsconfig.json": "tsconfig.*.json, deno.json, deno.lock, biome.json",
     "hugo.yaml": ".hugo_build.lock",
     ".gitignore": ".git*"
   },
