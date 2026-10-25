@@ -19,6 +19,7 @@ pandoc "$input" -o "$output" \
   --lua-filter="$SCRIPT_DIR/extract-codeblocks.lua" \
   --lua-filter="$SCRIPT_DIR/shift-headers.lua" \
   --lua-filter="$SCRIPT_DIR/remove-comments.lua" \
+  --lua-filter="$SCRIPT_DIR/expand-set-macros.lua" \
   --wrap=preserve
 
 cd "$output_dir"
