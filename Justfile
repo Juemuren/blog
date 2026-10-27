@@ -42,7 +42,7 @@ new:
 clean:
     ./scripts/maintenance/clean-tmp.sh
 
-code-check: type-check web-check script-check
+code-check: type-check web-check script-check ast-check
 docs-check: md-check spell-check punct-check
 
 type-check:
@@ -60,6 +60,9 @@ script-check:
 
 script-fix:
     deno fmt
+
+ast-check:
+    ast-grep scan --report-style short
 
 md-check:
     rumdl check "{{ SOURCE }}"

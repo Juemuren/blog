@@ -1,0 +1,24 @@
+id: css-raw-color
+language: Css
+severity: warning
+message: CSS 颜色应使用主题变量
+note: |
+  调色板定义在 assets/css/core/theme-vars.css。
+  必须通过 var(--ctp-mauve) 等变量取色。
+files:
+  - assets/css/**/*.css
+ignores:
+  # 调色板自身
+  - assets/css/core/theme-vars.css
+  # 自动生成的样式
+  - assets/css/includes/**
+rule:
+  any:
+    # 十六进制颜色字面量
+    - kind: color_value
+    # rgb() / rgba()
+    - all:
+        - kind: call_expression
+        - has:
+            kind: function_name
+            regex: ^rgba?$

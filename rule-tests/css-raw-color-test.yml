@@ -1,0 +1,13 @@
+id: css-raw-color
+valid:
+  - "a{color:var(--ctp-text)}"
+  - "a{color:currentColor}"
+  - "a{color:inherit}"
+invalid:
+  - "a{color:#fff}"
+  - "a{color:#4c4f69}"
+  - "a{color:rgb(213,213,214)}"
+  - "a{background:rgba(0,0,0,.5)}"
+  - "a{background:rgb(0 0 0 / 50%)}"
+  - "a{box-shadow:0 4px 20px #0002}"
+  - "a{background:#0007}"

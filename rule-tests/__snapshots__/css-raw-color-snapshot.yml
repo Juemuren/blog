@@ -1,0 +1,56 @@
+id: css-raw-color
+snapshots:
+  "a{background:#0007}":
+    labels:
+    - source: "#0007"
+      style: primary
+      start: 13
+      end: 18
+  "a{background:rgb(0 0 0 / 50%)}":
+    labels:
+    - source: rgb(0 0 0 / 50%)
+      style: primary
+      start: 13
+      end: 29
+    - source: rgb
+      style: secondary
+      start: 13
+      end: 16
+  "a{background:rgba(0,0,0,.5)}":
+    labels:
+    - source: rgba(0,0,0,.5)
+      style: primary
+      start: 13
+      end: 27
+    - source: rgba
+      style: secondary
+      start: 13
+      end: 17
+  "a{box-shadow:0 4px 20px #0002}":
+    labels:
+    - source: "#0002"
+      style: primary
+      start: 24
+      end: 29
+  "a{color:#4c4f69}":
+    labels:
+    - source: "#4c4f69"
+      style: primary
+      start: 8
+      end: 15
+  "a{color:#fff}":
+    labels:
+    - source: "#fff"
+      style: primary
+      start: 8
+      end: 12
+  "a{color:rgb(213,213,214)}":
+    labels:
+    - source: rgb(213,213,214)
+      style: primary
+      start: 8
+      end: 24
+    - source: rgb
+      style: secondary
+      start: 8
+      end: 11
