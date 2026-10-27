@@ -1,12 +1,12 @@
-"""Preview translucent Catppuccin colors over a chosen palette background."""
+"""Preview translucent Catppuccin colors across an opacity range."""
 
 import argparse
-import sys
+from collections.abc import Iterator
 from dataclasses import dataclass
+from decimal import Decimal, InvalidOperation
 from typing import cast
 
 type RGB = tuple[int, int, int]
-type PaletteRow = tuple[str, str, str, RGB]
 
 PALETTES: dict[str, dict[str, RGB]] = {
     "Latte": {
@@ -23,6 +23,10 @@ PALETTES: dict[str, dict[str, RGB]] = {
     },
 }
 COLOR_CHOICES = ("text", "base", "mantle", "crust")
+PREVIEW_BORDER_COLS = 5
+PREVIEW_CENTER_COLS = 16
+PREVIEW_BORDER_ROWS = 2
+PREVIEW_CENTER_ROWS = 3
 
 
 class Args(argparse.Namespace):
@@ -30,10 +34,7 @@ class Args(argparse.Namespace):
     color: str
     light_color: str | None
     dark_color: str | None
-    opacity: float
-    light_opacity: float | None
-    dark_opacity: float | None
-    css: bool
+    opacity: list[Decimal]
     css_var: str
 
 
@@ -42,10 +43,17 @@ class Options:
     background: str
     light_color: str
     dark_color: str
-    light_opacity: float
-    dark_opacity: float
-    css: bool
+    start: Decimal
+    end: Decimal
+    step: Decimal
     css_var: str
+
+
+def decimal_type(value: str) -> Decimal:
+    try:
+        return Decimal(value)
+    except InvalidOperation as error:
+        raise argparse.ArgumentTypeError(f"invalid percentage: {value}") from error
 
 
 def parse_args() -> Options:
@@ -57,13 +65,13 @@ def parse_args() -> Options:
         "--background",
         choices=COLOR_CHOICES,
         default="base",
-        help="palette color behind the translucent color",
+        help="palette color in the preview's center",
     )
     parser.add_argument(
         "--color",
         choices=COLOR_CHOICES,
         default="text",
-        help="source color for both flavors unless overridden",
+        help="overlay color for both flavors unless overridden",
     )
     parser.add_argument(
         "--light-color",
@@ -77,192 +85,107 @@ def parse_args() -> Options:
     )
     parser.add_argument(
         "--opacity",
-        type=float,
-        default=50,
-        metavar="PERCENT",
-        help="opacity for both flavors unless overridden",
-    )
-    parser.add_argument(
-        "--light-opacity",
-        type=float,
-        metavar="PERCENT",
-        help="override --opacity for Latte",
-    )
-    parser.add_argument(
-        "--dark-opacity",
-        type=float,
-        metavar="PERCENT",
-        help="override --opacity for Mocha",
-    )
-    parser.add_argument(
-        "--css",
-        action="store_true",
-        help="print a CSS declaration",
+        nargs=3,
+        type=decimal_type,
+        required=True,
+        metavar=("START", "END", "STEP"),
+        help="inclusive percentage range and increment",
     )
     parser.add_argument(
         "--css-var",
         default="--preview-color",
         metavar="NAME",
-        help="custom property name used by --css",
+        help="custom property name printed before each preview",
     )
     args = parser.parse_args(namespace=Args())
-    light_opacity = args.light_opacity or args.opacity
-    dark_opacity = args.dark_opacity or args.opacity
-    if any(not 0 <= opacity <= 100 for opacity in (light_opacity, dark_opacity)):
-        parser.error("opacity percentages must be between 0 and 100")
+    start, end, step = args.opacity
+    if not all(value.is_finite() for value in (start, end, step)):
+        parser.error("opacity values must be finite")
+    if not 0 <= start <= end <= 100 or step <= 0:
+        parser.error("opacity must satisfy 0 <= START <= END <= 100 and STEP > 0")
     return Options(
         background=args.background,
-        light_color=args.light_color or args.color or "text",
-        dark_color=args.dark_color or args.color or "crust",
-        light_opacity=light_opacity,
-        dark_opacity=dark_opacity,
-        css=args.css,
+        light_color=args.light_color or args.color,
+        dark_color=args.dark_color or args.color,
+        start=start,
+        end=end,
+        step=step,
         css_var=args.css_var,
     )
 
 
-def composite(foreground: RGB, background: RGB, opacity: float) -> RGB:
-    """Return a translucent foreground composited onto an opaque background."""
+def composite(foreground: RGB, background: RGB, opacity: Decimal) -> RGB:
+    fraction = opacity / 100
     return cast(
-        tuple[int, int, int],
+        RGB,
         tuple(
-            round(fg * opacity + bg * (1 - opacity))
+            round(Decimal(fg) * fraction + Decimal(bg) * (1 - fraction))
             for fg, bg in zip(foreground, background)
         ),
     )
 
 
-def palette(
-    background: str,
-    light_color: str,
-    dark_color: str,
-    light_opacity: float,
-    dark_opacity: float,
-) -> list[PaletteRow]:
-    """Return background, source, and composite rows for both flavors."""
-    rows = []
-    for flavor, color, opacity in (
-        ("Latte", light_color, light_opacity),
-        ("Mocha", dark_color, dark_opacity),
-    ):
-        colors = PALETTES[flavor]
-        rows.extend(
-            [
-                (
-                    flavor,
-                    f"{background} background",
-                    "",
-                    colors[background],
-                ),
-                (
-                    flavor,
-                    f"{color} composite",
-                    f"{opacity:g}%",
-                    composite(colors[color], colors[background], opacity / 100),
-                ),
-                (
-                    flavor,
-                    f"{color} source",
-                    "",
-                    colors[color],
-                ),
-            ]
-        )
-    return rows
+def percentage_text(value: Decimal) -> str:
+    text = format(value, "f")
+    return text.rstrip("0").rstrip(".") if "." in text else text
 
 
-def print_css(
-    css_var: str,
-    light_color: str,
-    dark_color: str,
-    light_opacity: float,
-    dark_opacity: float,
-) -> None:
-    light, dark = (
-        f"color-mix(in srgb, var(--ctp-{color}) {opacity:g}%, transparent)"
-        for color, opacity in (
-            (light_color, light_opacity),
-            (dark_color, dark_opacity),
-        )
+def color_block(rgb: RGB, width: int) -> str:
+    """Return spaces with a 24-bit ANSI background color."""
+    return f"\x1b[48;2;{rgb[0]};{rgb[1]};{rgb[2]}m{'':{width}}\x1b[0m"
+
+
+def print_preview(background: RGB, overlay: RGB) -> None:
+    border = color_block(
+        overlay,
+        PREVIEW_BORDER_COLS,
     )
-    if light == dark:
-        print(f"{css_var}: {light};")
-    else:
-        print(
-            "\n".join(
-                [
-                    f"{css_var}: light-dark(",
-                    f"  {light},",
-                    f"  {dark}",
-                    ");",
-                ]
-            )
-        )
+    center = color_block(
+        background,
+        PREVIEW_CENTER_COLS,
+    )
+    outside = color_block(
+        overlay,
+        2 * PREVIEW_BORDER_COLS + PREVIEW_CENTER_COLS,
+    )
 
-
-def print_table(rows: list[PaletteRow]) -> None:
-    show_preview = sys.stdout.isatty()
-    headers = ("flavor", "color", "opacity", "hex", "rgb")
-    values = [
-        (
-            flavor,
-            name,
-            opacity,
-            f"#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}",
-            str(rgb),
-        )
-        for flavor, name, opacity, rgb in rows
-    ]
-    widths = [
-        max(len(header), *(len(row[index]) for row in values))
-        for index, header in enumerate(headers)
-    ]
-    preview_width = len("preview")
     print(
-        "  ".join(
-            [
-                *(f"{header:<{width}}" for header, width in zip(headers, widths)),
-                *(["preview"] if show_preview else []),
-            ]
+        "\n".join(
+            [outside] * PREVIEW_BORDER_ROWS
+            + [border + center + border] * PREVIEW_CENTER_ROWS
+            + [outside] * PREVIEW_BORDER_ROWS
         )
     )
-    for row, (_, _, _, rgb) in zip(values, rows):
-        print(
-            "  ".join(
-                [
-                    *(f"{value:<{width}}" for value, width in zip(row, widths)),
-                    *(
-                        [
-                            f"\x1b[48;2;{rgb[0]};{rgb[1]};{rgb[2]}m{'':{preview_width}}\x1b[0m"
-                        ]
-                        if show_preview
-                        else []
-                    ),
-                ]
-            )
-        )
+
+
+def print_css(css_var: str, color: str, opacity: Decimal) -> None:
+    print(
+        f"{css_var}: color-mix(in srgb, var(--ctp-{color}) {percentage_text(opacity)}%, transparent);"
+    )
+
+
+def opacities(start: Decimal, end: Decimal, step: Decimal) -> Iterator[Decimal]:
+    count = int((end - start) // step) + 1
+    for index in range(count):
+        yield start + index * step
 
 
 def main() -> None:
-    args = parse_args()
-    if args.css:
-        print_css(
-            args.css_var,
-            args.light_color,
-            args.dark_color,
-            args.light_opacity,
-            args.dark_opacity,
-        )
-    else:
-        print_table(
-            palette(
-                args.background,
-                args.light_color,
-                args.dark_color,
-                args.light_opacity,
-                args.dark_opacity,
-            )
-        )
+    options = parse_args()
+
+    for opacity in opacities(options.start, options.end, options.step):
+        for flavor, color in (
+            ("Latte", options.light_color),
+            ("Mocha", options.dark_color),
+        ):
+            palette = PALETTES[flavor]
+            background = palette[options.background]
+            overlay = composite(palette[color], background, opacity)
+
+            print(f"/* {flavor}: {percentage_text(opacity)}% */")
+            print_css(options.css_var, color, opacity)
+            print_preview(background, overlay)
+            print()
 
 
 if __name__ == "__main__":
