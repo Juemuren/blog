@@ -10,3 +10,6 @@ indent_size = 2
 
 [Justfile]
 indent_size = 4
+
+[*.py]
+indent_size = 4
