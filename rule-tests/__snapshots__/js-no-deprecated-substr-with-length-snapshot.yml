@@ -1,0 +1,8 @@
+id: js-no-deprecated-substr-with-length
+snapshots:
+  "value.substr(1, 2)":
+    labels:
+    - source: value.substr(1, 2)
+      style: primary
+      start: 0
+      end: 18

@@ -1,0 +1,29 @@
+id: ts-no-deprecated-substr
+valid:
+  - 'value.substr(1, 2)'
+invalid:
+  - 'value.substr(1)'
+
+---
+
+id: js-no-deprecated-substr
+valid:
+  - 'value.substr(1, 2)'
+invalid:
+  - 'value.substr(1)'
+
+---
+
+id: ts-no-deprecated-substr-with-length
+valid:
+  - 'value.substr(1)'
+invalid:
+  - 'value.substr(1, 2)'
+
+---
+
+id: js-no-deprecated-substr-with-length
+valid:
+  - 'value.substr(1)'
+invalid:
+  - 'value.substr(1, 2)'

@@ -1,0 +1,43 @@
+# 弃用说明：https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/substr
+
+id: ts-no-deprecated-substr
+language: TypeScript
+severity: warning
+message: String.prototype.substr 已弃用，请改为 slice(start)
+files:
+  - assets/ts/**/*.ts
+rule:
+  pattern: $STR.substr($START)
+fix: $STR.slice($START)
+
+---
+
+id: js-no-deprecated-substr
+language: JavaScript
+severity: warning
+message: String.prototype.substr 已弃用，请改为 slice(start)
+files:
+  - assets/js/**/*.js
+rule:
+  pattern: $STR.substr($START)
+fix: $STR.slice($START)
+
+---
+
+id: ts-no-deprecated-substr-with-length
+language: TypeScript
+files:
+  - assets/ts/**/*.ts
+rule:
+  pattern: $STR.substr($START, $LENGTH)
+message: String.prototype.substr 的第二个参数是长度，请手动改为 slice(start, end)
+
+---
+
+id: js-no-deprecated-substr-with-length
+language: JavaScript
+files:
+  - assets/js/**/*.js
+rule:
+  pattern: $STR.substr($START, $LENGTH)
+message: String.prototype.substr 的第二个参数是长度，请手动改为 slice(start, end)

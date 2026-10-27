@@ -64,6 +64,9 @@ script-fix:
 ast-check:
     ast-grep scan --report-style short
 
+ast-fix:
+    ast-grep scan --interactive
+
 md-check:
     rumdl check "{{ SOURCE }}"
 

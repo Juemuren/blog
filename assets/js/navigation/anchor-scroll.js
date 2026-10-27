@@ -2,7 +2,7 @@
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener("click", function (e) {
       e.preventDefault();
-      var id = this.getAttribute("href").substr(1);
+      var id = this.getAttribute("href").slice(1);
       if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         document
           .querySelector(`[id='${decodeURIComponent(id)}']`)
