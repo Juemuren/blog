@@ -155,7 +155,7 @@
   display: grid;
   margin: auto 0;
   padding: 10px;
-  color: rgb(213, 213, 214);
+  color: var(--content);
   background: var(--code-block-bg);
   border-radius: var(--radius);
   overflow-x: auto;

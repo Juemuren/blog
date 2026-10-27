@@ -10,7 +10,7 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgba(0, 0, 0, 0.75);
+  background: var(--backdrop-color);
   cursor: zoom-out;
   touch-action: none;
 }

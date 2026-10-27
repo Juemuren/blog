@@ -115,12 +115,9 @@
   height: 44px;
   padding: 10px;
 
-  border: 1px solid var(--border);
   border-radius: 50%;
-  background: var(--button-bg);
-  color: var(--primary);
-  box-shadow: 0 4px 20px #0002;
-  font-size: 14px;
+  background: var(--tertiary);
+  color: var(--secondary);
 }
 
 /* Mobile dialog: fixed height prevents jumps when switching tabs. */
@@ -148,7 +145,7 @@
 }
 
 .reading-dialog::backdrop {
-  background: #0007;
+  background: var(--backdrop-color);
 }
 
 .reading-close-form {
@@ -183,7 +180,10 @@
 }
 
 /* Interaction states shared across layouts. */
-.reading-trigger:hover,
+.reading-trigger:hover {
+  color: var(--primary);
+}
+
 .reading-close:hover {
   background: var(--button-hover-bg);
 }
