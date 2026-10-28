@@ -871,3 +871,5 @@ $$
 $$
 
 而 $g(T\times S) = g(T) \times g(S)$ 不是所有的 $g$ 都满足。
+
+{{< demo entry="demo/15-entry.ts" code="demo/15-tensor-push-pull-plus-times.ts" >}}
