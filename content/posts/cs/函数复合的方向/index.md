@@ -55,13 +55,15 @@ type Fn<A, B> = (a: A) => B;
 // 前推：后复合
 function pushforward<A, B>(f: Fn<A, B>) {
   return <X>(g: Fn<X, A>): Fn<X, B> =>
-    x => f(g(x));
+    (x) =>
+      f(g(x));
 }
 
 // 拉回：前复合
 function pullback<A, B>(f: Fn<A, B>) {
   return <Y>(g: Fn<B, Y>): Fn<A, Y> =>
-    a => g(f(a));
+    (a) =>
+      g(f(a));
 }
 ```
 
@@ -123,11 +125,8 @@ $$
 
 ```ts
 // 函数复合
-function compose<A, B, C>(
-  f: Fn<B, C>,
-  g: Fn<A, B>
-): Fn<A, C> {
-  return a => f(g(a));
+function compose<A, B, C>(f: Fn<B, C>, g: Fn<A, B>): Fn<A, C> {
+  return (a) => f(g(a));
 }
 ```
 
@@ -199,18 +198,12 @@ $$
 
 ```ts
 // 前推二元运算
-function pushBin<A, B, C>(
-  f: Fn<B, C>,
-  g: Fn<A, B>
-): Fn<A, C> {
+function pushBin<A, B, C>(f: Fn<B, C>, g: Fn<A, B>): Fn<A, C> {
   return pushforward(f)(g);
 }
 
 // 拉回二元运算
-function pullBin<A, B, C>(
-  f: Fn<A, B>,
-  g: Fn<B, C>
-): Fn<A, C> {
+function pullBin<A, B, C>(f: Fn<A, B>, g: Fn<B, C>): Fn<A, C> {
   return pullback(f)(g);
 }
 ```
@@ -259,23 +252,24 @@ $$
 
 ```ts
 // 张量
-type Tensor<X, Y, Args extends X[]> =
-  (...args: Args) => Y;
+type Tensor<X, Y, Args extends X[]> = (...args: Args) => Y;
 
 // 张量前推：作用于输出
 function tensorPushforward<A, B>(f: Fn<A, B>) {
   return <X, Args extends X[]>(
-    tensor: Tensor<X, A, Args>
-  ): Tensor<X, B, Args> =>
-    (...xs) => f(tensor(...xs));
+      tensor: Tensor<X, A, Args>,
+    ): Tensor<X, B, Args> =>
+    (...xs) =>
+      f(tensor(...xs));
 }
 
 // 张量拉回：作用于每个输入
 function tensorPullback<A, B>(g: Fn<A, B>) {
   return <Y, Args extends B[]>(
-    tensor: Tensor<B, Y, Args>
-  ): Tensor<A, Y, { [K in keyof Args]: A }> =>
-    (...xs) => tensor(...xs.map(g) as Args);
+      tensor: Tensor<B, Y, Args>,
+    ): Tensor<A, Y, { [K in keyof Args]: A }> =>
+    (...xs) =>
+      tensor(...(xs.map(g) as Args));
 }
 ```
 
@@ -413,11 +407,8 @@ $$
 TypeScript 实现为
 
 ```ts
-function add<X>(
-  f: Fn<X, number>,
-  g: Fn<X, number>
-): Fn<X, number> {
-  return x => f(x) + g(x);
+function add<X>(f: Fn<X, number>, g: Fn<X, number>): Fn<X, number> {
+  return (x) => f(x) + g(x);
 }
 ```
 
@@ -531,11 +522,8 @@ $$
 TypeScript 实现为
 
 ```ts
-function mul<X>(
-  f: Fn<X, number>,
-  g: Fn<X, number>
-): Fn<X, number> {
-  return x => f(x) * g(x);
+function mul<X>(f: Fn<X, number>, g: Fn<X, number>): Fn<X, number> {
+  return (x) => f(x) * g(x);
 }
 ```
 
@@ -748,34 +736,22 @@ TypeScript 实现为
 
 ```ts
 // 张量和
-export function tensorPlus<
-  X,
-  Y,
-  A extends X[],
-  B extends Y[]
->(
+export function tensorPlus<X, Y, A extends X[], B extends Y[]>(
   T: Tensor<X, number, A>,
   S: Tensor<Y, number, B>,
 ): Tensor<X | Y, number, [...A, ...B]> {
   return (...args) =>
-    T(...args.slice(0, T.length) as A) +
-    S(...args.slice(T.length) as B);
+    T(...(args.slice(0, T.length) as A)) + S(...(args.slice(T.length) as B));
 }
 
 // 张量积
-export function tensorTimes<
-  X,
-  Y,
-  A extends X[],
-  B extends Y[]
->(
+export function tensorTimes<X, Y, A extends X[], B extends Y[]>(
   T: Tensor<X, number, A>,
   S: Tensor<Y, number, B>,
 ): Tensor<X | Y, number, [...A, ...B]> {
   return (...args) =>
-    T(...args.slice(0, T.length) as A) *
-    S(...args.slice(T.length) as B);
+    T(...(args.slice(0, T.length) as A)) * S(...(args.slice(T.length) as B));
 }
 ```
 
-<!-- TODO ## 张量和与张量积的运行示ii例 -->
+<!-- TODO ## 张量和与张量积的运行示例 -->
