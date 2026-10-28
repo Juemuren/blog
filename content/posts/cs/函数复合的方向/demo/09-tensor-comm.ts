@@ -1,6 +1,6 @@
-import { tensorPullback, tensorPushforward } from "./utils";
+import { tensor, tensorPullback, tensorPushforward } from "./utils.ts";
 
-const T = (x: number, y: number) => x*x + y*y;
+const T = tensor(2, (x: number, y: number) => x*x + y*y);
 const f = (x: number) => x + 1;
 const g = (x: string) => x.length;
 
@@ -20,7 +20,7 @@ interface Param {
 
 export function run({ s1, s2 }: Param) {
   return [
-    `lhs: ${lhs(s1, s2)}`,
-    `rhs: ${rhs(s1, s2)}`,
+    `lhs: ${lhs.apply(s1, s2)}`,
+    `rhs: ${rhs.apply(s1, s2)}`,
   ].join("\n");
 }

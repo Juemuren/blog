@@ -1,6 +1,6 @@
-import { tensorPullback } from "./utils.ts";
+import { tensor, tensorPullback } from "./utils.ts";
 
-const T = (x: number, y: number) => x*x + y*y;
+const T = tensor(2, (x: number, y: number) => x*x + y*y);
 const h = (x: string) => Number(x);
 const k = (x: boolean) => x ? "2" : "3";
 
@@ -21,7 +21,7 @@ interface Param {
 
 export function run({ b1, b2 }: Param) {
   return [
-    `pullLeft: ${pullLeft(b1, b2)}`,
-    `pullRight: ${pullRight(b1, b2)}`,
+    `pullLeft: ${pullLeft.apply(b1, b2)}`,
+    `pullRight: ${pullRight.apply(b1, b2)}`,
   ].join("\n");
 }

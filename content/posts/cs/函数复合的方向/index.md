@@ -248,28 +248,58 @@ $$
 g^*T: B \times B \times \cdots \times B \to Y
 $$
 
-使用 TypeScript 实现一个张量
+使用 TypeScript 实现张量。这里选择把张量作为一个普通对象，包含阶数和映射
 
 ```ts
-// 张量
-type Tensor<X, Y, Args extends X[]> = (...args: Args) => Y;
+// 张量类型
+type Tensor<Args extends unknown[], Y> = {
+  readonly rank: Args["length"];
+  readonly apply: (...args: Args) => Y;
+};
 
+// 张量构造器
+function tensor<Args extends unknown[], Y>(
+  rank: Args["length"],
+  apply: (...args: Args) => Y,
+): Tensor<Args, Y> {
+  return { rank, apply };
+}
+```
+
+也可以把张量作为一个函数对象，通过 `Object.assign` 设置阶数。后者可读性会稍差一点，好处是可以像普通函数一样使用张量
+
+```ts
+// 张量类型
+export type Tensor<Args extends unknown[], Y> = ((...args: Args) => Y) & {
+  readonly rank: Args["length"];
+};
+
+// 张量构造器
+export function tensor<Args extends unknown[], Y>(
+  rank: Args["length"],
+  fn: (...args: Args) => Y,
+): Tensor<Args, Y> {
+  return Object.assign(fn, { rank });
+}
+```
+
+我们使用可读性更好的普通对象版本，分别实现对张量的前推和拉回
+
+```ts
 // 张量前推：作用于输出
-function tensorPushforward<A, B>(f: Fn<A, B>) {
-  return <X, Args extends X[]>(
-      tensor: Tensor<X, A, Args>,
-    ): Tensor<X, B, Args> =>
-    (...xs) =>
-      f(tensor(...xs));
+function tensorPushforward<Y, A>(f: (y: Y) => A) {
+  return <Args extends unknown[]>(T: Tensor<Args, Y>): Tensor<Args, A> =>
+    tensor(T.rank, (...xs: Args) => f(T.apply(...xs)));
 }
 
 // 张量拉回：作用于每个输入
-function tensorPullback<A, B>(g: Fn<A, B>) {
-  return <Y, Args extends B[]>(
-      tensor: Tensor<B, Y, Args>,
-    ): Tensor<A, Y, { [K in keyof Args]: A }> =>
-    (...xs) =>
-      tensor(...(xs.map(g) as Args));
+function tensorPullback<B, X>(g: (b: B) => X) {
+  return <Args extends X[], Y>(T: Tensor<Args, Y>) => {
+    type Bs = { [K in keyof Args]: B };
+    return tensor(T.rank as Bs["length"], (...bs: Bs) =>
+      T.apply(...(bs.map(g) as Args)),
+    );
+  };
 }
 ```
 
@@ -735,22 +765,34 @@ $$
 TypeScript 实现为
 
 ```ts
+// 辅助函数：按左侧张量的阶数切分输入
+function splitTensorArgs<A extends unknown[], B extends unknown[]>(
+  args: [...A, ...B],
+  leftRank: A["length"],
+): [A, B] {
+  return [args.slice(0, leftRank), args.slice(leftRank)] as [A, B];
+}
+
 // 张量和
-export function tensorPlus<X, Y, A extends X[], B extends Y[]>(
-  T: Tensor<X, number, A>,
-  S: Tensor<Y, number, B>,
-): Tensor<X | Y, number, [...A, ...B]> {
-  return (...args) =>
-    T(...(args.slice(0, T.length) as A)) + S(...(args.slice(T.length) as B));
+function tensorPlus<A extends unknown[], B extends unknown[]>(
+  T: Tensor<A, number>,
+  S: Tensor<B, number>,
+): Tensor<[...A, ...B], number> {
+  return tensor(T.rank + S.rank, (...args: [...A, ...B]) => {
+    const [left, right] = splitTensorArgs<A, B>(args, T.rank);
+    return T.apply(...left) + S.apply(...right);
+  });
 }
 
 // 张量积
-export function tensorTimes<X, Y, A extends X[], B extends Y[]>(
-  T: Tensor<X, number, A>,
-  S: Tensor<Y, number, B>,
-): Tensor<X | Y, number, [...A, ...B]> {
-  return (...args) =>
-    T(...(args.slice(0, T.length) as A)) * S(...(args.slice(T.length) as B));
+function tensorTimes<A extends unknown[], B extends unknown[]>(
+  T: Tensor<A, number>,
+  S: Tensor<B, number>,
+): Tensor<[...A, ...B], number> {
+  return tensor(T.rank + S.rank, (...args: [...A, ...B]) => {
+    const [left, right] = splitTensorArgs<A, B>(args, T.rank);
+    return T.apply(...left) * S.apply(...right);
+  });
 }
 ```
 

@@ -53,52 +53,80 @@ export function mul<X>(
   return x => f(x) * g(x);
 }
 
-// 张量
-export type Tensor<X, Y, Args extends X[] = X[]> =
-  (...args: Args) => Y;
+// 张量类型
+export type Tensor<Args extends unknown[], Y> = {
+  readonly rank: Args["length"];
+  readonly apply: (...args: Args) => Y;
+};
+
+// 张量构造器
+export function tensor<Args extends unknown[], Y>(
+  rank: Args["length"],
+  apply: (...args: Args) => Y
+): Tensor<Args, Y> {
+  return { rank, apply };
+}
 
 // 张量前推：作用于输出
-export function tensorPushforward<Y, A>(f: Fn<Y, A>) {
-  return <X>(
-    tensor: Tensor<X, Y>
-  ): Tensor<X, A> =>
-    (...xs) => f(tensor(...xs));
+export function tensorPushforward<Y, A>(f: (y: Y) => A) {
+  return <Args extends unknown[]>(
+    T: Tensor<Args, Y>
+  ): Tensor<Args, A> =>
+    tensor(T.rank, (...xs: Args) => f(T.apply(...xs)));
 }
 
 // 张量拉回：作用于每个输入
-export function tensorPullback<B, X>(g: Fn<B, X>) {
-  return <Y, Args extends X[]>(
-    tensor: Tensor<X, Y, Args>
-  ): Tensor<B, Y, { [K in keyof Args]: B }> =>
-    (...bs) => tensor(...bs.map(g) as Args);
+export function tensorPullback<B, X>(g: (b: B) => X) {
+  return <Args extends X[], Y>(
+    T: Tensor<Args, Y>
+  ): Tensor<{ [K in keyof Args]: B }, Y> => {
+    type Bs = { [K in keyof Args]: B };
+
+    return tensor(
+      T.rank as Bs["length"],
+      (...bs: Bs) => T.apply(...bs.map(g) as Args)
+    );
+  };
+}
+
+// 辅助函数：按左侧张量的阶数切分输入
+function splitTensorArgs<A extends unknown[], B extends unknown[]>(
+  args: [...A, ...B],
+  leftRank: A["length"]
+): [A, B] {
+  return [args.slice(0, leftRank), args.slice(leftRank)] as [A, B];
 }
 
 // 张量和
 export function tensorPlus<
-  X,
-  Y,
-  A extends X[],
-  B extends Y[]
+  A extends unknown[],
+  B extends unknown[]
 >(
-  T: Tensor<X, number, A>,
-  S: Tensor<Y, number, B>,
-): Tensor<X | Y, number, [...A, ...B]> {
-  return (...args) =>
-    T(...args.slice(0, T.length) as A) +
-    S(...args.slice(T.length) as B);
+  T: Tensor<A, number>,
+  S: Tensor<B, number>
+): Tensor<[...A, ...B], number> {
+  return tensor(
+    T.rank + S.rank,
+    (...args: [...A, ...B]) => {
+      const [left, right] = splitTensorArgs<A, B>(args, T.rank);
+      return T.apply(...left) + S.apply(...right);
+    }
+  );
 }
 
 // 张量积
 export function tensorTimes<
-  X,
-  Y,
-  A extends X[],
-  B extends Y[]
+  A extends unknown[],
+  B extends unknown[]
 >(
-  T: Tensor<X, number, A>,
-  S: Tensor<Y, number, B>,
-): Tensor<X | Y, number, [...A, ...B]> {
-  return (...args) =>
-    T(...args.slice(0, T.length) as A) *
-    S(...args.slice(T.length) as B);
+  T: Tensor<A, number>,
+  S: Tensor<B, number>
+): Tensor<[...A, ...B], number> {
+  return tensor(
+    T.rank + S.rank,
+    (...args: [...A, ...B]) => {
+      const [left, right] = splitTensorArgs<A, B>(args, T.rank);
+      return T.apply(...left) * S.apply(...right);
+    }
+  );
 }

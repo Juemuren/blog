@@ -1,6 +1,6 @@
-import { tensorPushforward, pushforward } from "./utils.ts";
+import { tensor, tensorPushforward, pushforward } from "./utils.ts";
 
-const T = (x: number, y: number) => x*x + y*y;
+const T = tensor(2, (x: number, y: number) => x*x + y*y);
 const f = (x: number) => x + 1;
 const g = (x: number) => `value=${x}`;
 
@@ -21,7 +21,7 @@ interface Param {
 
 export function run({ n1, n2 }: Param) {
   return [
-    `pushLeft: ${pushLeft(n1, n2)}`,
-    `pullRight: ${pushRight(n1, n2)}`,
+    `pushLeft: ${pushLeft.apply(n1, n2)}`,
+    `pushRight: ${pushRight.apply(n1, n2)}`,
   ].join("\n");
 }
