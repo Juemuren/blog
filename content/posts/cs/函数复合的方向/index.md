@@ -710,31 +710,33 @@ $$
 g: \mathbb{R} \to B
 $$
 
-前推不一定保持张量加法
+前推不一定保持张量加法。$g_*(T+S)$ 和 $g_*T + g_*S$ 分别展开为
 
 $$
-\begin{align*}
+\begin{cases}
   (g_*(T+S))(x_1, \cdots, x_n)
-  &=g(T(x_1, \cdots, x_n)+S(x_1, \cdots, x_n)) \\
+  =g(T(x_1, \cdots, x_n)+S(x_1, \cdots, x_n)) \\
+  \\
   (g_*T + g_*S)(x_1, \cdots, x_n)
-  &=g(T(x_1, \cdots, x_n)) + g(S(x_1, \cdots, x_n))
-\end{align*}
+  =g(T(x_1, \cdots, x_n)) + g(S(x_1, \cdots, x_n))
+\end{cases}
 $$
 
-即 $g(T+S) = g(T) + g(S)$ 不是所有的 $g$ 都满足。
+而 $g(T+S) = g(T) + g(S)$ 不是所有的 $g$ 都满足。
 
-前推不一定保持张量乘法
+前推不一定保持张量乘法。$g_*(T\times S)$ 和 $g_*T \times g_*S$ 分别展开为
 
 $$
-\begin{align*}
+\begin{cases}
   (g_*(T\times S))(x_1, \cdots, x_n)
-  &=g(T(x_1, \cdots, x_n) \times S(x_1, \cdots, x_n)) \\
+  =g(T(x_1, \cdots, x_n) \times S(x_1, \cdots, x_n)) \\
+  \\
   (g_*T \times g_*S)(x_1, \cdots, x_n)
-  &=g(T(x_1, \cdots, x_n)) \times g(S(x_1, \cdots, x_n))
-\end{align*}
+  =g(T(x_1, \cdots, x_n)) \times g(S(x_1, \cdots, x_n))
+\end{cases}
 $$
 
-即 $g(T\times S) = g(T) \times g(S)$ 不是所有的 $g$ 都满足。
+而 $g(T\times S) = g(T) \times g(S)$ 不是所有的 $g$ 都满足。
 
 ### 第二种张量加法和张量乘法
 
@@ -797,3 +799,75 @@ function tensorTimes<A extends unknown[], B extends unknown[]>(
 ```
 
 {{< demo entry="demo/14-entry.ts" code="demo/14-tensor-plus-times.ts" >}}
+
+现假设两个张量的输入类型相同，只有阶数不同
+
+$$
+T: X^n \to \mathbb{R}
+\qquad
+S: X^m \to \mathbb{R}
+$$
+
+对于
+
+$$
+f: A \to X
+$$
+
+拉回保持张量和
+
+$$
+\begin{align*}
+  f^*(T\oplus S)(x_1, \cdots, x_n, y_1, \cdots, y_m)
+  &= (T\oplus S)(f(x_1), \cdots, f(x_n), f(y_1), \cdots, f(y_m))\\
+  &= T(f(x_1), \cdots, f(x_n)) + S(f(y_1), \cdots, f(y_m))\\
+  &= f^*T(x_1, \cdots, x_n) + f^*S(y_1, \cdots, y_m)\\
+  &= (f^*T\oplus f^*S)(x_1, \cdots, x_n, y_1, \cdots, y_m)
+\end{align*}
+$$
+
+拉回保持张量积
+
+$$
+\begin{align*}
+  f^*(T\otimes S)(x_1, \cdots, x_n, y_1, \cdots, y_m)
+  &= (T\otimes S)(f(x_1), \cdots, f(x_n), f(y_1), \cdots, f(y_m))\\
+  &= T(f(x_1), \cdots, f(x_n)) \times S(f(y_1), \cdots, f(y_m))\\
+  &= f^*T(x_1, \cdots, x_n) \times f^*S(y_1, \cdots, y_m)\\
+  &= (f^*T\otimes f^*S)(x_1, \cdots, x_n, y_1, \cdots, y_m)
+\end{align*}
+$$
+
+对于
+
+$$
+g: \mathbb{R} \to B
+$$
+
+前推不一定保持张量和。$g_*(T\oplus S)$ 和 $g_*T \oplus g_*S$ 分别展开为
+
+$$
+\begin{cases}
+  (g_*(T\oplus S))(x_1, \cdots, x_n, y_1, \cdots, y_m)
+  =g(T(x_1, \cdots, x_n) + S(y_1, \cdots, y_m)) \\
+  \\
+  (g_*T \oplus g_*S)(x_1, \cdots, x_n, y_1, \cdots, y_m)
+  =g(T(x_1, \cdots, x_n)) + g(S(y_1, \cdots, y_m))
+\end{cases}
+$$
+
+而 $g(T + S) = g(T) + g(S)$ 不是所有的 $g$ 都满足。
+
+前推不一定保持张量积。$g_*(T\otimes S)$ 和 $g_*T \otimes g_*S$ 分别展开为
+
+$$
+\begin{cases}
+  (g_*(T\otimes S))(x_1, \cdots, x_n, y_1, \cdots, y_m)
+  =g(T(x_1, \cdots, x_n) \times S(y_1, \cdots, y_m)) \\
+  \\
+  (g_*T \otimes g_*S)(x_1, \cdots, x_n, y_1, \cdots, y_m)
+  =g(T(x_1, \cdots, x_n)) \times g(S(y_1, \cdots, y_m))
+\end{cases}
+$$
+
+而 $g(T\times S) = g(T) \times g(S)$ 不是所有的 $g$ 都满足。
