@@ -796,4 +796,4 @@ function tensorTimes<A extends unknown[], B extends unknown[]>(
 }
 ```
 
-<!-- TODO ## 张量和与张量积的运行示例 -->
+{{< demo entry="demo/14-entry.ts" code="demo/14-tensor-plus-times.ts" >}}
